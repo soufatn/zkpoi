@@ -293,6 +293,33 @@ public final class XSSFRelation extends POIXMLRelation {
     		ExternalLink.class
     );
     
+    //20120111, samchuang@zkoss.org 
+    public static final XSSFRelation PIVOT_TABLE = new XSSFRelation(
+    		"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml",
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotTable",
+    		"/xl/pivotTable/pivotTable#.xml",
+    		null
+//    		XSSFPivotTable.class
+    );
+    
+    //20120418, samchuang@zkoss.org
+    public static final XSSFRelation PIVOT_CACHE_DEFINITION = new XSSFRelation(
+    		"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml",
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheDefinition",
+    		"/xl/pivotCache/pivotCacheDefinition#.xml",
+    		null
+//    		XSSFPivotCacheDefinition.class
+    );
+    
+    //20120418, samchuang@zkoss.org
+    public static final XSSFRelation PIVOT_CACHE_RECORDS = new XSSFRelation(
+    		"application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml",
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/pivotCacheRecords",
+    		"/xl/pivotCache/pivotCacheRecords#.xml",
+    		null
+//    		XSSFPivotCacheRecords.class
+    );
+    
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
 
