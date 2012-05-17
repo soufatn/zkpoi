@@ -45,6 +45,8 @@ import org.zkoss.poi.ss.usermodel.CellRange;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
@@ -2075,7 +2077,22 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
     //20111124, henrichen@zkoss.org
 	@Override
 	public DataValidation getDataValidation(int row, int col) {
-		// TODO Auto-generated method stub
+		// TODO: Not supported yet in xls format
+		return null;
+	}
+
+	//20120517, henrichen@zkoss.org
+	@Override
+	public List<PivotTable> getPivotTables() {
+		// TODO: Not supported yet in xls format
+		return null;
+	}
+
+	//20120517, henrichen@zkoss.org
+	@Override
+	public PivotTable createPivotTable(CellReference destination, String name,
+			PivotCache pivotCache) {
+		// TODO: Not supported yet in xls format
 		return null;
 	}
 }

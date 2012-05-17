@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.zkoss.poi.ss.util.AreaReference;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -576,4 +577,9 @@ public interface Workbook {
      */
     boolean getForceFormulaRecalculation();
 
+    //20120517, henrichen@zkoss.org: get all PivotCaches
+    public List<PivotCache> getPivotCaches();
+    
+    //20120517, henrichen@zkoss.org: create a PivotCache
+    PivotCache createPivotCache(AreaReference sourceRef);
 }

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -52,6 +53,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookProtection;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
 import org.zkoss.poi.POIXMLDocument;
 import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.POIXMLException;
@@ -67,10 +70,14 @@ import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
 import org.zkoss.poi.openxml4j.opc.TargetMode;
 import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.usermodel.PivotTable;
+import org.zkoss.poi.ss.usermodel.PivotTableHelper;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.CellReference;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.poi.util.IOUtils;
@@ -85,6 +92,8 @@ import org.zkoss.poi.xssf.model.MapInfo;
 import org.zkoss.poi.xssf.model.SharedStringsTable;
 import org.zkoss.poi.xssf.model.StylesTable;
 import org.zkoss.poi.xssf.model.ThemesTable;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFPivotTableHelper;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFPivotTableHelpers;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -357,7 +366,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
     
-    public CTPivotCaches getPivotCaches() {
+    public CTPivotCaches getCTPivotCaches() {
     	return this.workbook.getPivotCaches();
     }
     
@@ -1830,5 +1839,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 	//ZSS-81 Cannot input formula with proper external book name
 	/*package*/ String getExternalLinkIndexFromBookName(String bookname) {
 		return bookNameToLinkIndex.get(bookname);
+	}
+
+    //20120517, henrichen@zkoss.org
+    private List<PivotCache> _pivotCaches;
+	@Override
+	public List<PivotCache> getPivotCaches() {
+		if (_pivotCaches == null) {
+			_pivotCaches = XSSFPivotTableHelpers.instance.getHelper().initPivotCaches(this);
+		}
+		return _pivotCaches;
+	}
+
+	//20120517, henrichen@zkoss.org
+	@Override
+	public PivotCache createPivotCache(AreaReference sourceRef) {
+		return XSSFPivotTableHelpers.instance.getHelper().createPivotCache(sourceRef, this);
 	}
 }

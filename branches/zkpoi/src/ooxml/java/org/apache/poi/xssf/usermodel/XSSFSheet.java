@@ -49,6 +49,8 @@ import org.zkoss.poi.ss.usermodel.DataValidationHelper;
 import org.zkoss.poi.ss.usermodel.FilterColumn;
 import org.zkoss.poi.ss.usermodel.Footer;
 import org.zkoss.poi.ss.usermodel.Header;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.usermodel.PivotTable;
 import org.zkoss.poi.ss.usermodel.Row;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.AutoFilter;
@@ -63,6 +65,7 @@ import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
 import org.zkoss.poi.xssf.model.CommentsTable;
 import org.zkoss.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFPivotTableHelpers;
 import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.apache.xmlbeans.XmlException;
@@ -3442,4 +3445,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     	}
     	return null;
     }
+
+    //20120517, henrichen@zkoss.org
+    private List<PivotTable> _pivotTables;
+	@Override
+	public List<PivotTable> getPivotTables() {
+		if (_pivotTables == null) {
+			_pivotTables = XSSFPivotTableHelpers.instance.getHelper().initPivotTables(this);
+		}
+		return _pivotTables;
+	}
+
+    //20120517, henrichen@zkoss.org
+	@Override
+	public PivotTable createPivotTable(CellReference destination, String name, PivotCache pivotCache) {
+		return XSSFPivotTableHelpers.instance.getHelper().createPivotTable(destination, name, pivotCache, this);
+	}
 }

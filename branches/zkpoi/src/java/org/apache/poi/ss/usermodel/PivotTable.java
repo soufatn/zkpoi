@@ -27,7 +27,6 @@ import org.zkoss.poi.ss.util.ItemInfo;
  *
  */
 public interface PivotTable {
-	
 	/**
 	 * Sets the name of PivotTable.
 	 * 

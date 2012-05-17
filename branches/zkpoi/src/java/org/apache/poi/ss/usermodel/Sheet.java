@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellReference;
 
 /**
  * High level representation of a Excel worksheet.
@@ -956,4 +957,10 @@ public interface Sheet extends Iterable<Row> {
 
 	//20111124, henrichen@zkoss.org: returns data validation of the specified row,col
 	public DataValidation getDataValidation(int row, int col);
+	
+	//20120517, henrichen@zkoss.org: returns associated PivotTables of this sheet
+	public List<PivotTable> getPivotTables();
+	
+	//20120517, henrichen@zkoss.org: create a PivotTable
+	public PivotTable createPivotTable(CellReference destination, String name, PivotCache pivotCache);
 }

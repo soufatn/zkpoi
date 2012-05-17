@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +59,9 @@ import org.zkoss.poi.ss.formula.ptg.UnionPtg;
 import org.zkoss.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.zkoss.poi.ss.util.AreaReference;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
@@ -1892,5 +1895,18 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
             }
         }
 		return false;
+	}
+	
+	//20120517, henrichen@zkoss.org
+	@Override
+	public PivotCache createPivotCache(AreaReference sourceRef) {
+		// TODO: Not supported yet in xls format
+		return null;
+	}
+	//20120517, henrichen@zkoss.org
+	@Override
+	public List<PivotCache> getPivotCaches() {
+		// TODO Auto-generated method stub
+		return Collections.emptyList();
 	}
 }
