@@ -17,6 +17,7 @@
 
 package org.zkoss.poi.xssf.streaming;
 
+import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.usermodel.Font;
@@ -42,6 +43,7 @@ import java.util.zip.ZipEntry;
 
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.zkoss.poi.ss.util.AreaReference;
 
 /**
  * Streaming version of XSSFWorkbook implementing the "BigGridDemo" strategy.
@@ -1065,6 +1067,20 @@ public class SXSSFWorkbook implements Workbook
     public boolean getForceFormulaRecalculation(){
         return _wb.getForceFormulaRecalculation();
     }
+
+    //20120517, henrichen@zkoss.org
+	@Override
+	public PivotCache createPivotCache(AreaReference sourceRef) {
+		// TODO Not supported in SXSSFWorkbook
+		return null;
+	}
+
+    //20120517, henrichen@zkoss.org
+	@Override
+	public List<PivotCache> getPivotCaches() {
+		// TODO Not supported in SXSSFWorkbook
+		return null;
+	}
 
 //end of interface implementation
 }

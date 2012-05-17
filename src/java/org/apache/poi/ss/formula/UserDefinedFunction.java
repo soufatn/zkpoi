@@ -31,7 +31,7 @@ import org.zkoss.poi.ss.formula.eval.NotImplementedException;
  * @author Josh Micich
  * @author Petr Udalau - Improved resolving of UDFs through the ToolPacks.
  */
-final class UserDefinedFunction implements FreeRefFunction {
+final public class UserDefinedFunction implements FreeRefFunction {
 
 	public static final FreeRefFunction instance = new UserDefinedFunction();
 

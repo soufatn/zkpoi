@@ -1372,4 +1372,19 @@ public class SXSSFSheet implements Sheet, Cloneable
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	//20120517, henrichen@zkoss.org
+	@Override
+	public List<PivotTable> getPivotTables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//20120517, henrichen@zkoss.org
+	@Override
+	public PivotTable createPivotTable(CellReference destination, String name,
+			PivotCache pivotCache) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
