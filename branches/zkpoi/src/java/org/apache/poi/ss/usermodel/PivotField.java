@@ -66,6 +66,10 @@ public interface PivotField {
 	
 	public boolean getDatabaseField();
 	
+	public void setOutline(boolean outline);
+	
+	public boolean getOutline();
+	
 	public interface Item {
 		
 		public enum Type {
@@ -80,10 +84,10 @@ public interface PivotField {
 			MIN,
 			PRODUCT,
 			STD_DEV,
-			STD_DEVP,
+			STD_DEV_P,
 			SUM,
-			VAR,
-			VARP;
+			VARIANCE,
+			VARIANCE_P;
 		}
 		
 		/**

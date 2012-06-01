@@ -28,8 +28,8 @@ public enum Calculation {
 	MIN,
 	PRODUCT,
 	STD_DEV,
-	STD_DEVP,
+	STD_DEV_P,
 	SUM,
-	VAR,
-	VARP;
+	VARIANCE,
+	VARIANCE_P;
 }

@@ -28,11 +28,17 @@ public class ItemInfo {
 	private Object _value;
 	private int _depth;
 	private Item.Type _type;
+	private int _index = -1;
 	
 	public ItemInfo(Type type, Object value, int depth) {
+		this(type, value, depth, -1);
+	}
+	
+	public ItemInfo(Type type, Object value, int depth, int index) {
 		_type = type;
 		_value = value;
 		_depth = depth;
+		_index = index;
 	}
 	
 	/**
@@ -62,5 +68,7 @@ public class ItemInfo {
 		return _depth;
 	}
 	
-	
+	public int getIndex() {
+		return _index;
+	}
 }

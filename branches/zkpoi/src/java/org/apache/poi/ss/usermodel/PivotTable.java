@@ -167,7 +167,7 @@ public interface PivotTable {
 	 * 
 	 * @param items
 	 */
-	public void setRowItems(List<ItemInfo> items);
+	public void setRowItems(List<List<ItemInfo>> items);
 	
 	/**
 	 * Sets column type of a pivot field.
@@ -205,4 +205,26 @@ public interface PivotTable {
 	 * @return
 	 */
 	public List<DataField> getDataFields();
+	
+	/**
+	 * Sets data on rows
+	 * 
+	 * @param dataOnRows
+	 */
+	public void setDataOnRows(boolean dataOnRows);
+	
+	/**
+	 * Returns whether data on rows or not.
+	 * 
+	 * @return
+	 */
+	public boolean getDataOnRows();
+	
+	public void setOutline(boolean outline);
+	
+	public boolean getOutline();
+	
+	public void setOutlineData(boolean outlineData);
+	
+	public boolean getOutlineData();
 }
