@@ -418,11 +418,12 @@ public class CellFormat {
                     return new CellFormatPart("General");
                 }
             } else if (formatPartCount == 2) {
-                if ((!posNumFmt.hasCondition() && val >= 0)
-                        || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
+            	//20120608, samchuang@zkoss.org : show invaild format as ###...### (when posNumFmt is null)
+                if (posNumFmt != null && ((!posNumFmt.hasCondition() && val >= 0)
+                        || (posNumFmt.hasCondition() && posNumFmt.applies(val)))) {
                     return posNumFmt;
-                } else if (!negNumFmt.hasCondition()
-                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                } else if (negNumFmt != null && (!negNumFmt.hasCondition()
+                        || (negNumFmt.hasCondition() && negNumFmt.applies(val)))) {
                     return negNumFmt;
                 } else {
                     // Return ###...### (255 #s) to match Excel 2007 behaviour
