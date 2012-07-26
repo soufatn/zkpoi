@@ -207,7 +207,8 @@ public class CellFormat {
             posNumFmt = parts.get(0);
             negNumFmt = null;
             zeroNumFmt = null;
-            textFmt = posNumFmt.getCellFormatType() == CellFormatType.TEXT ? posNumFmt : DEFAULT_TEXT_FORMAT;
+            textFmt = posNumFmt != null ?
+            		posNumFmt.getCellFormatType() == CellFormatType.TEXT ? posNumFmt : DEFAULT_TEXT_FORMAT : DEFAULT_TEXT_FORMAT;
             _implicit = true; //implicit negative
             break;
         case 2:
@@ -411,14 +412,15 @@ public class CellFormat {
             double val = ((Number) value).doubleValue();
             
             if (formatPartCount == 1) {
-                if (!posNumFmt.hasCondition()
-                        || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
+            	//20120725 samchuang@zkoss.org: ZSS-142
+                if (posNumFmt != null && (!posNumFmt.hasCondition()
+                        || (posNumFmt.hasCondition() && posNumFmt.applies(val)))) {
                     return posNumFmt;
                 } else {
                     return new CellFormatPart("General");
                 }
             } else if (formatPartCount == 2) {
-            	//20120608, samchuang@zkoss.org : show invaild format as ###...### (when posNumFmt is null)
+            	//20120608 samchuang@zkoss.org: ZSS-134
                 if (posNumFmt != null && ((!posNumFmt.hasCondition() && val >= 0)
                         || (posNumFmt.hasCondition() && posNumFmt.applies(val)))) {
                     return posNumFmt;
@@ -426,7 +428,7 @@ public class CellFormat {
                         || (negNumFmt.hasCondition() && negNumFmt.applies(val)))) {
                     return negNumFmt;
                 } else {
-                    // Return ###...### (255 #s) to match Excel 2007 behaviour
+                	// Return ###...### (255 #s) to match Excel 2007 behaviour
                     return new CellFormatPart(QUOTE + INVALID_VALUE_FOR_FORMAT + QUOTE);
                 }
             } else {

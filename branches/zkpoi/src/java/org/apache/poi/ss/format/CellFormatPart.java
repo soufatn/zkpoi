@@ -361,6 +361,7 @@ public class CellFormatPart {
                     // This can be part of date, elapsed, or number
                     seenZero = true;
                     break;
+                //TODO 20120726: samchuang@zkoss.org: could be currency format, for example [$IDR]
                 case '[':
                     return CellFormatType.ELAPSED;
                 case '#':
