@@ -106,11 +106,14 @@ public abstract class PropertyTableBase implements BATManaged {
             return;
         }
         Stack<Property> children = new Stack<Property>();
-
         children.push(_properties.get(index));
         while (!children.empty())
         {
+        	//20120814 samchuang@zkoss.org: ZSS-138
             Property property = children.pop();
+            if (property == null) {
+            	continue;
+            }
 
             root.addChild(property);
             if (property.isDirectory())
