@@ -41,6 +41,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
@@ -435,6 +436,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 	
 	//20111114, henrichen@zkoss.org: get Chart associated relationId in Drawing
 	private String getChartRelationId(CTGraphicalObjectFrame graphicFrame) {
+		if (graphicFrame == null)//20120829, samchuang@zkoss.org: ZSS-156
+			return null;
 		CTGraphicalObjectData data  = graphicFrame.getGraphic().getGraphicData();
 		String r_namespaceUri = STRelationshipId.type.getName().getNamespaceURI();
 		XmlCursor cursor = data.newCursor();
