@@ -30,46 +30,9 @@ import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 
-import org.zkoss.poi.POIXMLDocumentPart;
-import org.zkoss.poi.POIXMLException;
-import org.zkoss.poi.hssf.record.PasswordRecord;
-import org.zkoss.poi.hssf.util.PaneInformation;
-import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
-import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.zkoss.poi.openxml4j.opc.PackagePart;
-import org.zkoss.poi.openxml4j.opc.PackageRelationship;
-import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.zkoss.poi.ss.SpreadsheetVersion;
-import org.zkoss.poi.ss.formula.FormulaShifter;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellRange;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.DataValidation;
-import org.zkoss.poi.ss.usermodel.DataValidationHelper;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.Footer;
-import org.zkoss.poi.ss.usermodel.Header;
-import org.zkoss.poi.ss.usermodel.PivotCache;
-import org.zkoss.poi.ss.usermodel.PivotTable;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.ss.util.CellRangeAddressList;
-import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.ss.util.SSCellRange;
-import org.zkoss.poi.ss.util.SheetUtil;
-import org.zkoss.poi.util.HexDump;
-import org.zkoss.poi.util.Internal;
-import org.zkoss.poi.util.POILogFactory;
-import org.zkoss.poi.util.POILogger;
-import org.zkoss.poi.xssf.model.CommentsTable;
-import org.zkoss.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.zkoss.poi.xssf.usermodel.helpers.XSSFPivotTableHelpers;
-import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
-import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
@@ -112,6 +75,45 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.hssf.record.PasswordRecord;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellRange;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.Footer;
+import org.zkoss.poi.ss.usermodel.Header;
+import org.zkoss.poi.ss.usermodel.IndexedColors;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.usermodel.PivotTable;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.SSCellRange;
+import org.zkoss.poi.ss.util.SheetUtil;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.xssf.model.CommentsTable;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
+import org.zkoss.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFPivotTableHelpers;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
 
 
 /**
@@ -134,9 +136,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
-    
-    
-        
+
+
 	/**
      * cache of master shared formulas in this sheet.
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
@@ -2707,6 +2708,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     @Override
     protected void commit() throws IOException {
+    	//20121123 samchuang@zkoss.org, ZSS-179: XmlValueDisconnectedException, TODO: any better solution? 
+    	for (XSSFRow row : _rows.values()) {
+    		for (XSSFCell cell : row.getCells().values()) {
+    			CTCell ctcell = (CTCell)cell.getCTCell().copy();
+    			cell.setCTCell(ctcell);
+    		}
+    	}
+    	
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         write(out);
