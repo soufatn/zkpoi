@@ -1169,6 +1169,10 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
 
     public HSSFCellStyle createCellStyle()
     {
+    	//20130125, samchuang@zkoss.org: try to remove duplicate cell styles
+    	if(workbook.getNumExFormats() == MAX_STYLES) {
+    		HSSFOptimiser.optimiseCellStyles(this);
+    	}
         if(workbook.getNumExFormats() == MAX_STYLES) {
             throw new IllegalStateException("The maximum number of cell styles was exceeded. " +
                     "You can define up to 4000 styles in a .xls workbook");
