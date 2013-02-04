@@ -31,7 +31,7 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
  * @author Josh Micich
  * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference, HYPERLINK function
  */
-final class LazyAreaEval extends AreaEvalBase implements HyperlinkEval {
+public final class LazyAreaEval extends AreaEvalBase implements HyperlinkEval {
 
 	private final SheetRefEvaluator _evaluator;
 
