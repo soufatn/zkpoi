@@ -178,6 +178,32 @@ public class XSSFCellStyle implements CellStyle {
                } catch(XmlException e) {
                   throw new POIXMLException(e);
                }
+               
+				// 20130306, samchuang@zkoss.org, ZSS-210
+				// Copy the fill
+               	if (src.getCoreXf().getApplyFill()) {
+					try {
+						CTFill ctFill = CTFill.Factory.parse(src.getCTFill().toString());
+						int index = _stylesSource.putFill(new XSSFCellFill(ctFill));
+						_cellXf.setFillId(index);
+						_cellXf.setApplyFill(true);
+					} catch (XmlException e) {
+						throw new POIXMLException(e);
+					}
+				}
+               
+				// 20130306, samchuang@zkoss.org, ZSS-210
+				// Copy the border
+				if (src.getCoreXf().getApplyBorder()) {
+					try {
+						CTBorder ctBorder = CTBorder.Factory.parse(src.getCTBorder().toString());
+						int index = _stylesSource.putBorder(new XSSFCellBorder(ctBorder, _theme));
+						_cellXf.setBorderId(index);
+						_cellXf.setApplyBorder(true);
+					} catch (XmlException e) {
+						throw new POIXMLException(e);
+					}
+				}
             }
             
             // Clear out cached details
