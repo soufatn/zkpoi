@@ -17,12 +17,12 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.FormulaError;
+import org.zkoss.poi.ss.util.CellReference;
 
 import java.io.*;
 import java.util.Iterator;
@@ -137,9 +137,6 @@ public class SheetDataWriter {
             _out.write(" s=\"" + row._style + "\"");
             _out.write(" customFormat=\"1\"");
         }
-        if (row.getOutlineLevel() != 0) {
-            _out.write(" outlineLevel=\"" + row.getOutlineLevel() + "\"");
-        }
         _out.write(">\n");
         this._rownum = rownum;
         _rowContainedNullCells = false;
@@ -253,7 +250,6 @@ public class SheetDataWriter {
                     break;
                 // Special characters
                 case '\n':
-                case '\r':
                     if (counter > last) {
                         _out.write(chars, last, counter - last);
                     }
@@ -267,6 +263,13 @@ public class SheetDataWriter {
                     _out.write("&#x9;");
                     last = counter + 1;
                     break;
+                case '\r':
+                    if (counter > last) {
+                        _out.write(chars, last, counter - last);
+                    }
+                    _out.write("&#xd;");
+                    last = counter + 1;
+                    break;
                 case 0xa0:
                     if (counter > last) {
                         _out.write(chars, last, counter - last);
@@ -275,14 +278,7 @@ public class SheetDataWriter {
                     last = counter + 1;
                     break;
                 default:
-                    // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
-                    // the same rule applies to unicode surrogates and "not a character" symbols.
-                    if( c < ' ' || Character.isLowSurrogate(c) || Character.isHighSurrogate(c) ||
-                            ('\uFFFE' <= c && c <= '\uFFFF')) {
-                        _out.write('?');
-                        last = counter + 1;
-                    }
-                    else if (c > 127) {
+                    if (c < ' ' || c > 127) {
                         if (counter > last) {
                             _out.write(chars, last, counter - last);
                         }

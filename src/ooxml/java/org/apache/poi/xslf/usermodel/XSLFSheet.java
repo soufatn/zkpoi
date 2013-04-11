@@ -14,16 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<XSLFShape> {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -241,16 +241,6 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return getShapeList().remove(xShape);
     }
 
-    /**
-     * Removes all of the elements from this container (optional operation).
-     * The container will be empty after this call returns.
-     */
-    public void clear() {
-        for(XSLFShape shape : getShapes()){
-            removeShape(shape);
-        }
-    }
-
     protected abstract String getRootElementName();
 
     protected CTGroupShape getSpTree(){
@@ -296,11 +286,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _shapes = null;
         _spTree = null;
         _drawing = null;
-        _spTree = null;
         // first copy the source xml
-        getSpTree().set(src.getSpTree());
+        getXmlObject().set(src.getXmlObject());
 
-        // recursively update each shape
+        // recursively update each shape 
         List<XSLFShape> tgtShapes = getShapeList();
         List<XSLFShape> srcShapes = src.getShapeList();
         for(int i = 0; i < tgtShapes.size(); i++){
@@ -313,52 +302,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
     }
 
     /**
-     * Append content to this sheet.
-     *
-     * @param src the source sheet
-     * @return modified <code>this</code>.
-     */
-    public XSLFSheet appendContent(XSLFSheet src){
-        CTGroupShape spTree = getSpTree();
-        int numShapes = getShapeList().size();
-
-        CTGroupShape srcTree = src.getSpTree();
-        for(XmlObject ch : srcTree.selectPath("*")){
-            if(ch instanceof CTShape){ // simple shape
-                spTree.addNewSp().set(ch);
-            } else if (ch instanceof CTGroupShape){
-                spTree.addNewGrpSp().set(ch);
-            } else if (ch instanceof CTConnector){
-                spTree.addNewCxnSp().set(ch);
-            } else if (ch instanceof CTPicture){
-                spTree.addNewPic().set(ch);
-            } else if (ch instanceof CTGraphicalObjectFrame){
-                spTree.addNewGraphicFrame().set(ch);
-            }
-        }
-
-        _shapes = null;
-        _spTree = null;
-        _drawing = null;
-        _spTree = null;
-
-        // recursively update each shape
-        List<XSLFShape> tgtShapes = getShapeList();
-        List<XSLFShape> srcShapes = src.getShapeList();
-        for(int i = 0; i < srcShapes.size(); i++){
-            XSLFShape s1 = srcShapes.get(i);
-            XSLFShape s2 = tgtShapes.get(numShapes + i);
-
-            s2.copy(s1);
-        }
-        return this;
-    }
-
-   /**
      * @return theme (shared styles) associated with this theme.
      *  By default returns <code>null</code> which means that this sheet is theme-less.
      *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
-     *  method and return the corresponding package part.
+     *  method and return the corresposnding package part.
      */
     XSLFTheme getTheme(){
     	return null;

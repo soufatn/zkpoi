@@ -15,29 +15,31 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationName;
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaParsingWorkbook;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.xssf.model.IndexedUDFFinder;
+import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
+import org.zkoss.poi.ss.formula.ptg.NamePtg;
+import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationName;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.xssf.model.IndexedUDFFinder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
  * Internal POI use only
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 
@@ -54,28 +56,28 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		_uBook = book;
 	}
 
-	private int convertFromExternalSheetIndex(int externSheetIndex) {
-		return externSheetIndex;
-	}
 	/**
 	 * @return the sheet index of the sheet with the given external index.
 	 */
 	public int convertFromExternSheetIndex(int externSheetIndex) {
-		return externSheetIndex;
+		final String[] names = _uBook.convertFromExternSheetIndex(externSheetIndex);
+		if (names == null) return -1;
+		return getSheetIndex(names[1]);
 	}
 	/**
-	 * @return  the external sheet index of the sheet with the given internal
-	 * index. Used by some of the more obscure formula and named range things.
-	 * Fairly easy on XSSF (we think...) since the internal and external
-	 * indicies are the same
+	 * @return the sheet index of the 2nd sheet with the given external index.
 	 */
-	private int convertToExternalSheetIndex(int sheetIndex) {
-		return sheetIndex;
+	public int convertLastIndexFromExternSheetIndex(int externSheetIndex) {
+		final String[] names = _uBook.convertFromExternSheetIndex(externSheetIndex);
+		if (names == null) return -1;
+		return getSheetIndex(names[2]);
 	}
-
+	
 	public int getExternalSheetIndex(String sheetName) {
-		int sheetIndex = _uBook.getSheetIndex(sheetName);
-		return convertToExternalSheetIndex(sheetIndex);
+		final int j = sheetName.indexOf(':');
+		final String sheetName1 = j < 0 ? sheetName : sheetName.substring(0, j);
+		final String sheetName2 = j < 0 ? sheetName : sheetName.substring(j+1);
+		return _uBook.getOrCreateExternalSheetIndex(null, sheetName1, sheetName2);
 	}
 
 	public EvaluationName getName(String name, int sheetIndex) {
@@ -119,20 +121,28 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return new XSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
 	}
 
+	/** Return null if in the same workbook */
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
-		// TODO Auto-generated method stub
+		String[] names = _uBook.convertFromExternSheetIndex(externSheetIndex);
+		if (names != null && names[0] != null) {
+			return new ExternalSheet(names[0], names[1], names[2]);
+		}
 		return null;
 	}
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		throw new RuntimeException("not implemented yet");
+		final int j = sheetName.indexOf(':');
+		final String sheetName1 = j < 0 ? sheetName : sheetName.substring(0, j);
+		final String sheetName2 = j < 0 ? sheetName : sheetName.substring(j+1);
+		return _uBook.getOrCreateExternalSheetIndex(workbookName, sheetName1, sheetName2);
 	}
 	public int getSheetIndex(String sheetName) {
 		return _uBook.getSheetIndex(sheetName);
 	}
 
 	public String getSheetNameByExternSheet(int externSheetIndex) {
-		int sheetIndex = convertFromExternalSheetIndex(externSheetIndex);
-		return _uBook.getSheetName(sheetIndex);
+		String[] names = _uBook.convertFromExternSheetIndex(externSheetIndex);
+		//20101213, henrichen@zkoss.org: sheet could have been deleted
+		return names == null || _uBook.getSheet(names[1]) == null ? "" : names[1].equals(names[2]) ? names[1] : names[1]+':'+names[2];  
 	}
 
 	public String getNameText(NamePtg namePtg) {
@@ -194,5 +204,34 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public SpreadsheetVersion getSpreadsheetVersion(){
 		return SpreadsheetVersion.EXCEL2007;
+	}
+
+	@Override
+	public String getBookNameFromExternalLinkIndex(String externalLinkIndex) {
+		return _uBook.getBookNameFromExternalLinkIndex(externalLinkIndex);
+	}
+	
+	//20101112, henrichen@zkoss.org: handle parsing of user defined function
+	@Override
+	public EvaluationName getOrCreateName(String name, int sheetIndex) {
+		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
+			XSSFName nm = _uBook.getNameAt(i);
+			String nameText = nm.getNameName();
+			if (name.equalsIgnoreCase(nameText) && nm.getSheetIndex() == sheetIndex) {
+				return new Name(_uBook.getNameAt(i), i, this);
+			}
+		}
+		if (sheetIndex == -1) {
+			XSSFName nm = _uBook.createName();
+			nm.setNameName(name);
+			return new Name(nm, _uBook.getNumberOfNames() - 1, this);
+		}
+		return getOrCreateName(name, -1); //recursive
+	}
+	
+	//20111124, henrichen@zkoss.org: get formula tokens per the formula string
+	public Ptg[] getFormulaTokens(int sheetIndex, String formula) {
+		XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
+		return FormulaParser.parse(formula, frBook, FormulaType.CELL, sheetIndex);
 	}
 }

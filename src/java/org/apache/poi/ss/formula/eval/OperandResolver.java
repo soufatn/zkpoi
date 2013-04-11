@@ -15,15 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval;
+package org.zkoss.poi.ss.formula.eval;
 
 import java.util.regex.Pattern;
+
 
 /**
  * Provides functionality for evaluating arguments to functions and operators.
  *
  * @author Josh Micich
  * @author Brendan Nolan
+ * @author henrichen@zkoss.org: handle HYPERLINK function
  */
 public final class OperandResolver {
 
@@ -64,6 +66,10 @@ public final class OperandResolver {
 			result = chooseSingleElementFromArea((AreaEval) arg, srcCellRow, srcCellCol);
 		} else {
 			result = arg;
+		}
+		//20100720, henrichen@zkoss.org: HYPERLINK function
+		if (arg instanceof HyperlinkEval && result instanceof HyperlinkEval) { 
+			((HyperlinkEval)result).setHyperlink(((HyperlinkEval)arg).getHyperlink());
 		}
 		if (result instanceof ErrorEval) {
 			throw new EvaluationException((ErrorEval) result);
@@ -149,7 +155,7 @@ public final class OperandResolver {
 		cells this method could not detect it.
 
 		Logic to detect evaluation cycles of all kinds has been coded in EvaluationCycleDetector
-		(and FormulaEvaluator).
+		(and HSSFFormulaEvaluator).
 		 */
 		}
 
@@ -320,5 +326,77 @@ public final class OperandResolver {
 			throw new EvaluationException((ErrorEval) ve);
 		}
 		throw new RuntimeException("Unexpected eval (" + ve.getClass().getName() + ")");
+	}
+
+	//20101113, henrichen@zkoss.org: to long
+	/**
+	 * Applies some conversion rules if the supplied value is not already a long integer.<br/>
+	 * Value is first coerced to a <tt>double</tt> ( See <tt>coerceValueToDouble()</tt> ).
+	 * Note - <tt>BlankEval</tt> is converted to <code>0</code>.<p/>
+	 *
+	 * Excel typically converts doubles to integers by truncating toward negative infinity.<br/>
+	 * The equivalent java code is:<br/>
+	 * &nbsp;&nbsp;<code>return (long)Math.floor(d);</code><br/>
+	 * <b>not</b>:<br/>
+	 * &nbsp;&nbsp;<code>return (long)d; // wrong - rounds toward zero</code>
+	 *
+	 */
+	public static long coerceValueToLong(ValueEval ev) throws EvaluationException {
+		if (ev == BlankEval.instance) {
+			return 0;
+		}
+		double d = coerceValueToDouble(ev);
+		// Note - the standard java type conversion from double to int truncates toward zero.
+		// but Math.floor() truncates toward negative infinity
+		return (long)Math.floor(d);
+	}
+
+	//20111125, henrichen@zkoss.org: will return ArrayEval if necessary
+	public static ValueEval chooseMultipleElementsFromArea(AreaEval ae,
+			int srcCellRow, int srcCellCol) throws EvaluationException {
+		ValueEval result = ae.getWidth() == 1 && ae.getHeight() == 1 ? 
+				chooseSingleElementFromAreaInternal(ae, srcCellRow, srcCellCol):
+				chooseMultipleElementsFromAreaInternal(ae, srcCellRow, srcCellCol);
+		if (result instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval) result);
+		}
+		return result;
+	}
+
+	//20111125, henrichen@zkoss.org: will return ArrayEval if necessary
+	private static ValueEval chooseMultipleElementsFromAreaInternal(AreaEval ae,
+			int srcCellRow, int srcCellCol) throws EvaluationException {
+		int w = ae.getWidth();
+		int h = ae.getHeight();
+		
+		ValueEval[][] values = new ValueEval[h][];
+		for (int r = 0; r < h; ++r) {
+			values[r] = new ValueEval[w];
+			for(int c = 0; c < w; ++c) {
+				values[r][c] = ae.getRelativeValue(r, c);
+			}
+		}
+		return new ArrayEval(values, ae.getFirstRow(), ae.getFirstColumn(), ae.getLastRow(), ae.getLastColumn());
+	}
+	
+	//20111125, henrichen@zkoss.org: will return ArrayEval if necessary
+	public static ValueEval getMultipleValue(ValueEval arg, int srcCellRow, int srcCellCol)
+	throws EvaluationException {
+		ValueEval result;
+		if (arg instanceof RefEval) {
+			result = ((RefEval) arg).getInnerValueEval();
+		} else if (arg instanceof AreaEval) {
+			result = chooseMultipleElementsFromArea((AreaEval) arg, srcCellRow, srcCellCol);
+		} else {
+			result = arg;
+		}
+		//20100720, henrichen@zkoss.org: HYPERLINK function
+		if (arg instanceof HyperlinkEval && result instanceof HyperlinkEval) { 
+			((HyperlinkEval)result).setHyperlink(((HyperlinkEval)arg).getHyperlink());
+		}
+		if (result instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval) result);
+		}
+		return result;
 	}
 }

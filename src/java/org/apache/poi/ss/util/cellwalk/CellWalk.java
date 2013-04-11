@@ -15,12 +15,12 @@
    limitations under the License.
    ==================================================================== */
 
-package org.apache.poi.ss.util.cellwalk;
+package org.zkoss.poi.ss.util.cellwalk;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * Traverse cell range.

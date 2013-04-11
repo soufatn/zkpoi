@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -95,7 +95,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
         int pos = offset;
         LittleEndian.putShort( data, pos, getOptions() ); pos += 2;
         LittleEndian.putShort( data, pos, getRecordId() ); pos += 2;
-        LittleEndian.putInt( data, 0, getRecordSize() - HEADER_SIZE ); pos += 4;
+        LittleEndian.putInt( data, getRecordSize() - HEADER_SIZE ); pos += 4;
 
         System.arraycopy( field_1_UID, 0, data, pos, 16 ); pos += 16;
         LittleEndian.putInt( data, pos, field_2_cb ); pos += 4;

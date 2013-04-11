@@ -14,15 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.EntryUtils;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.poifs.filesystem.DirectoryEntry;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.EntryUtils;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public class ObjectPoolImpl implements ObjectsPool

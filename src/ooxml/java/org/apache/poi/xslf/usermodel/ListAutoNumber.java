@@ -16,7 +16,7 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 /**
  * Specifies type of automatic numbered bullet points that should be applied to a paragraph.

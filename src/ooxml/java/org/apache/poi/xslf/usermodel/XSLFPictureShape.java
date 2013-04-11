@@ -17,19 +17,18 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
@@ -147,12 +146,6 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         CTPicture ct = (CTPicture)getXmlObject();
         CTBlip blip = ct.getBlipFill().getBlip();
         blip.setEmbed(relId);
-
-        CTApplicationNonVisualDrawingProps nvPr = ct.getNvPicPr().getNvPr();
-        if(nvPr.isSetCustDataLst()) {
-            // discard any custom tags associated with the picture being copied
-            nvPr.unsetCustDataLst();
-        }
 
     }
 }

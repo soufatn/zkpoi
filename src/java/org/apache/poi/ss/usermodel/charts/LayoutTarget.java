@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.charts;
+package org.zkoss.poi.ss.usermodel.charts;
 
 /**
  * Specifies whether to layout the plot area by its inside (not including axis

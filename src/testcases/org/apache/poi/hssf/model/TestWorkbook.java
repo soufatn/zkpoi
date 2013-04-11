@@ -29,6 +29,7 @@ import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 
 /**

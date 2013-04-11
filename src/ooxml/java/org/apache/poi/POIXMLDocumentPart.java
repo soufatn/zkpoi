@@ -14,33 +14,33 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi;
+package org.zkoss.poi;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import org.apache.xmlbeans.XmlOptions;
 
 /**
  * Represents an entry of a OOXML package.
  *
  * <p>
- * Each POIXMLDocumentPart keeps a reference to the underlying a {@link org.apache.poi.openxml4j.opc.PackagePart}.
+ * Each POIXMLDocumentPart keeps a reference to the underlying a {@link org.zkoss.poi.openxml4j.opc.PackagePart}.
  * </p>
  *
  * @author Yegor Kozlov
@@ -78,7 +78,7 @@ public class POIXMLDocumentPart {
         return relationCounter;
     }
 
-    int getRelationCounter() {
+    protected int getRelationCounter() { //20111110, henrichen@zkoss.org: promote protection
         return relationCounter;
     }
 

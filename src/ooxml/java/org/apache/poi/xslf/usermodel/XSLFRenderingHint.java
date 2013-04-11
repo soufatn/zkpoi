@@ -17,9 +17,9 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 import java.awt.RenderingHints;
 

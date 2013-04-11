@@ -40,7 +40,6 @@ public class TestXWPFDecorators extends TestCase {
         comments = XWPFTestDataSamples.openSampleDocument("WordWithAttachments.docx");
    }
 
-    @SuppressWarnings("deprecation")
    public void testHyperlink() {
       XWPFParagraph ps;
       XWPFParagraph ph;

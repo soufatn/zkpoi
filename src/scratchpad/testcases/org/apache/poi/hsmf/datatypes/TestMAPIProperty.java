@@ -18,6 +18,7 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.TestCase;
 

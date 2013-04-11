@@ -15,40 +15,57 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.ptg.FuncVarPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
  *
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 final class SheetRefEvaluator {
 
 	private final WorkbookEvaluator _bookEvaluator;
 	private final EvaluationTracker _tracker;
 	private final int _sheetIndex;
+	private final int _lastSheetIndex;
 	private EvaluationSheet _sheet;
 
-	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker, int sheetIndex) {
-		if (sheetIndex < 0) {
+
+	public SheetRefEvaluator(WorkbookEvaluator bookEvaluator, EvaluationTracker tracker, int sheetIndex, int lastSheetIndex) {
+//20101213, henrichen@zkoss.org: handle deleted sheet		
+/*		if (sheetIndex < 0) {
 			throw new IllegalArgumentException("Invalid sheetIndex: " + sheetIndex + ".");
 		}
-		_bookEvaluator = bookEvaluator;
+		if (lastSheetIndex < 0) {
+			throw new IllegalArgumentException("Invalid sheetIndex2: " + lastSheetIndex + ".");
+		}
+*/		_bookEvaluator = bookEvaluator;
 		_tracker = tracker;
 		_sheetIndex = sheetIndex;
+		_lastSheetIndex = lastSheetIndex;
 	}
 
 	public String getSheetName() {
-		return _bookEvaluator.getSheetName(_sheetIndex);
+		return _sheetIndex < 0 ? "#REF" : _bookEvaluator.getSheetName(_sheetIndex);
+	}
+	
+	public String getLastSheetName() {
+		return _lastSheetIndex < 0 ? "#REF" : _bookEvaluator.getSheetName(_lastSheetIndex);
 	}
 
 	public ValueEval getEvalForCell(int rowIndex, int columnIndex) {
-		return _bookEvaluator.evaluateReference(getSheet(), _sheetIndex, rowIndex, columnIndex, _tracker);
+		return _bookEvaluator.evaluateReference(getSheetName(), getLastSheetName(), rowIndex, columnIndex, _tracker);
+	}
+	
+	public String getBookName() {
+		final CollaboratingWorkbooksEnvironment env = _bookEvaluator.getEnvironment();
+		return env.getBookName(_bookEvaluator);
 	}
 
 	private EvaluationSheet getSheet() {
@@ -57,10 +74,10 @@ final class SheetRefEvaluator {
 		}
 		return _sheet;
 	}
-
+	
     /**
      * @return  whether cell at rowIndex and columnIndex is a subtotal
-     * @see org.apache.poi.ss.formula.functions.Subtotal
+     * @see org.zkoss.poi.ss.formula.functions.Subtotal
      */
     public boolean isSubTotal(int rowIndex, int columnIndex){
         boolean subtotal = false;
@@ -80,4 +97,13 @@ final class SheetRefEvaluator {
         return subtotal;
     }
 
+    //20111125, henrichen@zkoss.org: return number of sheet of this SheetReference
+    public int getSheetCount() {
+    	if (_sheetIndex > 0 && _lastSheetIndex > 0) {
+    		return _lastSheetIndex  - _sheetIndex + 1;
+    	} else if (_sheetIndex < 0 && _lastSheetIndex < 0) {
+    		return 0;
+    	}
+    	return 1;
+    }
 }

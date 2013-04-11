@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianConsts;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * Represents an Ole10Native record which is wrapped around certain binary
@@ -138,7 +138,7 @@ public class Ole10Native {
       ofs += len;
       flags2 = LittleEndian.getShort(data, ofs);
       ofs += LittleEndianConsts.SHORT_SIZE;
-      len = LittleEndian.getUByte(data, ofs);
+      len = LittleEndian.getUnsignedByte(data, ofs);
       unknown1 = new byte[len];
       ofs += len;
       len = 3;

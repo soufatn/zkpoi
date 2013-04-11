@@ -15,31 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.PropertyNode;
-import org.apache.poi.hwpf.model.SEPX;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.TextPieceTable;
-import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
-import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.model.BytePropertyNode;
+
+import org.zkoss.poi.hwpf.HWPFDocument;
+import org.zkoss.poi.hwpf.HWPFDocumentCore;
+import org.zkoss.poi.hwpf.model.CHPX;
+import org.zkoss.poi.hwpf.model.FileInformationBlock;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.model.PAPX;
+import org.zkoss.poi.hwpf.model.PropertyNode;
+import org.zkoss.poi.hwpf.model.SEPX;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.model.SubdocumentType;
+import org.zkoss.poi.hwpf.model.TextPieceTable;
+import org.zkoss.poi.hwpf.sprm.CharacterSprmCompressor;
+import org.zkoss.poi.hwpf.sprm.ParagraphSprmCompressor;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This class is the central class of the HWPF object model. All properties that

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.property;
+package org.zkoss.poi.poifs.property;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.NPOIFSStream;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.zkoss.poi.poifs.filesystem.NPOIFSStream;
+import org.zkoss.poi.poifs.storage.HeaderBlock;
 
 /**
  * This class embodies the Property Table for a {@link NPOIFSFileSystem}; 
@@ -38,8 +36,6 @@ import org.apache.poi.util.POILogger;
  * filesystem.
  */
 public final class NPropertyTable extends PropertyTableBase {
-    private static final POILogger _logger =
-       POILogFactory.getLogger(NPropertyTable.class);
     private POIFSBigBlockSize _bigBigBlockSize;
 
     public NPropertyTable(HeaderBlock headerBlock)
@@ -94,18 +90,7 @@ public final class NPropertyTable extends PropertyTableBase {
              data = bb.array();
           } else {
              data = new byte[bigBlockSize.getBigBlockSize()];
-             
-             int toRead = data.length;
-             if (bb.remaining() < bigBlockSize.getBigBlockSize()) {
-                // Looks to be a truncated block
-                // This isn't allowed, but some third party created files
-                //  sometimes do this, and we can normally read anyway
-                _logger.log(POILogger.WARN, "Short Property Block, ", bb.remaining(),
-                            " bytes instead of the expected " + bigBlockSize.getBigBlockSize());
-                toRead = bb.remaining();
-             }
-             
-             bb.get(data, 0, toRead);
+             bb.get(data, 0, data.length);
           }
           
           PropertyFactory.convertToProperties(data, properties);

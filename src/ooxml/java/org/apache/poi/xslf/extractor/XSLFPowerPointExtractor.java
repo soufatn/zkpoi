@@ -14,29 +14,38 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.extractor;
+package org.zkoss.poi.xslf.extractor;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xslf.XSLFSlideShow;
-import org.apache.poi.xslf.usermodel.DrawingParagraph;
-import org.apache.poi.xslf.usermodel.DrawingTextBody;
-import org.apache.poi.xslf.usermodel.DrawingTextPlaceholder;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFCommentAuthors;
-import org.apache.poi.xslf.usermodel.XSLFComments;
-import org.apache.poi.xslf.usermodel.XSLFCommonSlideData;
-import org.apache.poi.xslf.usermodel.XSLFNotes;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
-import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.zkoss.poi.POIXMLTextExtractor;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.xslf.XSLFSlideShow;
+import org.zkoss.poi.xslf.usermodel.DrawingParagraph;
+import org.zkoss.poi.xslf.usermodel.DrawingTextBody;
+import org.zkoss.poi.xslf.usermodel.DrawingTextPlaceholder;
+import org.zkoss.poi.xslf.usermodel.XMLSlideShow;
+import org.zkoss.poi.xslf.usermodel.XSLFCommentAuthors;
+import org.zkoss.poi.xslf.usermodel.XSLFComments;
+import org.zkoss.poi.xslf.usermodel.XSLFCommonSlideData;
+import org.zkoss.poi.xslf.usermodel.XSLFNotes;
+import org.zkoss.poi.xslf.usermodel.XSLFRelation;
+import org.zkoss.poi.xslf.usermodel.XSLFSlide;
+import org.zkoss.poi.xslf.usermodel.XSLFSlideLayout;
+import org.zkoss.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTComment;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthor;
+import org.zkoss.poi.POIXMLTextExtractor;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.xslf.XSLFSlideShow;
+import org.zkoss.poi.xslf.usermodel.DrawingParagraph;
+import org.zkoss.poi.xslf.usermodel.XMLSlideShow;
+import org.zkoss.poi.xslf.usermodel.XSLFCommonSlideData;
+import org.zkoss.poi.xslf.usermodel.XSLFRelation;
+import org.zkoss.poi.xslf.usermodel.XSLFSlide;
 
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
    public static final XSLFRelation[] SUPPORTED_TYPES = new XSLFRelation[] {

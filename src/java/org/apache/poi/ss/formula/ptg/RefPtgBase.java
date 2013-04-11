@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * ReferencePtgBase - handles references (such as A1, A2, IA4)
@@ -45,7 +45,7 @@ public abstract class RefPtgBase extends OperandPtg {
      * YK: subclasses of RefPtgBase are used by the FormulaParser and FormulaEvaluator accross HSSF and XSSF.
      * The bit mask should accomodate the maximum number of avaiable columns, i.e. 0x3FFF.
      *
-     * @see org.apache.poi.ss.SpreadsheetVersion
+     * @see org.zkoss.poi.ss.SpreadsheetVersion
      */
     private static final BitField column = BitFieldFactory.getInstance(0x3FFF);
 
@@ -113,5 +113,22 @@ public abstract class RefPtgBase extends OperandPtg {
 
 	public final byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
+	}
+	
+	//20110324, henrichen@zkoss.org: override hashCode
+	public int hashCode() {
+		return field_1_row ^ field_2_col;
+	}
+
+	//20110324, henrichen@zkoss.org: override equals
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof RefPtgBase)) {
+			return false;
+		}
+		final RefPtgBase other = (RefPtgBase) o;
+		return other.field_1_row == this.field_1_row && other.field_2_col == this.field_2_col; 
 	}
 }

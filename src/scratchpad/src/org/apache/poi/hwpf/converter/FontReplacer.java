@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.converter;
+package org.zkoss.poi.hwpf.converter;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 
 @Beta
 public interface FontReplacer

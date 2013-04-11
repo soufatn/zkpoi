@@ -15,20 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.extractor;
+package org.zkoss.poi.hwpf.extractor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.converter.WordToTextConverter;
-import org.apache.poi.hwpf.usermodel.HeaderStories;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.POIOLE2TextExtractor;
+import org.zkoss.poi.hwpf.HWPFDocument;
+import org.zkoss.poi.hwpf.converter.WordToTextConverter;
+import org.zkoss.poi.hwpf.usermodel.HeaderStories;
+import org.zkoss.poi.hwpf.usermodel.Paragraph;
+import org.zkoss.poi.hwpf.usermodel.Range;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to extract the text from a Word Document.
@@ -102,7 +102,7 @@ public final class WordExtractor extends POIOLE2TextExtractor
         {
             System.err.println( "Use:" );
             System.err
-                    .println( "   java org.apache.poi.hwpf.extractor.WordExtractor <filename>" );
+                    .println( "   java org.zkoss.poi.hwpf.extractor.WordExtractor <filename>" );
             System.exit( 1 );
         }
 

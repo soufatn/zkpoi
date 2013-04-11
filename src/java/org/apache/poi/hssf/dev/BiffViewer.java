@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.dev;
+package org.zkoss.poi.hssf.dev;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -30,13 +30,13 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
-import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.pivottable.*;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hssf.record.*;
+import org.zkoss.poi.hssf.record.RecordInputStream.LeftoverDataException;
+import org.zkoss.poi.hssf.record.chart.*;
+import org.zkoss.poi.hssf.record.pivottable.*;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  *  Utillity for reading in BIFF8 records and displaying data from them.
@@ -122,6 +122,12 @@ public final class BiffViewer {
 			case AxisParentRecord.sid:     return new AxisParentRecord(in);
 			case AxisRecord.sid:           return new AxisRecord(in);
 			case AxisUsedRecord.sid:       return new AxisUsedRecord(in);
+			
+			//20110429, peterkuo@potix.com
+			case AutoFilterRecord.sid: 	   return new AutoFilterRecord(in);
+			case AutoFilter12Record.sid:   return new AutoFilter12Record(in);
+			case ContinueFrt12Record.sid:   return new ContinueFrt12Record(in);
+			
 			case AutoFilterInfoRecord.sid: return new AutoFilterInfoRecord(in);
 			case BOFRecord.sid:            return new BOFRecord(in);
 			case BackupRecord.sid:         return new BackupRecord(in);
@@ -134,6 +140,7 @@ public final class BiffViewer {
 			case BoundSheetRecord.sid:     return new BoundSheetRecord(in);
 			case CFHeaderRecord.sid:       return new CFHeaderRecord(in);
 			case CFRuleRecord.sid:         return new CFRuleRecord(in);
+			case Chart3DRecord.sid:        return new Chart3DRecord(in);
 			case CalcCountRecord.sid:      return new CalcCountRecord(in);
 			case CalcModeRecord.sid:       return new CalcModeRecord(in);
 			case CategorySeriesAxisRecord.sid: return new CategorySeriesAxisRecord(in);
@@ -143,12 +150,13 @@ public final class BiffViewer {
 			case ColumnInfoRecord.sid:     return new ColumnInfoRecord(in);
 			case ContinueRecord.sid:       return new ContinueRecord(in);
 			case CountryRecord.sid:        return new CountryRecord(in);
+			case CRNCountRecord.sid:       return new CRNCountRecord(in);
+			case CRNRecord.sid:            return new CRNRecord(in);
 			case DBCellRecord.sid:         return new DBCellRecord(in);
 			case DSFRecord.sid:            return new DSFRecord(in);
 			case DatRecord.sid:            return new DatRecord(in);
 			case DataFormatRecord.sid:     return new DataFormatRecord(in);
 			case DateWindow1904Record.sid: return new DateWindow1904Record(in);
-		case DConRefRecord.sid: return new DConRefRecord(in);
 			case DefaultColWidthRecord.sid:return new DefaultColWidthRecord(in);
 			case DefaultDataLabelTextPropertiesRecord.sid: return new DefaultDataLabelTextPropertiesRecord(in);
 			case DefaultRowHeightRecord.sid: return new DefaultRowHeightRecord(in);
@@ -192,6 +200,7 @@ public final class BiffViewer {
 			case LabelSSTRecord.sid:       return new LabelSSTRecord(in);
 			case LeftMarginRecord.sid:     return new LeftMarginRecord(in);
 			case LegendRecord.sid:         return new LegendRecord(in);
+			case LineRecord.sid:           return new LineRecord(in);
 			case LineFormatRecord.sid:     return new LineFormatRecord(in);
 			case LinkedDataRecord.sid:     return new LinkedDataRecord(in);
 			case MMSRecord.sid:            return new MMSRecord(in);
@@ -202,12 +211,15 @@ public final class BiffViewer {
 			case NameCommentRecord.sid:    return new NameCommentRecord(in);
 			case NoteRecord.sid:           return new NoteRecord(in);
 			case NumberRecord.sid:         return new NumberRecord(in);
+			case ObjectProtectRecord.sid:  return new ObjectProtectRecord(in);
 			case ObjRecord.sid:            return new ObjRecord(in);
 			case ObjectLinkRecord.sid:     return new ObjectLinkRecord(in);
 			case PaletteRecord.sid:        return new PaletteRecord(in);
 			case PaneRecord.sid:           return new PaneRecord(in);
 			case PasswordRecord.sid:       return new PasswordRecord(in);
 			case PasswordRev4Record.sid:   return new PasswordRev4Record(in);
+			case PieRecord.sid:            return new PieRecord(in);
+			case PieFormatRecord.sid:      return new PieFormatRecord(in);
 			case PlotAreaRecord.sid:       return new PlotAreaRecord(in);
 			case PlotGrowthRecord.sid:     return new PlotGrowthRecord(in);
 			case PrecisionRecord.sid:      return new PrecisionRecord(in);
@@ -225,6 +237,8 @@ public final class BiffViewer {
 			case SCLRecord.sid:            return new SCLRecord(in);
 			case SSTRecord.sid:            return new SSTRecord(in);
 			case SaveRecalcRecord.sid:     return new SaveRecalcRecord(in);
+			case ScatterRecord.sid:        return new ScatterRecord(in);
+			case ScenarioProtectRecord.sid: return new ScenarioProtectRecord(in);
 			case SelectionRecord.sid:      return new SelectionRecord(in);
 			case SeriesIndexRecord.sid:    return new SeriesIndexRecord(in);
 			case SeriesListRecord.sid:     return new SeriesListRecord(in);
@@ -243,9 +257,11 @@ public final class BiffViewer {
 			case TextRecord.sid:           return new TextRecord(in);
 			case TickRecord.sid:           return new TickRecord(in);
 			case TopMarginRecord.sid:      return new TopMarginRecord(in);
-            case UncalcedRecord.sid:       return new UncalcedRecord(in);
 			case UnitsRecord.sid:          return new UnitsRecord(in);
 			case UseSelFSRecord.sid:       return new UseSelFSRecord(in);
+            case UncalcedRecord.sid:       return new UncalcedRecord(in);
+			case UserSViewBegin.sid:       return new UserSViewBegin(in);
+			case UserSViewEnd.sid:         return new UserSViewEnd(in);
 			case VCenterRecord.sid:        return new VCenterRecord(in);
 			case ValueRangeRecord.sid:     return new ValueRangeRecord(in);
 			case VerticalPageBreakRecord.sid: return new VerticalPageBreakRecord(in);
@@ -256,14 +272,17 @@ public final class BiffViewer {
 			case WriteAccessRecord.sid:    return new WriteAccessRecord(in);
 			case WriteProtectRecord.sid:   return new WriteProtectRecord(in);
 
+			case XFCrcRecord.sid:          return new XFCrcRecord(in); //20110117, henrichen@zkoss.org
+			case XFExtRecord.sid:          return new XFExtRecord(in); //20110118, henrichen@zkoss.org
 			// chart
 			case CatLabRecord.sid:         return new CatLabRecord(in);
+			case Chart3DBarShapeRecord.sid:      return new Chart3DBarShapeRecord(in);
 			case ChartEndBlockRecord.sid:  return new ChartEndBlockRecord(in);
 			case ChartEndObjectRecord.sid: return new ChartEndObjectRecord(in);
 			case ChartFRTInfoRecord.sid:   return new ChartFRTInfoRecord(in);
 			case ChartStartBlockRecord.sid: return new ChartStartBlockRecord(in);
 			case ChartStartObjectRecord.sid: return new ChartStartObjectRecord(in);
-
+			
 			// pivot table
 			case StreamIDRecord.sid:        return new StreamIDRecord(in);
 			case ViewSourceRecord.sid:      return new ViewSourceRecord(in);

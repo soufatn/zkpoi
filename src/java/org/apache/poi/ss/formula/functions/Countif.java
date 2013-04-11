@@ -15,22 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
-import org.apache.poi.ss.formula.TwoDEval;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
+import org.zkoss.poi.ss.formula.eval.RefEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
+import org.zkoss.poi.ss.formula.TwoDEval;
+import org.zkoss.poi.ss.usermodel.ErrorConstants;
 
 /**
  * Implementation for the function COUNTIF
@@ -217,14 +217,6 @@ public final class Countif extends Fixed2ArgFunction {
 			} else if((x instanceof NumberEval)) {
 				NumberEval ne = (NumberEval) x;
 				testValue = ne.getNumberValue();
-            } else if((x instanceof BlankEval)) {
-                switch (getCode()) {
-                    case CmpOp.NE:
-                        // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
-                        return true;
-                    default:
-                        return false;
-                }
 			} else {
 				return false;
 			}
@@ -266,23 +258,7 @@ public final class Countif extends Fixed2ArgFunction {
 			} else if((x instanceof BoolEval)) {
 				BoolEval be = (BoolEval) x;
 				testValue = boolToInt(be.getBooleanValue());
-            } else if((x instanceof BlankEval)) {
-                switch (getCode()) {
-                    case CmpOp.NE:
-                        // Excel counts blank values in range as not equal to any value. See Bugzilla 51498
-                        return true;
-                    default:
-                        return false;
-                }
-            } else if((x instanceof NumberEval)) {
-                switch (getCode()) {
-                    case CmpOp.NE:
-                        // not-equals comparison of a number to boolean always returnes false
-                        return true;
-                    default:
-                        return false;
-                }
-            } else {
+			} else {
 				return false;
 			}
 			return evaluate(testValue - _value);
@@ -342,10 +318,6 @@ public final class Countif extends Fixed2ArgFunction {
 					case CmpOp.NONE:
 					case CmpOp.EQ:
 						return _value.length() == 0;
-                    case CmpOp.NE:
-                        // pred '<>' matches empty string but not blank cell
-                        // pred '<>ABC'  matches blank and 'not ABC'
-                        return _value.length() != 0;
 				}
 				// no other criteria matches a blank cell
 				return false;
@@ -370,9 +342,7 @@ public final class Countif extends Fixed2ArgFunction {
 			if (_pattern != null) {
 				return evaluate(_pattern.matcher(testedValue).matches());
 			}
-            // String criteria in COUNTIF are case insensitive:
-            // for example, the string "apples" and the string "APPLES" will match the same cells.
-			return evaluate(testedValue.compareToIgnoreCase(_value));
+			return evaluate(testedValue.compareTo(_value));
 		}
 		/**
 		 * Translates Excel countif wildcard strings into java regex strings
@@ -424,7 +394,7 @@ public final class Countif extends Fixed2ArgFunction {
 				sb.append(ch);
 			}
 			if (hasWildCard) {
-				return Pattern.compile(sb.toString(), Pattern.CASE_INSENSITIVE);
+				return Pattern.compile(sb.toString());
 			}
 			return null;
 		}

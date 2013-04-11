@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model.io;
+package org.zkoss.poi.hwpf.model.io;
 
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public final class HWPFFileSystem

@@ -17,10 +17,14 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 /**
- * @author Yegor Kozlov
+ * Created by IntelliJ IDEA.
+ * User: yegor
+ * Date: 11/3/11
+ * Time: 5:07 PM
+ * To change this template use File | Settings | File Templates.
  */
 public enum TextCap {
     NONE,

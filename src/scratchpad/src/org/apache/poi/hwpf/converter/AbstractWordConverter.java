@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.converter;
+package org.zkoss.poi.hwpf.converter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,31 +27,31 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-import org.apache.poi.hwpf.model.FieldsDocumentPart;
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.usermodel.Bookmark;
-import org.apache.poi.hwpf.usermodel.CharacterRun;
-import org.apache.poi.hwpf.usermodel.Field;
-import org.apache.poi.hwpf.usermodel.Notes;
-import org.apache.poi.hwpf.usermodel.OfficeDrawing;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.PictureType;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.hwpf.usermodel.Section;
-import org.apache.poi.hwpf.usermodel.Table;
-import org.apache.poi.hwpf.usermodel.TableCell;
-import org.apache.poi.hwpf.usermodel.TableRow;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hpsf.SummaryInformation;
+import org.zkoss.poi.hwpf.HWPFDocument;
+import org.zkoss.poi.hwpf.HWPFDocumentCore;
+import org.zkoss.poi.hwpf.converter.FontReplacer.Triplet;
+import org.zkoss.poi.hwpf.model.FieldsDocumentPart;
+import org.zkoss.poi.hwpf.model.ListFormatOverride;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.usermodel.Bookmark;
+import org.zkoss.poi.hwpf.usermodel.CharacterRun;
+import org.zkoss.poi.hwpf.usermodel.Field;
+import org.zkoss.poi.hwpf.usermodel.Notes;
+import org.zkoss.poi.hwpf.usermodel.OfficeDrawing;
+import org.zkoss.poi.hwpf.usermodel.Paragraph;
+import org.zkoss.poi.hwpf.usermodel.Picture;
+import org.zkoss.poi.hwpf.usermodel.PictureType;
+import org.zkoss.poi.hwpf.usermodel.Range;
+import org.zkoss.poi.hwpf.usermodel.Section;
+import org.zkoss.poi.hwpf.usermodel.Table;
+import org.zkoss.poi.hwpf.usermodel.TableCell;
+import org.zkoss.poi.hwpf.usermodel.TableRow;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

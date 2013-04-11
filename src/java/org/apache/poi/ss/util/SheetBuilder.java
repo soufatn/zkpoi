@@ -14,15 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
    ==================================================================== */
-package org.apache.poi.ss.util;
+package org.zkoss.poi.ss.util;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
  * Class {@code SheetBuilder} provides an easy way of building workbook sheets

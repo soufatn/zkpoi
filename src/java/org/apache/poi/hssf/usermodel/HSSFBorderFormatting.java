@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.cf.BorderFormatting;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
+import org.zkoss.poi.hssf.record.cf.BorderFormatting;
 
 /**
  * High level representation for Border Formatting component
@@ -27,7 +27,7 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
  * @author Dmitriy Kumshayev
  *
  */
-public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.BorderFormatting
+public final class HSSFBorderFormatting implements org.zkoss.poi.ss.usermodel.BorderFormatting
 {
 	private final CFRuleRecord cfRuleRecord;
 	private final BorderFormatting borderFormatting;

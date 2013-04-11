@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.exceptions;
+package org.zkoss.poi.openxml4j.exceptions;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
 
 /**
  * Throw when trying to create a {@link PackagePart} but one

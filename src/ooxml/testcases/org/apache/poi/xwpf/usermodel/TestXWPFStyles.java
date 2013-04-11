@@ -68,18 +68,8 @@ public class TestXWPFStyles extends TestCase {
 		assertTrue(styles.styleExist(strStyleName));
 	}
 
-	/**
-	 * Bug #52449 - We should be able to write a file containing
-	 *  both regular and glossary styles without error
-	 */
-	public void test52449() throws Exception {
-      XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52449.docx");
-      XWPFStyles styles = doc.getStyles();
-      assertNotNull(styles);
-      
-      XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(doc);
-      styles = docIn.getStyles();
-      assertNotNull(styles);
-	}
+//	protected void tearDown() throws Exception {
+//		super.tearDown();
+//	}
 
 }

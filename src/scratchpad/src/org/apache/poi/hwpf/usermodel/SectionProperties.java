@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 
-import org.apache.poi.hwpf.model.types.SEPAbstractType;
+import org.zkoss.poi.hwpf.model.types.SEPAbstractType;
 
 public final class SectionProperties extends SEPAbstractType
 {

@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.text.MessageFormat;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Structure describing the Plex for fields (contained plclfd* in the spec).

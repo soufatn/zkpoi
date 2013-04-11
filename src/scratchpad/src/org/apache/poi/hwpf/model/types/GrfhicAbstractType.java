@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.Internal;
 
 /**
  * The grfhic structure is a set of HTML incompatibility flags that specify the HTML

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.dev;
+package org.zkoss.poi.hwpf.dev;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,42 +32,42 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.POIDocument;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.HWPFOldDocument;
-import org.apache.poi.hwpf.OldWordFileFormatException;
-import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.FieldsDocumentPart;
-import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.GenericPropertyNode;
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.PAPFormattedDiskPage;
-import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.PlexOfCps;
-import org.apache.poi.hwpf.model.StyleDescription;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.sprm.SprmIterator;
-import org.apache.poi.hwpf.sprm.SprmOperation;
-import org.apache.poi.hwpf.usermodel.Bookmark;
-import org.apache.poi.hwpf.usermodel.Bookmarks;
-import org.apache.poi.hwpf.usermodel.Field;
-import org.apache.poi.hwpf.usermodel.OfficeDrawing;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.POIDocument;
+import org.zkoss.poi.hwpf.HWPFDocument;
+import org.zkoss.poi.hwpf.HWPFDocumentCore;
+import org.zkoss.poi.hwpf.HWPFOldDocument;
+import org.zkoss.poi.hwpf.OldWordFileFormatException;
+import org.zkoss.poi.hwpf.model.CHPX;
+import org.zkoss.poi.hwpf.model.FieldsDocumentPart;
+import org.zkoss.poi.hwpf.model.FileInformationBlock;
+import org.zkoss.poi.hwpf.model.GenericPropertyNode;
+import org.zkoss.poi.hwpf.model.ListFormatOverride;
+import org.zkoss.poi.hwpf.model.ListLevel;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.model.PAPFormattedDiskPage;
+import org.zkoss.poi.hwpf.model.PAPX;
+import org.zkoss.poi.hwpf.model.PlexOfCps;
+import org.zkoss.poi.hwpf.model.StyleDescription;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.model.TextPiece;
+import org.zkoss.poi.hwpf.sprm.SprmIterator;
+import org.zkoss.poi.hwpf.sprm.SprmOperation;
+import org.zkoss.poi.hwpf.usermodel.Bookmark;
+import org.zkoss.poi.hwpf.usermodel.Bookmarks;
+import org.zkoss.poi.hwpf.usermodel.Field;
+import org.zkoss.poi.hwpf.usermodel.OfficeDrawing;
+import org.zkoss.poi.hwpf.usermodel.Paragraph;
+import org.zkoss.poi.hwpf.usermodel.ParagraphProperties;
+import org.zkoss.poi.hwpf.usermodel.Picture;
+import org.zkoss.poi.hwpf.usermodel.Range;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.filesystem.DirectoryEntry;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Used by developers to list out key information on a HWPF file. End users will
@@ -201,9 +201,9 @@ public final class HWPFLister
 
         HWPFDocumentCore original;
         {
-            System.setProperty( "org.apache.poi.hwpf.preserveBinTables",
+            System.setProperty( "org.zkoss.poi.hwpf.preserveBinTables",
                     Boolean.TRUE.toString() );
-            System.setProperty( "org.apache.poi.hwpf.preserveTextTable",
+            System.setProperty( "org.zkoss.poi.hwpf.preserveTextTable",
                     Boolean.TRUE.toString() );
 
             original = loadDoc( new File( args[0] ) );

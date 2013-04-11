@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Class TestHSSFDateUtil

@@ -20,9 +20,9 @@
  * 
  * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public enum NoteType {

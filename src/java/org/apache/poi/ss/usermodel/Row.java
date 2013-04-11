@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 import java.util.Iterator;
 
@@ -78,12 +78,12 @@ public interface Row extends Iterable<Cell> {
      *
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
-     * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
+     * @see #getCell(int, org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy)
      */
     Cell getCell(int cellnum);
     
     /**
-     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     * Returns the cell at the given (0 based) index, with the specified {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
      * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
@@ -225,4 +225,10 @@ public interface Row extends Iterable<Cell> {
     public static final MissingCellPolicy RETURN_BLANK_AS_NULL = new MissingCellPolicy();
     /** A new, blank cell is created for missing cells. Blank cells are returned as normal */
     public static final MissingCellPolicy CREATE_NULL_AS_BLANK = new MissingCellPolicy();
+    
+    //20120103, henrichen@zkoss.org: whether the height is set by the user
+    public boolean isCustomHeight();
+    
+    //20120103, henrichen@zkoss.org: whether the height is set by the user
+    public void setCustomHeight(boolean b);
 }

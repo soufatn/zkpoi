@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.converter;
+package org.zkoss.poi.hssf.converter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -28,23 +28,23 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hwpf.converter.FoDocumentFacade;
-import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hpsf.SummaryInformation;
+import org.zkoss.poi.hssf.usermodel.HSSFCell;
+import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
+import org.zkoss.poi.hssf.usermodel.HSSFFont;
+import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
+import org.zkoss.poi.hssf.usermodel.HSSFRow;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.hwpf.converter.FoDocumentFacade;
+import org.zkoss.poi.hwpf.converter.FontReplacer.Triplet;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;

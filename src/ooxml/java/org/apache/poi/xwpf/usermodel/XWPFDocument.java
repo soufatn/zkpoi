@@ -14,13 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,25 +32,25 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLProperties;
-import org.apache.poi.POIXMLRelation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.IdentifierManager;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.PackageHelper;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.POIXMLProperties;
+import org.zkoss.poi.POIXMLRelation;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.IdentifierManager;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.PackageHelper;
+import org.zkoss.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -72,6 +71,23 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.EndnotesDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.POIXMLProperties;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.PackageHelper;
+import org.zkoss.poi.xwpf.model.XWPFHeaderFooterPolicy;
 
 /**
  * Experimental class to do low level processing
@@ -189,20 +205,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     picData.onDocumentRead();
                     registerPackagePictureData(picData);
                     pictures.add(picData);
-                } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
-                    // We don't currently process the glossary itself
-                    // Until we do, we do need to load the glossary child parts of it
-                    for (POIXMLDocumentPart gp : p.getRelations()) {
-                       // Trigger the onDocumentRead for all the child parts
-                       // Otherwise we'll hit issues on Styles, Settings etc on save
-                       try {
-                          Method onDocumentRead = gp.getClass().getDeclaredMethod("onDocumentRead");
-                          onDocumentRead.setAccessible(true);
-                          onDocumentRead.invoke(gp);
-                       } catch(Exception e) {
-                          throw new POIXMLException(e);
-                       }
-                    }
                 }
             }
             initHyperlinks();
@@ -296,32 +298,28 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     
     /**
      * returns an Iterator with paragraphs and tables
-     * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getBodyElements()
      */
     public List<IBodyElement> getBodyElements(){
     	return Collections.unmodifiableList(bodyElements);
     }
     
-    public Iterator<IBodyElement> getBodyElementsIterator() {
-    	return bodyElements.iterator();
-    }
-
     /**
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphs()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getParagraphs()
      */
   	public List<XWPFParagraph> getParagraphs(){
     	return Collections.unmodifiableList(paragraphs);
     }
     
  	/**
- 	 * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
+ 	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTables()
  	 */
  	public List<XWPFTable> getTables(){
  		return Collections.unmodifiableList(tables);
  	}
  	
 	/**
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTableArray(int)
 	 */
 	public XWPFTable getTableArray(int pos) {
 		if(pos > 0 && pos < tables.size()){
@@ -496,7 +494,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
     
     /**
-     * Look up the paragraph at the specified position in the body elements list
+     * Look up the paragraph at the specified position in the body elemnts list
      * and return this paragraphs position in the paragraphs list
      * 
      * @param pos
@@ -608,6 +606,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             cursor.toParent();
             CTTbl t = (CTTbl) cursor.getObject();
             XWPFTable newT = new XWPFTable(t, this);
+            cursor.removeXmlContents();
             XmlObject o = null;
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
@@ -619,22 +618,16 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 tables.add(pos, newT);
             }
             int i = 0;
-            XmlCursor tableCursor = t.newCursor();
-            try {
-                cursor.toCursor(tableCursor);
+            cursor = t.newCursor();
             while (cursor.toPrevSibling()) {
                 o = cursor.getObject();
                 if (o instanceof CTP || o instanceof CTTbl)
                     i++;
             }
             bodyElements.add(i, newT);
-            	cursor.toCursor(tableCursor);
+            cursor = t.newCursor();
             cursor.toEndToken();
             return newT;
-        }
-            finally {
-            	tableCursor.dispose();
-            }
         }
         return null;
     }
@@ -974,10 +967,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return settings.isEnforcedWith(STDocProtect.TRACKED_CHANGES);
     }
 
-    public boolean isEnforcedUpdateFields() {
-        return settings.isUpdateFields();
-    }
-
     /**
      * Enforces the readOnly protection.<br/>
      * In the documentProtection tag inside settings.xml file, <br/>
@@ -1051,22 +1040,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         settings.removeEnforcement();
     }
 
-    /**
-     * Enforces fields update on document open (in Word).
-     * In the settings.xml file <br/>
-     * sets the updateSettings value to true (w:updateSettings w:val="true")
-     * 
-     *  NOTICES:
-     *  <ul>
-     *  	<li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"
-     *           (if "Update automatic links at open" is enabled)</li>
-     *  	<li>Flag is removed after saving with changes in Word </li>
-     *  </ul> 
-     */
-    public void enforceUpdateFields() {
-    	settings.setUpdateFields();
-    }
-    
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      * @param pos
@@ -1269,7 +1242,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * get a table by its CTTbl-Object
      * @param ctTbl
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
      * @return a table by its CTTbl-Object or null
      */
     public XWPFTable getTable(CTTbl ctTbl) {
@@ -1292,7 +1265,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
 	/**
 	 * Returns the paragraph that of position pos
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getParagraphArray(int)
 	 */
 	public XWPFParagraph getParagraphArray(int pos) {
 		if(pos >= 0 && pos < paragraphs.size()){		
@@ -1305,7 +1278,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * returns the Part, to which the body belongs, which you need for adding relationship to other parts
      * Actually it is needed of the class XWPFTableCell. Because you have to know to which part the tableCell
      * belongs.
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPart()
      */
     public POIXMLDocumentPart getPart() {
         return this;
@@ -1316,7 +1289,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 	 * get the PartType of the body, for example
 	 * DOCUMENT, HEADER, FOOTER,	FOOTNOTE,
      *
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getPartType()
 	 */
 	public BodyType getPartType() {
 		return BodyType.DOCUMENT;
@@ -1346,7 +1319,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 			return null;
 		}
 		XWPFTableRow tableRow = table.getRow(row);
-		if (tableRow == null) {
+		if(row == null){
 			return null;
 		}
 		return tableRow.getTableCell(cell);

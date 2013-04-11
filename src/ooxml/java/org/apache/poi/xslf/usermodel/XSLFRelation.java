@@ -14,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLRelation;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLRelation;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -182,30 +182,6 @@ public class XSLFRelation extends POIXMLRelation {
 	      "/ppt/media/image#.gif",
 	      XSLFPictureData.class
 	);
-    public static final XSLFRelation IMAGE_TIFF = new XSLFRelation(
-            "image/tiff",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.tiff",
-            XSLFPictureData.class
-    );
-    public static final XSLFRelation IMAGE_EPS = new XSLFRelation(
-            "image/x-eps",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.eps",
-            XSLFPictureData.class
-    );
-    public static final XSLFRelation IMAGE_BMP = new XSLFRelation(
-            "image/x-ms-bmp",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.bmp",
-            XSLFPictureData.class
-    );
-    public static final XSLFRelation IMAGE_WPG = new XSLFRelation(
-            "image/x-wpg",
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
-            "/ppt/media/image#.wpg",
-            XSLFPictureData.class
-    );
 
     public static final XSLFRelation IMAGES = new XSLFRelation(
             null,

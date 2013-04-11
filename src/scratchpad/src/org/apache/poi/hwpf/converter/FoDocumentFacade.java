@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.converter;
+package org.zkoss.poi.hwpf.converter;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -242,7 +242,7 @@ public class FoDocumentFacade
 
         // See http://xmlgraphics.apache.org/fop/0.95/metadata.html
 
-        Element xmpmeta = document.createElementNS( "adobe:ns:meta/",
+        Element xmpmeta = document.createElementNS( "adobe:ns:meta",
                 "x:xmpmeta" );
         declarations.appendChild( xmpmeta );
 

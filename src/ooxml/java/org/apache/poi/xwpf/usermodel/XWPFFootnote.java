@@ -14,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
@@ -83,7 +83,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * @param pos in table array
      * @return The table at position pos
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
     public XWPFTable getTableArray(int pos) {
         if(pos > 0 && pos < tables.size()){
@@ -96,7 +96,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      * @param pos
      * @param table
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
      */
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
@@ -116,7 +116,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * the method will return this table
      * if there is no corresponding {@link XWPFTable} the method will return null 
      * @param ctTable
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
      */
     public XWPFTable getTable(CTTbl ctTable){
         for (XWPFTable table : tables) {
@@ -135,7 +135,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * @param p is instance of CTP and is searching for an XWPFParagraph
      * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this header or footer
      * 		   XWPFParagraph with the correspondig CTP p
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
      */
     public XWPFParagraph getParagraph(CTP p){
         for (XWPFParagraph paragraph : paragraphs) {
@@ -148,7 +148,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * Returns the paragraph that holds
      *  the text of the header or footer.
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
      */
     public XWPFParagraph getParagraphArray(int pos) {
 
@@ -158,7 +158,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * get the TableCell which belongs to the TableCell
      * @param cell
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
      */
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlCursor cursor = cell.newCursor();
@@ -207,7 +207,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * 
      * @param cursor
      * @return the inserted table
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
      */
     public XWPFTable insertNewTbl(XmlCursor cursor) {
         if(isCursorInFtn(cursor)){
@@ -248,7 +248,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * add a new paragraph at position of the cursor
      * @param cursor
      * @return the inserted paragraph
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
      */
     public XWPFParagraph insertNewParagraph(XmlCursor cursor){
         if(isCursorInFtn(cursor)){
@@ -311,7 +311,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     }
 	
     /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getXWPFDocument()
      */
     public  XWPFDocument getXWPFDocument() {
        return footnotes.getXWPFDocument();
@@ -319,7 +319,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * returns the Part, to which the body belongs, which you need for adding relationship to other parts
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPart()
      */
     public POIXMLDocumentPart getPart() {
         return footnotes;
@@ -327,7 +327,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     /**
      * get the PartType of the body
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {
         return BodyType.FOOTNOTE;

@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.SHDAbstractType;
+import org.zkoss.poi.hwpf.model.types.SHDAbstractType;
 
 /**
  * The SHD is a substructure of the CHP, PAP, and TC for Word 2000.

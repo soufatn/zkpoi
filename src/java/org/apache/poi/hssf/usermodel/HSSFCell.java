@@ -15,44 +15,44 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.BlankRecord;
-import org.apache.poi.hssf.record.BoolErrRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.DrawingRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.HyperlinkRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.SubRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.ptg.ExpPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.NumberToTextConverter;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.model.InternalSheet;
+import org.zkoss.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.hssf.record.BlankRecord;
+import org.zkoss.poi.hssf.record.BoolErrRecord;
+import org.zkoss.poi.hssf.record.CellValueRecordInterface;
+import org.zkoss.poi.hssf.record.CommonObjectDataSubRecord;
+import org.zkoss.poi.hssf.record.DrawingRecord;
+import org.zkoss.poi.hssf.record.ExtendedFormatRecord;
+import org.zkoss.poi.hssf.record.FormulaRecord;
+import org.zkoss.poi.hssf.record.HyperlinkRecord;
+import org.zkoss.poi.hssf.record.LabelSSTRecord;
+import org.zkoss.poi.hssf.record.NoteRecord;
+import org.zkoss.poi.hssf.record.NumberRecord;
+import org.zkoss.poi.hssf.record.ObjRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.RecordBase;
+import org.zkoss.poi.hssf.record.SubRecord;
+import org.zkoss.poi.hssf.record.TextObjectRecord;
+import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.zkoss.poi.hssf.record.common.UnicodeString;
+import org.zkoss.poi.ss.formula.ptg.ExpPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.NumberToTextConverter;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.POILogFactory;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -70,6 +70,7 @@ import org.apache.poi.util.POILogFactory;
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  * @author  Yegor Kozlov cell comments support
+ * @author	henrichen@zkoss.org: handle HYPERLINK function
  */
 public class HSSFCell implements Cell {
     private static POILogger log = POILogFactory.getLogger(HSSFCell.class);
@@ -106,7 +107,7 @@ public class HSSFCell implements Cell {
      * @param row   - the row of this cell
      * @param col   - the column for this cell
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFRow#createCell(short)
      */
     protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col)
     {
@@ -152,7 +153,7 @@ public class HSSFCell implements Cell {
      * @param type  - CELL_TYPE_NUMERIC, CELL_TYPE_STRING, CELL_TYPE_FORMULA, CELL_TYPE_BLANK,
      *                CELL_TYPE_BOOLEAN, CELL_TYPE_ERROR
      *                Type of cell
-     * @see org.apache.poi.hssf.usermodel.HSSFRow#createCell(short,int)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFRow#createCell(short,int)
      */
     protected HSSFCell(HSSFWorkbook book, HSSFSheet sheet, int row, short col,
                        int type)
@@ -314,7 +315,7 @@ public class HSSFCell implements Cell {
                     frec.setRow(row);
                     frec.setColumn(col);
                 }
-                if (setValue)
+                if (setValue && _cellType == Cell.CELL_TYPE_NUMERIC) //20110330, henrichen@zkoss.org: if original is not a number
                 {
                     frec.getFormulaRecord().setValue(getNumericCellValue());
                 }
@@ -625,7 +626,9 @@ public class HSSFCell implements Cell {
         if (!(_record instanceof FormulaRecordAggregate)) {
             throw typeMismatch(CELL_TYPE_FORMULA, _cellType, true);
         }
-        return HSSFFormulaParser.toFormulaString(_book, ((FormulaRecordAggregate)_record).getFormulaTokens());
+        //20110322, henrichen@zkoss.org: formula tokens could be empty, shall check before parse it
+        final Ptg[] ptgs = ((FormulaRecordAggregate)_record).getFormulaTokens();
+        return ptgs.length > 0 ? HSSFFormulaParser.toFormulaString(_book, ptgs) : "";
     }
 
     /**
@@ -894,8 +897,8 @@ public class HSSFCell implements Cell {
      * the HSSFWorkbook.
      *
      * @param style  reference contained in the workbook
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
+     * @see org.zkoss.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */
     public void setCellStyle(CellStyle style) {
         setCellStyle( (HSSFCellStyle)style );
@@ -918,7 +921,7 @@ public class HSSFCell implements Cell {
     /**
      * get the style for the cell.  This is a reference to a cell style contained in the workbook
      * object.
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
      */
     public HSSFCellStyle getCellStyle()
     {
@@ -1236,10 +1239,10 @@ public class HSSFCell implements Cell {
      *
      * @see #setCellType(int)
      * @see #setCellFormula(String)
-     * @see HSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#shiftRows(int, int, int)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)
+     * @see HSSFRow#removeCell(org.zkoss.poi.ss.usermodel.Cell)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#removeRow(org.zkoss.poi.ss.usermodel.Row)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#shiftRows(int, int, int)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#addMergedRegion(org.zkoss.poi.ss.util.CellRangeAddress)
      * @throws IllegalStateException if modification is not allowed
      */
     void notifyArrayFormulaChanging(){
@@ -1293,5 +1296,13 @@ public class HSSFCell implements Cell {
         }
 
         return styleIndex;
+    }
+    //20100719, henrichen@zkoss.org: cache evaluated hyperlink for HYPERLINK function
+    private Hyperlink _hyperlink;
+    public void setEvalHyperlink(Hyperlink hyperlink) {
+    	_hyperlink = hyperlink;
+    }
+    public Hyperlink getEvalHyperlink() {
+    	return _hyperlink;
     }
 }

@@ -15,22 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.model;
+package org.zkoss.poi.xssf.model;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
 
+import javax.imageio.stream.MemoryCacheImageInputStream;
+
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.internal.MemoryPackagePart;
 
 /**
  * Table of strings shared across all sheets in a workbook.
@@ -221,8 +223,19 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
+        //ZSS-35: A exported xlsx is not loadable again by Excel or Spreadsheet
+        //20110819, henrichen: xl/SharedStrings.xml corrupted (previous data shall be cleared first)
+        clearMemoryPackagePart(part);
+        
         OutputStream out = part.getOutputStream();
         writeTo(out);
         out.close();
+    }
+    
+    //20110819, henrichen: clear MemoryPackagePart to avoid data accumulated
+    private void clearMemoryPackagePart(PackagePart part) {
+        if (part instanceof MemoryPackagePart) {
+        	((MemoryPackagePart)part).clear();
+        }
     }
 }

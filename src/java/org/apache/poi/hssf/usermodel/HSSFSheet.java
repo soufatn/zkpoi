@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -23,32 +23,35 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.aggregates.DataValidityTable;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellRange;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.SSCellRange;
-import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.model.InternalSheet;
+import org.zkoss.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.hssf.record.*;
+import org.zkoss.poi.hssf.record.aggregates.AutoFilterInfoRecordAggregate;
+import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
+import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.zkoss.poi.hssf.record.aggregates.WorksheetProtectionBlock;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.hssf.util.Region;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellRange;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.SSCellRange;
+import org.zkoss.poi.ss.util.SheetUtil;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * High level representation of a worksheet.
@@ -60,8 +63,9 @@ import org.apache.poi.util.POILogger;
  * @author  Yegor Kozlov (yegor at apache.org) (Autosizing columns)
  * @author  Josh Micich
  * @author  Petr Udalau(Petr.Udalau at exigenservices.com) - set/remove array formulas
+ * @author	Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference; enhance HYPERLINK shift
  */
-public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
+public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
     private static final POILogger log = POILogFactory.getLogger(HSSFSheet.class);
     private static final int DEBUG = POILogger.DEBUG;
 
@@ -81,15 +85,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     protected final InternalWorkbook _book;
     protected final HSSFWorkbook _workbook;
     private HSSFPatriarch _patriarch;
-    private int _firstrow;
+
+	private int _firstrow;
     private int _lastrow;
+
 
     /**
      * Creates new HSSFSheet   - called by HSSFWorkbook to create a sheet from
      * scratch.  You should not be calling this from application code (its protected anyhow).
      *
      * @param workbook - The HSSF Workbook object associated with the sheet.
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createSheet()
+     * @see org.zkoss.poi.hssf.usermodel.HSSFWorkbook#createSheet()
      */
     protected HSSFSheet(HSSFWorkbook workbook) {
         _sheet = InternalSheet.createSheet();
@@ -104,7 +110,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      *
      * @param workbook - The HSSF Workbook object associated with the sheet.
      * @param sheet - lowlevel Sheet object this sheet will represent
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createSheet()
+     * @see org.zkoss.poi.hssf.usermodel.HSSFWorkbook#createSheet()
      */
     protected HSSFSheet(HSSFWorkbook workbook, InternalSheet sheet) {
         this._sheet = sheet;
@@ -115,7 +121,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     HSSFSheet cloneSheet(HSSFWorkbook workbook) {
-      return new HSSFSheet(workbook, _sheet.cloneSheet());
+        //20100903, henrichen@zkoss.org: allow customize creating HSSFSheet 
+    	//return new HSSFSheet(workbook, _sheet.cloneSheet());
+    	return workbook.createHSSFSheet(workbook, _sheet.cloneSheet());
     }
 
     /**
@@ -141,6 +149,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             row = sheet.getNextRow();
         }
 
+		//20110505 , peterkuo@potix.com
+        AutoFilterInfoRecordAggregate autofilter = sheet.getAutoFilterInfoRecordAggregate();
+        _autofilter = createAutofilterFromRecord(autofilter);
+        
+        CellValueRecordInterface[] cvals = sheet.getValueRecords();
         Iterator<CellValueRecordInterface> iter = sheet.getCellValueIterator();
         long timestart = System.currentTimeMillis();
 
@@ -185,19 +198,18 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 Long.valueOf(System.currentTimeMillis() - timestart));
     }
 
-    /**
+
+	/**
      * Create a new row within the sheet and return the high level representation
      *
      * @param rownum  row number
      * @return High level HSSFRow object representing a row in the sheet
-     * @see org.apache.poi.hssf.usermodel.HSSFRow
-     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFRow
+     * @see #removeRow(org.zkoss.poi.ss.usermodel.Row)
      */
     public HSSFRow createRow(int rownum)
     {
         HSSFRow row = new HSSFRow(_workbook, this, rownum);
-        // new rows inherit default height from the sheet
-        row.setHeight(getDefaultRowHeight());
 
         addRow(row, true);
         return row;
@@ -585,7 +597,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * @deprecated (Aug-2008) use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
      */
-    public int addMergedRegion(org.apache.poi.ss.util.Region region)
+    public int addMergedRegion(org.zkoss.poi.ss.util.Region region)
     {
         return _sheet.addMergedRegion( region.getRowFrom(),
                 region.getColumnFrom(),
@@ -645,20 +657,20 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * when the workbook is opened.
      *
      *  <p>
-     *  Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
+     *  Calculating the formula values with {@link org.zkoss.poi.ss.usermodel.FormulaEvaluator} is the
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
      *  </p>
      *
      *  <p>
      *  It is recommended to force recalcuation of formulas on workbook level using
-     *  {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
+     *  {@link org.zkoss.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
      *  to ensure that all cross-worksheet formuals and external dependencies are updated.
      *  </p>
      * @param value true if the application will perform a full recalculation of
      * this worksheet values when the workbook is opened
      *
-     * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
+     * @see org.zkoss.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
      */
     public void setForceFormulaRecalculation(boolean value)
     {
@@ -764,10 +776,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * @deprecated (Aug-2008) use {@link HSSFSheet#getMergedRegion(int)}
      */
-    public org.apache.poi.hssf.util.Region getMergedRegionAt(int index) {
+    public Region getMergedRegionAt(int index) {
         CellRangeAddress cra = getMergedRegion(index);
 
-        return new org.apache.poi.hssf.util.Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
+        return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
                 cra.getLastRow(), (short)cra.getLastColumn());
     }
     /**
@@ -1061,14 +1073,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return the size of the margin
      */
     public double getMargin(short margin) {
-        switch (margin){
-            case FooterMargin:
-                return _sheet.getPageSettings().getPrintSetup().getFooterMargin();
-            case HeaderMargin:
-                return _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
-            default:
-                return _sheet.getPageSettings().getMargin(margin);
-        }
+        return _sheet.getPageSettings().getMargin(margin);
     }
 
     /**
@@ -1077,16 +1082,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param size the size of the margin
      */
     public void setMargin(short margin, double size) {
-        switch (margin){
-            case FooterMargin:
-                _sheet.getPageSettings().getPrintSetup().setFooterMargin(size);
-                break;
-            case HeaderMargin:
-                _sheet.getPageSettings().getPrintSetup().setHeaderMargin(size);
-                break;
-            default:
-                _sheet.getPageSettings().setMargin(margin, size);
-        }
+        _sheet.getPageSettings().setMargin(margin, size);
     }
 
     private WorksheetProtectionBlock getProtectionBlock() {
@@ -1407,7 +1403,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         // Update any formulas on this sheet that point to
         //  rows which have been moved
         int sheetIndex = _workbook.getSheetIndex(this);
-        short externSheetIndex = _book.checkExternSheet(sheetIndex);
+        short externSheetIndex = _book.checkExternSheet(sheetIndex, sheetIndex);
         FormulaShifter shifter = FormulaShifter.createForRowShift(externSheetIndex, startRow, endRow, n);
         _sheet.updateFormulasAfterCellShift(shifter, externSheetIndex);
 
@@ -1417,7 +1413,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             if (otherSheet == this._sheet) {
                 continue;
             }
-            short otherExtSheetIx = _book.checkExternSheet(i);
+            short otherExtSheetIx = _book.checkExternSheet(i, i);
             otherSheet.updateFormulasAfterCellShift(shifter, otherExtSheetIx);
         }
         _workbook.getWorkbook().updateNamesAfterCellShift(shifter);
@@ -1428,7 +1424,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         _sheet.getRecords().addAll(window2Loc, records);
     }
 
-    private void notifyRowShifting(HSSFRow row){
+    //20100903, henrichen@zkoss.org: change accesibility to allow extend HSSFSheet
+    //private void notifyRowShifting(HSSFRow row){
+    protected void notifyRowShifting(HSSFRow row){
         String msg = "Row[rownum="+row.getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
                 "You cannot change part of an array.";
         for(Cell cell : row){
@@ -1713,7 +1711,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             // Workbook has drawing stuff, but this sheet doesn't
             return null;
         }
-
         // Grab our aggregate record, and wire it up
         EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
         return agg;
@@ -1969,8 +1966,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 	}
     
     public HSSFAutoFilter setAutoFilter(CellRangeAddress range) {
-
-
         InternalWorkbook workbook = _workbook.getWorkbook();
         int sheetIndex = _workbook.getSheetIndex(this);
 
@@ -1986,13 +1981,19 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 false, false, false, false, sheetIndex);
         name.setNameDefinition(new Ptg[]{ptg});
 
-        AutoFilterInfoRecord r = new AutoFilterInfoRecord();
-        // the number of columns that have AutoFilter enabled.
+//        AutoFilterInfoRecord r = new AutoFilterInfoRecord();
+//        // the number of columns that have AutoFilter enabled.
+//        int numcols = 1 + range.getLastColumn() - range.getFirstColumn();
+//        r.setNumEntries((short)numcols);
+//        int idx = _sheet.findFirstRecordLocBySid(DimensionsRecord.sid);
+//        _sheet.getRecords().add(idx, r);
+        
+		//20110505 , peterkuo@potix.com
+        AutoFilterInfoRecordAggregate r = _sheet.getAutoFilterInfoRecordAggregate();
         int numcols = 1 + range.getLastColumn() - range.getFirstColumn();
         r.setNumEntries((short)numcols);
-        int idx = _sheet.findFirstRecordLocBySid(DimensionsRecord.sid);
-        _sheet.getRecords().add(idx, r);
-
+        //TODO: more action about the record ?????
+        
         //create a combobox control for each column
         HSSFPatriarch p = createDrawingPatriarch();
         for(int col = range.getFirstColumn(); col <= range.getLastColumn(); col++){
@@ -2000,7 +2001,63 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                     (short)col, range.getFirstRow(), (short)(col+1), range.getFirstRow()+1));
         }
         
-        return new HSSFAutoFilter(this);
+        return new HSSFAutoFilter(this,r);
     }
 
+
+	//20100903, henrichen@zkoss.org: allow extending the HSSFSheet 
+	protected void setLastRowNum(int row) {
+		_lastrow = row;
+	}
+	//20100903, henrichen@zkoss.org: allow extending the HSSFSheet
+	protected void setFirstRowNum(int row) {
+		_firstrow = row;
+	}
+	
+	//20110505 , peterkuo@potix.com
+    private HSSFAutoFilter _autofilter;
+    @Override
+    public AutoFilter getAutoFilter() {
+		return _autofilter;
+	}
+
+	//20110505 , peterkuo@potix.com
+    private HSSFAutoFilter createAutofilterFromRecord(
+			AutoFilterInfoRecordAggregate autofilter) {
+    	HSSFAutoFilter hautofilter = new HSSFAutoFilter(this, autofilter);
+		return hautofilter;
+	}
+
+	@Override
+	public boolean isAutoFilterMode() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public CellRangeAddress removeAutoFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//20110511, peterkuo@zkoss.org
+	@Override
+	public void removeValidationData(DataValidation dataValidation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//20111122, henrichen@zkoss.org
+	@Override
+	public List<DataValidation> getDataValidations() {
+		//TODO: getDataValidations() of HSSFSheet
+		return null;
+	}
+
+    //20111124, henrichen@zkoss.org
+	@Override
+	public DataValidation getDataValidation(int row, int col) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -26,27 +26,27 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
-import org.apache.poi.hslf.record.OutlineTextRefAtom;
-import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ddf.EscherContainerRecord;
+import org.zkoss.poi.ddf.EscherOptRecord;
+import org.zkoss.poi.ddf.EscherProperties;
+import org.zkoss.poi.ddf.EscherSimpleProperty;
+import org.zkoss.poi.ddf.EscherSpRecord;
+import org.zkoss.poi.ddf.EscherTextboxRecord;
+import org.zkoss.poi.hslf.exceptions.HSLFException;
+import org.zkoss.poi.hslf.record.EscherTextboxWrapper;
+import org.zkoss.poi.hslf.record.InteractiveInfo;
+import org.zkoss.poi.hslf.record.InteractiveInfoAtom;
+import org.zkoss.poi.hslf.record.OEPlaceholderAtom;
+import org.zkoss.poi.hslf.record.OutlineTextRefAtom;
+import org.zkoss.poi.hslf.record.PPDrawing;
+import org.zkoss.poi.hslf.record.Record;
+import org.zkoss.poi.hslf.record.RecordTypes;
+import org.zkoss.poi.hslf.record.StyleTextPropAtom;
+import org.zkoss.poi.hslf.record.TextCharsAtom;
+import org.zkoss.poi.hslf.record.TextHeaderAtom;
+import org.zkoss.poi.hslf.record.TxInteractiveInfoAtom;
+import org.zkoss.poi.hslf.usermodel.RichTextRun;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * A common superclass of all shapes that can hold text.
@@ -576,10 +576,10 @@ public abstract class TextShape extends SimpleShape {
      *
      * Assigns a hyperlink to this text shape
      *
-     * @param linkId    id of the hyperlink, @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
+     * @param linkId    id of the hyperlink, @see org.zkoss.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
      * @param      beginIndex   the beginning index, inclusive.
      * @param      endIndex     the ending index, exclusive.
-     * @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
+     * @see org.zkoss.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
      */
     public void setHyperlink(int linkId, int beginIndex, int endIndex){
         //TODO validate beginIndex and endIndex and throw IllegalArgumentException

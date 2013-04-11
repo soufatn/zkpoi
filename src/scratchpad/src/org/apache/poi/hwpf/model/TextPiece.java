@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Lightweight representation of a text piece.

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,18 +26,23 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.model.CommentsTable;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Drawing;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.xssf.model.CommentsTable;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
@@ -59,7 +64,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     /**
      * Create a new SpreadsheetML drawing
      *
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#createDrawingPatriarch()
+     * @see org.zkoss.poi.xssf.usermodel.XSSFSheet#createDrawingPatriarch()
      */
     protected XSSFDrawing() {
         super();
@@ -78,8 +83,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         super(part, rel);
         XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
         //Removing root element
-        options.setLoadReplaceDocumentElement(null);
-        drawing = CTDrawing.Factory.parse(part.getInputStream(),options);
+        //options.setLoadReplaceDocumentElement(null);
+        //drawing = CTDrawing.Factory.parse(part.getInputStream(),options);
+    
+        //20101018, henrichen@zkoss.org: will not create all associated CTxxx XmlObject will NOT parse from XxxDocument
+        //drawing = CTDrawing.Factory.parse(part.getInputStream());
+        drawing = WsDrDocument.Factory.parse(part.getInputStream()).getWsDr();
     }
 
     /**
@@ -154,7 +163,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      *
      * @param anchor    the client anchor describes how this picture is attached to the sheet.
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
-     *   {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
+     *   {@link org.zkoss.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
      *
      * @return  the newly created picture shape.
      */
@@ -184,7 +193,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 	 * @param anchor the client anchor describes how this chart is attached to
 	 *               the sheet.
 	 * @return the newly created chart
-	 * @see org.apache.poi.xssf.usermodel.XSSFDrawing#createChart(ClientAnchor)
+	 * @see org.zkoss.poi.xssf.usermodel.XSSFDrawing#createChart(ClientAnchor)
 	 */
     public XSSFChart createChart(XSSFClientAnchor anchor) {
         int chartNumber = getPackagePart().getPackage().
@@ -208,14 +217,16 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * Add the indexed picture to this drawing relations
      *
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
-     *   {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
+     *   {@link org.zkoss.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
      */
     protected PackageRelationship addPictureReference(int pictureIndex){
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
         PackagePartName ppName = data.getPackagePart().getPartName();
         PackageRelationship rel = getPackagePart().addRelationship(ppName, TargetMode.INTERNAL, XSSFRelation.IMAGES.getRelation());
-        addRelation(rel.getId(),new XSSFPictureData(data.getPackagePart(), rel));
+        XSSFPictureData newImg = new XSSFPictureData(data.getPackagePart(), rel); //20111109, henrichen@zkoss.org: picture data with relation
+        wb.setPictureData(pictureIndex, newImg); //20111109, henrichen@zkoss.org: must reset pictures in workbook, or it is not able to be removed
+        addRelation(rel.getId(), newImg);
         return rel;
     }
 
@@ -378,4 +389,65 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         }
         return lst;
     }
+
+    /*package*/ XSSFPictureData getPictureData(XSSFPicture pic) {
+		final String relId = pic.getCTPicture().getBlipFill().getBlip().getEmbed();
+		return (XSSFPictureData) (relId != null ? getRelationById(relId) : null);
+    }
+    
+    //20111109, henrichen@zkoss.org: delete picture
+	@Override
+	public void deletePicture(Picture picture) {
+		final XSSFPictureData img = getPictureData((XSSFPicture) picture);
+		if (img != null) {
+			removeRelation(img);
+		}
+	}
+
+	//20111110, henrichen@zkoss.org: change picture anchor position
+	@Override
+	public void movePicture(Picture pic, ClientAnchor anchor) {
+		pic.setClientAnchor(anchor);
+	}
+
+	//20111111, henrichen@zkoss.org: change chart anchor position
+	@Override
+	public void moveChart(ZssChartX chartX, ClientAnchor anchor) {
+		chartX.setClientAnchor(anchor);
+	}
+
+	//20111114, henrichen@zkoss.org: delete chart
+	@Override
+	public void deleteChart(ZssChartX chartX) {
+		final XSSFChart part = (XSSFChart) chartX.getChart();
+		final String relationId = part.getChartId();
+		removeRelation(part);
+		int j = 0;
+		for (CTTwoCellAnchor anchor: drawing.getTwoCellAnchorArray()) {
+			String id = getChartRelationId(anchor.getGraphicFrame());
+			if (relationId.equals(id)) {
+				drawing.removeTwoCellAnchor(j);
+				break;
+			}
+			++j;
+		}
+	}
+	
+	//20111114, henrichen@zkoss.org: get Chart associated relationId in Drawing
+	private String getChartRelationId(CTGraphicalObjectFrame graphicFrame) {
+		CTGraphicalObjectData data  = graphicFrame.getGraphic().getGraphicData();
+		String r_namespaceUri = STRelationshipId.type.getName().getNamespaceURI();
+		XmlCursor cursor = data.newCursor();
+		XmlCursor.TokenType type;
+		while ((type = cursor.toNextToken()) != XmlCursor.TokenType.NONE) {
+			if (type == XmlCursor.TokenType.START) {
+				QName qname = cursor.getName();
+				if (XSSFDrawing.NAMESPACE_C.equals(qname.getNamespaceURI())) { // an <c:chart> element
+					String id = cursor.getAttributeText(new QName(r_namespaceUri, "id", "r")); //an <c:chart r:id=""> attribute
+					return id;
+				}
+			}
+		}
+		return null;
+	}
 }

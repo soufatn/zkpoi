@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.formula.ptg.NamePtg;
+import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
 
 /**
  * Abstracts a workbook for the purpose of formula evaluation.<br/>
@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
  * For POI internal use only
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public interface EvaluationWorkbook {
 	String getSheetName(int sheetIndex);
@@ -48,6 +49,7 @@ public interface EvaluationWorkbook {
 	 */
 	ExternalSheet getExternalSheet(int externSheetIndex);
 	int convertFromExternSheetIndex(int externSheetIndex);
+	int convertLastIndexFromExternSheetIndex(int externSheetIndex);
 	ExternalName getExternalName(int externSheetIndex, int externNameIndex);
 	EvaluationName getName(NamePtg namePtg);
     EvaluationName getName(String name, int sheetIndex);
@@ -58,13 +60,18 @@ public interface EvaluationWorkbook {
 	class ExternalSheet {
 		private final String _workbookName;
 		private final String _sheetName;
+		private final String _lastSheetName;
 
-		public ExternalSheet(String workbookName, String sheetName) {
+		public ExternalSheet(String workbookName, String sheetName, String lastSheetName) {
 			_workbookName = workbookName;
 			_sheetName = sheetName;
+			_lastSheetName = lastSheetName;
 		}
 		public String getWorkbookName() {
 			return _workbookName;
+		}
+		public String getLastSheetName() {
+			return _lastSheetName;
 		}
 		public String getSheetName() {
 			return _sheetName;
@@ -90,4 +97,7 @@ public interface EvaluationWorkbook {
 			return _ix;
 		}
 	}
+
+	//20111124, henrichen@zkoss.org
+	Ptg[] getFormulaTokens(int sheetIndex, String formula);
 }

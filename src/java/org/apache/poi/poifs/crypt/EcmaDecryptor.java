@@ -14,10 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.poifs.crypt;
+package org.zkoss.poi.poifs.crypt;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,9 +29,10 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  *  @author Maxim Valyanskiy
@@ -39,7 +41,6 @@ import org.apache.poi.util.LittleEndian;
 public class EcmaDecryptor extends Decryptor {
     private final EncryptionInfo info;
     private byte[] passwordHash;
-    private long _length = -1;
 
     public EcmaDecryptor(EncryptionInfo info) {
         this.info = info;
@@ -50,7 +51,7 @@ public class EcmaDecryptor extends Decryptor {
 
         sha1.update(passwordHash);
         byte[] blockValue = new byte[4];
-        LittleEndian.putInt(blockValue, 0, block);
+        LittleEndian.putInt(blockValue, block);
         byte[] finalHash = sha1.digest(blockValue);
 
         int requiredKeyLength = info.getHeader().getKeySize()/8;
@@ -124,13 +125,8 @@ public class EcmaDecryptor extends Decryptor {
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream("EncryptedPackage");
 
-        _length = dis.readLong();
+        long size = dis.readLong();
 
         return new CipherInputStream(dis, getCipher());
-    }
-
-    public long getLength(){
-        if(_length == -1) throw new IllegalStateException("EcmaDecryptor.getDataStream() was not called");
-        return _length;
     }
 }

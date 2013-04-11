@@ -14,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.converter;
+package org.zkoss.poi.hwpf.converter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;

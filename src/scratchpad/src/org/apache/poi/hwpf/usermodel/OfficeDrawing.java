@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.ddf.EscherContainerRecord;
+import org.zkoss.poi.ddf.EscherContainerRecord;
 
 /**
  * User-friendly interface to office drawing objects.

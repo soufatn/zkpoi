@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.converter;
+package org.zkoss.poi.hwpf.converter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,23 +23,23 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.HWPFOldDocument;
-import org.apache.poi.hwpf.OldWordFileFormatException;
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.Table;
-import org.apache.poi.hwpf.usermodel.TableCell;
-import org.apache.poi.hwpf.usermodel.TableRow;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.HWPFDocument;
+import org.zkoss.poi.hwpf.HWPFDocumentCore;
+import org.zkoss.poi.hwpf.HWPFOldDocument;
+import org.zkoss.poi.hwpf.OldWordFileFormatException;
+import org.zkoss.poi.hwpf.model.ListLevel;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.Paragraph;
+import org.zkoss.poi.hwpf.usermodel.Table;
+import org.zkoss.poi.hwpf.usermodel.TableCell;
+import org.zkoss.poi.hwpf.usermodel.TableRow;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -232,7 +232,7 @@ public class AbstractWordUtils
         final ListLevel listLevel = listTables.getLevel( listId,
                 paragraph.getIlvl() );
 
-        if ( listLevel==null || listLevel.getNumberText() == null )
+        if ( listLevel.getNumberText() == null )
             return EMPTY;
 
         StringBuffer bulletBuffer = new StringBuffer();

@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.Ffn;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.model.CHPX;
+import org.zkoss.poi.hwpf.model.Ffn;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * This class represents a run of text that share common properties.
@@ -606,13 +606,8 @@ public final class CharacterRun
   public Ffn getSymbolFont()
   {
     if (isSymbol()) {
-      if (_doc.getFontTable() == null)
-        return null;
-      
-      // Fetch all font names
       Ffn[] fontNames = _doc.getFontTable().getFontNames();
 
-      // Try to find the name of the font for our symbol
       if (fontNames.length <= _props.getFtcSym())
         return null;
 

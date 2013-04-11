@@ -137,11 +137,4 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(document.isEnforcedCommentsProtection());
     }
 
-    public void testUpdateFields() throws Exception {
-        XWPFDocument doc = new XWPFDocument();
-        assertFalse(doc.isEnforcedUpdateFields());
-        doc.enforceUpdateFields();
-        assertTrue(doc.isEnforcedUpdateFields());
-    }
-
 }

@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.record.*;
+import org.zkoss.poi.hslf.usermodel.PictureData;
+import org.zkoss.poi.hslf.usermodel.SlideShow;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import java.util.List;
 
 import java.awt.*;
@@ -163,12 +163,19 @@ public final class Fill {
      */
     public Color getForegroundColor(){
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p1 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLCOLOR);
+        EscherSimpleProperty p2 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p3 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLOPACITY);
 
-        if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
+        int p2val = p2 == null ? 0 : p2.getPropertyValue();
+        int alpha =  p3 == null ? 255 : ((p3.getPropertyValue() >> 8) & 0xFF);
 
-        return shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
-
+        Color clr = null;
+        if (p1 != null && (p2val  & 0x10) != 0){
+            int rgb = p1.getPropertyValue();
+            clr = shape.getColor(rgb, alpha);
+        }
+        return clr;
     }
 
     /**
@@ -191,11 +198,17 @@ public final class Fill {
      */
     public Color getBackgroundColor(){
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p1 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR);
+        EscherSimpleProperty p2 = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
-        if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
+        int p2val = p2 == null ? 0 : p2.getPropertyValue();
 
-        return shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
+        Color clr = null;
+        if (p1 != null && (p2val  & 0x10) != 0){
+            int rgb = p1.getPropertyValue();
+            clr = shape.getColor(rgb, 255);
+        }
+        return clr;
     }
 
     /**

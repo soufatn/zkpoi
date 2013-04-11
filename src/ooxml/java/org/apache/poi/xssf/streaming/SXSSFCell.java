@@ -15,19 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.formula.FormulaParseException;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.xssf.usermodel.XSSFHyperlink;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -282,7 +282,7 @@ public class SXSSFCell implements Cell
      * @return the value of the cell as a number
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
-     * @see org.apache.poi.ss.usermodel.DataFormatter for turning this number into a string similar to that which Excel would render this number as.
+     * @see org.zkoss.poi.ss.usermodel.DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
     public double getNumericCellValue()
     {
@@ -313,7 +313,7 @@ public class SXSSFCell implements Cell
      * @return the value of the cell as a date
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
-     * @see org.apache.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
+     * @see org.zkoss.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
      */
     public Date getDateCellValue()
     {
@@ -411,7 +411,7 @@ public class SXSSFCell implements Cell
      *        precalculated value , for errors we'll set
      *        its value. For other types we will change the cell to an error
      *        cell and set its value.
-     * @see org.apache.poi.ss.usermodel.FormulaError
+     * @see org.zkoss.poi.ss.usermodel.FormulaError
      */
     public void setCellErrorValue(byte value)
     {
@@ -463,7 +463,7 @@ public class SXSSFCell implements Cell
      *
      * @return the value of the cell as an error code
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't CELL_TYPE_ERROR
-     * @see org.apache.poi.ss.usermodel.FormulaError for error codes
+     * @see org.zkoss.poi.ss.usermodel.FormulaError for error codes
      */
     public byte getErrorCellValue()
     {
@@ -494,7 +494,7 @@ public class SXSSFCell implements Cell
      *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
-     * @see org.apache.poi.ss.usermodel.Workbook#createCellStyle()
+     * @see org.zkoss.poi.ss.usermodel.Workbook#createCellStyle()
      */
     public void setCellStyle(CellStyle style)
     {
@@ -506,7 +506,7 @@ public class SXSSFCell implements Cell
      *
      * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
      * <code>workbook.getCellStyleAt(0)</code>
-     * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(short)
+     * @see org.zkoss.poi.ss.usermodel.Workbook#getCellStyleAt(short)
      */
     public CellStyle getCellStyle()
     {

@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.charts;
+package org.zkoss.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.*;
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.ss.usermodel.charts.*;
+import org.zkoss.poi.util.Beta;
 
 /**
  * @author Roman Kashitsyn

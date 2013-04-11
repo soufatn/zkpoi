@@ -14,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.converter;
+package org.zkoss.poi.hssf.converter;
 
 import java.util.Arrays;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.util.Beta;
 
 @Beta
 public class ExcelToHtmlUtils extends AbstractExcelUtils

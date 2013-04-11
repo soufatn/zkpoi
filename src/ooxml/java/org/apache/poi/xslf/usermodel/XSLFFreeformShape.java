@@ -17,10 +17,10 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Units;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTAdjPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;

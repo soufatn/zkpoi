@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.dev;
+package org.zkoss.poi.hwpf.dev;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Helper functions for the record transformations. Used during model classes

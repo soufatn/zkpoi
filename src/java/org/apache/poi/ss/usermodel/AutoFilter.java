@@ -14,7 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
+
+import java.util.List;
+
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * Represents autofiltering for the specified worksheet.
@@ -75,5 +79,31 @@ public interface AutoFilter {
      *
      * void applyFilter(int columnIndex, String ... values);
      */
-    
+
+	//20110510, henrichen@zkoss.org
+	//inner filterOp for #filter
+	public final static int FILTEROP_AND = 0x01;
+	public final static int FILTEROP_BOTTOM10 = 0x02;
+	public final static int FILTEROP_BOTOOM10PERCENT = 0x03;
+	public final static int FILTEROP_OR = 0x04;
+	public final static int FILTEROP_TOP10 = 0x05;
+	public final static int FILTEROP_TOP10PERCENT = 0x06;
+	public final static int FILTEROP_VALUES = 0x07;
+
+	/**
+	 * Returns the filtered Range.
+	 */
+	CellRangeAddress getRangeAddress();
+	
+	/**
+	 * Return filter setting of each filtered column.
+	 */
+	List<FilterColumn> getFilterColumns();
+	
+	/**
+	 * Returns the column filter information of the specified column; null if the column is not filtered.
+	 * @param col the nth column (1st column in the filter range is 0)
+	 * @return the column filter information of the specified column; null if the column is not filtered.
+	 */
+	FilterColumn getFilterColumn(int col);
 }

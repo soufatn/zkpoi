@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -23,11 +23,11 @@ import java.util.regex.Matcher;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.model.ThemesTable;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -194,14 +194,11 @@ public class XSSFRichTextString implements RichTextString {
     public void append(String text, XSSFFont font){
         if(st.sizeOfRArray() == 0 && st.isSetT()) {
             //convert <t>string</t> into a text run: <r><t>string</t></r>
-            CTRElt lt = st.addNewR();
-            lt.setT(st.getT());
-            preserveSpaces(lt.xgetT());
+            st.addNewR().setT(st.getT());
             st.unsetT();
         }
         CTRElt lt = st.addNewR();
         lt.setT(text);
-        preserveSpaces(lt.xgetT());
         CTRPrElt pr = lt.addNewRPr();
         if(font != null) setRunAttributes(font.getCTFont(), pr);
     }
@@ -346,10 +343,16 @@ public class XSSFRichTextString implements RichTextString {
 
         for(int i = 0; i < st.sizeOfRArray(); i++){
             CTRElt r = st.getRArray(i);
+            //20100927, henrichen@zkoss.org: must check property of the text run
+//          if(i == index) return new XSSFFont(toCTFont(r.getRPr()));
             if(i == index) {
-               XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
-               fnt.setThemesTable(getThemesTable());
-               return fnt;
+            	final CTRPrElt rpr =  r.getRPr(); //20100927, henrichen@zkoss.org: property of the text run
+				if (rpr != null) {
+					XSSFFont fnt = new XSSFFont(toCTFont(rpr));
+					fnt.setThemesTable(getThemesTable());
+					return fnt;
+				}
+           		return null;
             }
         }
         return null;
@@ -395,7 +398,7 @@ public class XSSFRichTextString implements RichTextString {
         if(st.sizeOfRArray() > 0) {
             for (CTRElt r : st.getRArray()) {
                 CTRPrElt pr = r.getRPr();
-                if(pr != null && pr.sizeOfRFontArray() > 0){
+                if(pr != null){
                     String fontName = pr.getRFontArray(0).getVal();
                     if(fontName.startsWith("#")){
                         int idx = Integer.parseInt(fontName.substring(1));
@@ -496,6 +499,7 @@ public class XSSFRichTextString implements RichTextString {
         return buf.toString();
     }
 
+    @SuppressWarnings("deprecation")
     void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {
             // delete format runs that fit between startIndex and endIndex
             // runs intersecting startIndex and endIndex remain
@@ -526,19 +530,18 @@ public class XSSFRichTextString implements RichTextString {
             while(sub.size() > 1) sub.remove(sub.lastKey());
         }
 
-    @SuppressWarnings("deprecation")
-    TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
-        int length = 0;
-        TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
-        for (CTRElt r : entry.getRArray()) {
-            String txt = r.getT();
-            CTRPrElt fmt = r.getRPr();
+        TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
+            int length = 0;
+            TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
+            for (CTRElt r : entry.getRArray()) {
+                String txt = r.getT();
+                CTRPrElt fmt = r.getRPr();
 
-            length += txt.length();
-            formats.put(length, fmt);
+                length += txt.length();
+                formats.put(length, fmt);
+            }
+            return formats;
         }
-        return formats;
-    }
 
     CTRst buildCTRst(String text, TreeMap<Integer, CTRPrElt> formats){
         if(text.length() != formats.lastKey()) {

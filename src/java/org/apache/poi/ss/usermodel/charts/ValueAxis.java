@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.charts;
+package org.zkoss.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 
 /**
  * @author Roman Kashitsyn
@@ -34,4 +34,15 @@ public interface ValueAxis extends ChartAxis {
 	 * @param crossBetween cross between type
 	 */
 	void setCrossBetween(AxisCrossBetween crossBetween);
+
+	//20111012, henrichen@zkoss.org: move from ChartAxis to here
+	/**
+	 * @return axis number format
+	 */
+	String getNumberFormat();
+
+	/**
+	 * @param format axis number format
+	 */
+	void setNumberFormat(String format);
 }

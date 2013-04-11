@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.extractor;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.POIDataSamples;
 
 /**

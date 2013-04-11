@@ -15,17 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.common;
+package org.zkoss.poi.hssf.record.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
-import org.apache.poi.util.*;
+import org.zkoss.poi.hssf.record.cont.ContinuableRecordInput;
+import org.zkoss.poi.hssf.record.RecordInputStream;
+import org.zkoss.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.zkoss.poi.poifs.dev.POIFSLister;
+import org.zkoss.poi.util.*;
 
 /**
  * Title: Unicode String<p/>

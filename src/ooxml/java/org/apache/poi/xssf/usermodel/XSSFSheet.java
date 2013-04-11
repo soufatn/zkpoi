@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,34 +30,84 @@ import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.SSCellRange;
-import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.hssf.record.PasswordRecord;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellRange;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.Footer;
+import org.zkoss.poi.ss.usermodel.Header;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.SSCellRange;
+import org.zkoss.poi.ss.util.SheetUtil;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.xssf.model.CommentsTable;
+import org.zkoss.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFilterColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -79,7 +129,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
-    /**
+    
+    
+        
+	/**
      * cache of master shared formulas in this sheet.
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
      */
@@ -91,7 +144,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
      *
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createSheet()
+     * @see org.zkoss.poi.xssf.usermodel.XSSFWorkbook#createSheet()
      */
     protected XSSFSheet() {
         super();
@@ -144,6 +197,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         // Look for bits we're interested in
         for(POIXMLDocumentPart p : getRelations()){
+        	//TODO: test to dump p
             if(p instanceof CommentsTable) {
                sheetComments = (CommentsTable)p;
                break;
@@ -155,9 +209,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         
         // Process external hyperlinks for the sheet, if there are any
         initHyperlinks();
+        
+        // 20110930, henrichen: for autofilter
+        initAutofilter();
+        
     }
 
-    /**
+	/**
      * Initialize worksheet data when creating a new sheet.
      */
     @Override
@@ -208,7 +266,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
-    /**
+	/**
      * Create a new CTWorksheet instance with all values set to defaults
      *
      * @return a new instance
@@ -502,8 +560,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  need to assign it to a cell though
      *
      * @deprecated since Nov 2009 this method is not compatible with the common SS interfaces,
-     * use {@link org.apache.poi.xssf.usermodel.XSSFDrawing#createCellComment
-     *  (org.apache.poi.ss.usermodel.ClientAnchor)} instead
+     * use {@link org.zkoss.poi.xssf.usermodel.XSSFDrawing#createCellComment
+     *  (org.zkoss.poi.ss.usermodel.ClientAnchor)} instead
      */
     @Deprecated
     public XSSFComment createComment() {
@@ -515,7 +573,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param rownum  row number
      * @return High level {@link XSSFRow} object representing a row in the sheet
-     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see #removeRow(org.zkoss.poi.ss.usermodel.Row)
      */
     public XSSFRow createRow(int rownum) {
         CTRow ctRow;
@@ -548,10 +606,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
      *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_RIGHT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_RIGHT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_LOWER_LEFT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_LOWER_RIGHT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_UPPER_LEFT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_UPPER_RIGHT
      */
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
@@ -775,8 +833,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return worksheet.getHeaderFooter();
     }
-
-
 
     /**
      * Returns the default footer for the sheet,
@@ -1485,20 +1541,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * when the workbook is opened.
      *
      *  <p>
-     *  Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
+     *  Calculating the formula values with {@link org.zkoss.poi.ss.usermodel.FormulaEvaluator} is the
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
      *  </p>
      *
      *  <p>
      *  It is recommended to force recalcuation of formulas on workbook level using
-     *  {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
+     *  {@link org.zkoss.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
      *  to ensure that all cross-worksheet formuals and external dependencies are updated.
      *  </p>
      * @param value true if the application will perform a full recalculation of
      * this worksheet values when the workbook is opened
      *
-     * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
+     * @see org.zkoss.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
      */
     public void setForceFormulaRecalculation(boolean value) {
        if(worksheet.isSetSheetCalcPr()) {
@@ -2014,7 +2070,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param  height default row height in  twips (1/20 of  a point)
      */
     public void setDefaultRowHeight(short height) {
-        setDefaultRowHeightInPoints((float)height / 20);
+        getSheetTypeSheetFormatPr().setDefaultRowHeight((double)height / 20);
+
     }
 
     /**
@@ -2023,9 +2080,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param height default row height measured in point size.
      */
     public void setDefaultRowHeightInPoints(float height) {
-        CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
-        pr.setDefaultRowHeight(height);
-        pr.setCustomHeight(true);
+        getSheetTypeSheetFormatPr().setDefaultRowHeight(height);
+
     }
 
     /**
@@ -2480,7 +2536,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param cellRef cell region
      * @param comment the comment to assign
-     * @deprecated since Nov 2009 use {@link XSSFCell#setCellComment(org.apache.poi.ss.usermodel.Comment)} instead
+     * @deprecated since Nov 2009 use {@link XSSFCell#setCellComment(org.zkoss.poi.ss.usermodel.Comment)} instead
      */
     @Deprecated
     public static void setCellComment(String cellRef, XSSFComment comment) {
@@ -2624,20 +2680,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
             // save a detached  copy to avoid XmlValueDisconnectedException,
             // this may happen when the master cell of a shared formula is changed
-            CTCellFormula sf = (CTCellFormula)f.copy();
-            CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
-            CellReference cellRef = new CellReference(cell);
-            // If the shared formula range preceeds the master cell then the preceding  part is discarded, e.g.
-            // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
-            // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
-            if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
-                String effectiveRef = new CellRangeAddress(
-                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), sfRef.getLastRow(),
-                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), sfRef.getLastColumn()).formatAsString();
-                sf.setRef(effectiveRef);
-            }
-
-            sharedFormulas.put((int)f.getSi(), sf);
+            sharedFormulas.put((int)f.getSi(), (CTCellFormula)f.copy());
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
@@ -3074,8 +3117,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 	}
     
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
-    public List<XSSFDataValidation> getDataValidations() {
-    	List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
+    @Override
+    public List<DataValidation> getDataValidations() { //20111122, henrichen@zkoss.org: XSSFDataValidation -> DataValidation
+    	List<DataValidation> xssfValidations = new ArrayList<DataValidation>(); 
     	CTDataValidations dataValidations = this.worksheet.getDataValidations();
     	if( dataValidations!=null && dataValidations.getCount() > 0 ) {
     		for (CTDataValidation ctDataValidation : dataValidations.getDataValidationArray()) {
@@ -3112,7 +3156,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 		dataValidations.setCount(currentCount + 1);
 
 	}
-
+/*
     public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
         CTAutoFilter af = worksheet.getAutoFilter();
         if(af == null) af = worksheet.addNewAutoFilter();
@@ -3136,8 +3180,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         return new XSSFAutoFilter(this);
     }
-    
-    /**
+*/    
+     /**
      * Creates a new Table, and associates it with this Sheet
      */
     public XSSFTable createTable() {
@@ -3172,17 +3216,202 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public XSSFSheetConditionalFormatting getSheetConditionalFormatting(){
         return new XSSFSheetConditionalFormatting(this);
     }
+	
+	//20100914, henrichen@zkoss.org: expose _rows
+	protected TreeMap<Integer, XSSFRow> getRows() {
+		return _rows;
+	}
+	//20100914, henrichen@zkoss.org: expose _rows
+	protected void setRows(TreeMap<Integer, XSSFRow> rows) {
+		_rows = rows;
+	}
 
+    //20110506, peterkuo@potix.com
+    public boolean isAutoFilterMode() {
+        return worksheet.getAutoFilter() != null;
+	}
+
+    //TO remove current autofilter
+    //20110506, peterkuo@potix.com
+    public CellRangeAddress removeAutoFilter(){
+    	//remove CTAutoFilter and related name range
+    	//TODO:also have to remove related button? send a event?
+    	//TODO:also have to restore the height of certain rows
+    	CTSheetPr sheetPr = worksheet.getSheetPr();
+    	if (sheetPr != null) {
+    		sheetPr.setFilterMode(false);
+    	}
+    	worksheet.unsetAutoFilter();
+    	autoFilter = null;
+    	
+        XSSFWorkbook wb = getWorkbook();
+        int sheetIndex = getWorkbook().getSheetIndex(this);
+        XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
+        
+    	wb.removeName(name.getNameName());
+    	return CellRangeAddress.valueOf(name.getRefersToFormula());
+    }
+
+    //20100504: peterkuo@zkoss.org: get autofilter
+    private XSSFAutoFilter autoFilter;
+    
+    @Override
+    public AutoFilter getAutoFilter() {
+		return autoFilter;
+	}
+    
+    //20110504, henrichen@zkoss.org: set auto filter mode
     /**
-     * Set background color of the sheet tab
-     *
-     * @param colorIndex  the indexed color to set, must be a constant from {@link IndexedColors}
+     * Set false to remove AutoFilter; set true is ignored.
+     * @param b false to remove current AutoFilter; set true is ignored.
      */
-    public void setTabColor(int colorIndex){
-        CTSheetPr pr = worksheet.getSheetPr();
-        if(pr == null) pr = worksheet.addNewSheetPr();
-        CTColor color = CTColor.Factory.newInstance();
-        color.setIndexed(colorIndex);
-        pr.setTabColor(color);
+    public void setAutoFilterMode(boolean b) {
+    	if (!b && isAutoFilterMode()) {
+    		removeAutoFilter();
+    	}
+    }
+    
+    //20110504, henrichne@zkoss.org: returns whther auto filter mode is in use.
+    public boolean isFilterMode() {
+    	if (autoFilter != null) {
+    		final List<FilterColumn> fcs = autoFilter.getFilterColumns();
+    		if (fcs != null) {
+    			for(FilterColumn fc : fcs) {
+    				List<String> filters = fc.getFilters();
+    				if (filters.size() > 0) { //in use
+    					return true;
+    				}
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+	//20110512, peterkuo@potix.com
+	public void removeValidationData(DataValidation dataValidation) {
+		XSSFDataValidation xssfDataValidation = (XSSFDataValidation)dataValidation;		
+		CTDataValidations dataValidations = worksheet.getDataValidations();
+		if( dataValidations==null ) {
+			return;
+		}
+		int currentCount = dataValidations.sizeOfDataValidationArray();
+		
+		CTDataValidation[] dvArray = dataValidations.getDataValidationArray();
+		
+		for(int i = 0;i<dvArray.length;i++){
+			if(dvArray[i].equals(xssfDataValidation.getCtDdataValidation())){
+				dataValidations.removeDataValidation(i);
+			}
+		}
+		dataValidations.setCount(currentCount - 1);
+	}
+
+    //20110930, henrichen@zkoss.org, for autofilter
+    private void initAutofilter(){
+			CTAutoFilter af = worksheet.getAutoFilter();			
+			if(af != null){
+				autoFilter = new XSSFAutoFilter(this, af);
+				fillInAutoFilter(af);
+			}
+				
+    }
+
+    //20110930, henrichen@zkoss.org
+    /**
+     * Parse from CTAutoFilter to fill the user model autoFilter
+     * @param af
+     */
+    private void fillInAutoFilter(CTAutoFilter af) {
+		CTFilterColumn[] fcList = af.getFilterColumnArray();
+		if(fcList == null || fcList.length == 0)
+			return;
+		
+		for(CTFilterColumn fc: fcList){
+			autoFilter.addFilterColumn(fc);
+		}
+		
+		List<FilterColumn> fcs = autoFilter.getFilterColumns();
+		if (fcs != null) {
+			for(FilterColumn fc: fcs) {
+				((XSSFFilterColumn)fc).init();
+			}
+		}
+	}
+    
+	//20110930, henrichen@zkoss.org: handle filter
+    public AutoFilter setAutoFilter(CellRangeAddress range) {
+    	if(isAutoFilterMode()){
+    		removeAutoFilter();
+    		if (range == null) {
+    			return null;
+    		}
+    	}
+    	
+        CTAutoFilter ctaf = worksheet.getAutoFilter();
+        if(ctaf == null) ctaf = worksheet.addNewAutoFilter();
+
+        String ref = range.formatAsString();
+        ctaf.setRef(ref);
+        
+        final int left = range.getFirstColumn();
+        final int top = range.getFirstRow();
+        final int right = range.getLastColumn();
+        final int bottom = range.getLastRow();
+        XSSFWorkbook wb = getWorkbook();
+        int sheetIndex = getWorkbook().getSheetIndex(this);
+        XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
+        if (name == null) {
+            name = wb.createBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
+            name.getCTName().setHidden(true); 
+            CellReference r1 = new CellReference(getSheetName(), top, left, true, true);
+            CellReference r2 = new CellReference(null, bottom, right, true, true);
+            String fmla = r1.formatAsString() + ":" + r2.formatAsString();
+            name.setRefersToFormula(fmla);
+        }
+        
+        //set FilterMode in SheetPr to true
+        CTSheetPr sheetPr = worksheet.getSheetPr();
+        if (sheetPr == null) {
+        	sheetPr = worksheet.addNewSheetPr();
+        }
+        sheetPr.setFilterMode(true);
+        
+        autoFilter = new XSSFAutoFilter(this, ctaf);
+        
+        //handle the showButton on merged cell
+		for (int i = 0; i < this.getNumMergedRegions(); i++) {
+			final CellRangeAddress mrng = this.getMergedRegion(i);
+			final int t = mrng.getFirstRow();
+	        final int b = mrng.getLastRow();
+	        final int l = mrng.getFirstColumn();
+	        final int r = mrng.getLastColumn();
+	        
+	        if (t == top && l <= right && l >= left) { // to be add filter column to hide button
+	        	for(int c = l; c < r; ++c) {
+		        	final int colId = c - left; 
+		        	final XSSFFilterColumn fc = (XSSFFilterColumn) autoFilter.getOrCreateFilterColumn(colId);
+		        	fc.setProperties(null, AutoFilter.FILTEROP_AND, null, false);
+	        	}
+	        }
+		}
+		
+        return autoFilter; 
+    }
+    
+    //20111124, henrichen@zkoss.org:
+    public DataValidation getDataValidation(int row, int col) {
+    	List<DataValidation> dvs = getDataValidations();
+    	if (dvs != null) {
+    		for(DataValidation dv : dvs) {
+    			CellRangeAddressList addrList = dv.getRegions();
+    			for (int j = 0, len = addrList.countRanges(); j < len; ++j) {
+    				CellRangeAddress addr = addrList.getCellRangeAddress(j);
+    				if (addr.isInRange(row, col)) {
+    					return dv;
+    				}
+    			}
+    		}
+    	}
+    	return null;
     }
 }

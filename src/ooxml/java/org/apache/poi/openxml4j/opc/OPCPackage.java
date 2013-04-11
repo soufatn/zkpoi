@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc;
+package org.zkoss.poi.openxml4j.opc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -36,24 +36,24 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
-import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.apache.poi.openxml4j.opc.internal.ContentType;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
-import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
-import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.marshallers.DefaultMarshaller;
-import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMarshaller;
-import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
-import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
-import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.InvalidOperationException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
+import org.zkoss.poi.openxml4j.opc.internal.ContentType;
+import org.zkoss.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.zkoss.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.zkoss.poi.openxml4j.opc.internal.PartMarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.PartUnmarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.ZipContentTypeManager;
+import org.zkoss.poi.openxml4j.opc.internal.marshallers.DefaultMarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
+import org.zkoss.poi.openxml4j.util.Nullable;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.POILogFactory;
 
 /**
  * Represents a container that can store multiple data objects.
@@ -458,7 +458,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *
 	 * @throws InvalidOperationException
 	 *             Throws if a writing operation is done on a read only package.
-	 * @see org.apache.poi.openxml4j.opc.PackageAccess
+	 * @see org.zkoss.poi.openxml4j.opc.PackageAccess
 	 */
 	void throwExceptionIfReadOnly() throws InvalidOperationException {
 		if (packageAccess == PackageAccess.READ)
@@ -473,7 +473,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *
 	 * @throws InvalidOperationException
 	 *             Throws if a read operation is done on a write only package.
-	 * @see org.apache.poi.openxml4j.opc.PackageAccess
+	 * @see org.zkoss.poi.openxml4j.opc.PackageAccess
 	 */
 	void throwExceptionIfWriteOnly() throws InvalidOperationException {
 		if (packageAccess == PackageAccess.WRITE)
@@ -597,13 +597,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * Load the parts of the archive if it has not been done yet. The
-	 * relationships of each part are not loaded.
-	 * 
-	 * Note - Rule M4.1 states that there may only ever be one Core
-	 *  Properties Part, but Office produced files will sometimes
-	 *  have multiple! As Office ignores all but the first, we relax
-	 *  Compliance with Rule M4.1, and ignore all others silently too. 
+	 * Load the parts of the archive if it has not been done yet The
+	 * relationships of each part are not loaded
 	 *
 	 * @return All this package's parts.
 	 */
@@ -614,36 +609,31 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (partList == null) {
 			/* Variables use to validate OPC Compliance */
 
-			// Check rule M4.1 -> A format consumer shall consider more than
+			// Ensure rule M4.1 -> A format consumer shall consider more than
 			// one core properties relationship for a package to be an error
-		   // (We just log it and move on, as real files break this!)
 			boolean hasCorePropertiesPart = false;
-			boolean needCorePropertiesPart = true;
 
 			PackagePart[] parts = this.getPartsImpl();
 			this.partList = new PackagePartCollection();
 			for (PackagePart part : parts) {
 				if (partList.containsKey(part._partName))
 					throw new InvalidFormatException(
-							"A part with the name '" +
-							part._partName +
-						        "' already exist : Packages shall not contain equivalent " +
-						        "part names and package implementers shall neither create " +
-					        	"nor recognize packages with equivalent part names. [M1.12]");
+							"A part with the name '"
+									+ part._partName
+									+ "' already exist : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
 
 				// Check OPC compliance rule M4.1
 				if (part.getContentType().equals(
 						ContentTypes.CORE_PROPERTIES_PART)) {
-					if (!hasCorePropertiesPart) {
+					if (!hasCorePropertiesPart)
 						hasCorePropertiesPart = true;
-					} else {
-					   logger.log(POILogger.WARN, "OPC Compliance error [M4.1]: " +
-					   		"there is more than one core properties relationship in the package! " +
-					   		"POI will use only the first, but other software may reject this file.");
-					}
+					else
+						throw new InvalidFormatException(
+								"OPC Compliance error [M4.1]: there is more than one core properties relationship in the package !");
 				}
 
-				PartUnmarshaller partUnmarshaller = partUnmarshallers.get(part._contentType);
+				PartUnmarshaller partUnmarshaller = partUnmarshallers
+						.get(part._contentType);
 
 				if (partUnmarshaller != null) {
 					UnmarshallContext context = new UnmarshallContext(this,
@@ -653,14 +643,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 								.unmarshall(context, part.getInputStream());
 						partList.put(unmarshallPart._partName, unmarshallPart);
 
-						// Core properties case-- use first CoreProperties part we come across
-						// and ignore any subsequent ones
-						if (unmarshallPart instanceof PackagePropertiesPart &&
-								hasCorePropertiesPart &&
-								needCorePropertiesPart) {
+						// Core properties case
+						if (unmarshallPart instanceof PackagePropertiesPart)
 							this.packageProperties = (PackagePropertiesPart) unmarshallPart;
-							needCorePropertiesPart = false;
-						}
 					} catch (IOException ioe) {
 						logger.log(POILogger.WARN, "Unmarshall operation : IOException for "
 								+ part._partName);
@@ -733,20 +718,19 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (partList.containsKey(partName)
 				&& !partList.get(partName).isDeleted()) {
 			throw new PartAlreadyExistsException(
-					"A part with the name '" + partName.getName() + "'" +
-					" already exists : Packages shall not contain equivalent part names and package" +
-					" implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
+					"A part with the name '"
+							+ partName.getName()
+							+ "' already exists : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
 		}
 
 		/* Check OPC compliance */
 
-		// Rule [M4.1]: The format designer shall specify and the format producer
+		// Rule [M4.1]: The format designer shall specify and the format
+		// producer
 		// shall create at most one core properties relationship for a package.
 		// A format consumer shall consider more than one core properties
 		// relationship for a package to be an error. If present, the
 		// relationship shall target the Core Properties part.
-		// Note - POI will read files with more than one Core Properties, which
-		//  Office sometimes produces, but is strict on generation
 		if (contentType.equals(ContentTypes.CORE_PROPERTIES_PART)) {
 			if (this.packageProperties != null)
 				throw new InvalidOperationException(
@@ -1103,7 +1087,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param relationshipType
 	 *            Type of relationship.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
 	 *      java.lang.String)
 	 */
 	public PackageRelationship addExternalRelationship(String target,
@@ -1125,7 +1109,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
 	 *      java.lang.String)
 	 */
 	public PackageRelationship addExternalRelationship(String target,
@@ -1228,21 +1212,21 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
 	 */
 	public PackageRelationship getRelationship(String id) {
 		return this.relationships.getRelationshipByID(id);
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#hasRelationships()
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#hasRelationships()
 	 */
 	public boolean hasRelationships() {
 		return (relationships.size() > 0);
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.zkoss.poi.openxml4j.opc.PackageRelationship)
 	 */
 	public boolean isRelationshipExists(PackageRelationship rel) {
         for (PackageRelationship r : this.getRelationships()) {
@@ -1439,50 +1423,4 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	protected abstract PackagePart[] getPartsImpl()
 			throws InvalidFormatException;
-
-    /**
-     * Replace a content type in this package.
-     *
-     * <p>
-     *     A typical scneario to call this method is to rename a template file to the main format, e.g.
-     *     ".dotx" to ".docx"
-     *     ".dotm" to ".docm"
-     *     ".xltx" to ".xlsx"
-     *     ".xltm" to ".xlsm"
-     *     ".potx" to ".pptx"
-     *     ".potm" to ".pptm"
-     * </p>
-     * For example, a code converting  a .xlsm macro workbook to .xlsx would look as follows:
-     * <p>
-     *    <pre><code>
-     *
-     *     OPCPackage pkg = OPCPackage.open(new FileInputStream("macro-workbook.xlsm"));
-     *     pkg.replaceContentType(
-     *         "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
-     *         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
-     *
-     *     FileOutputStream out = new FileOutputStream("workbook.xlsx");
-     *     pkg.save(out);
-     *     out.close();
-     *
-     *    </code></pre>
-     * </p>
-     *
-     * @param oldContentType  the content type to be replaced
-     * @param newContentType  the replacement
-     * @return whether replacement was succesfull
-     * @since POI-3.8
-     */
-    public boolean replaceContentType(String oldContentType, String newContentType){
-        boolean success = false;
-        ArrayList<PackagePart> list = getPartsByContentType(oldContentType);
-        for (PackagePart packagePart : list) {
-            if (packagePart.getContentType().equals(oldContentType)) {
-                PackagePartName partName = packagePart.getPartName();
-                contentTypeManager.addContentType(partName, newContentType);
-                success = true;
-            }
-        }
-        return success;
-    }
 }

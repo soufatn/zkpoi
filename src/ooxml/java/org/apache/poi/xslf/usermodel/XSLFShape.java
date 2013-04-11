@@ -17,10 +17,10 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 
 import java.awt.Graphics2D;
@@ -169,7 +169,7 @@ public abstract class XSLFShape {
      * This method is called recursively for each shape when merging slides
      *
      * @param  sh the source shape
-     * @see org.apache.poi.xslf.usermodel.XSLFSlide#importContent(XSLFSheet)
+     * @see org.zkoss.poi.xslf.usermodel.XSLFSlide#importContent(XSLFSheet)
      */
     @Internal
     void copy(XSLFShape sh) {

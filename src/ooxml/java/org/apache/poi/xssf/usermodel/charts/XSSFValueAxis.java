@@ -15,22 +15,25 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.charts;
+package org.zkoss.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ValueAxis;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.AxisOrientation;
-import org.apache.poi.ss.usermodel.charts.AxisCrossBetween;
-import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.zkoss.poi.ss.usermodel.charts.AxisTickLabelPosition;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
+import org.zkoss.poi.ss.usermodel.charts.ValueAxis;
+import org.zkoss.poi.ss.usermodel.charts.AxisPosition;
+import org.zkoss.poi.ss.usermodel.charts.AxisOrientation;
+import org.zkoss.poi.ss.usermodel.charts.AxisCrossBetween;
+import org.zkoss.poi.ss.usermodel.charts.AxisCrosses;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 
@@ -125,5 +128,11 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 			default:
 				throw new IllegalArgumentException();
 		}
+	}
+
+	//20111012, henrichen@zkoss.org: handle TickLblPos
+	@Override
+	protected CTTickLblPos getTickLblPos() {
+		return ctValAx.getTickLblPos();
 	}
 }

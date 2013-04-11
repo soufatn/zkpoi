@@ -14,20 +14,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.converter;
+package org.zkoss.poi.hssf.converter;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hwpf.converter.AbstractWordConverter;
-import org.apache.poi.hwpf.converter.DefaultFontReplacer;
-import org.apache.poi.hwpf.converter.FontReplacer;
-import org.apache.poi.hwpf.converter.NumberFormatter;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.hssf.usermodel.HSSFCell;
+import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
+import org.zkoss.poi.hssf.usermodel.HSSFDataFormatter;
+import org.zkoss.poi.hssf.usermodel.HSSFRichTextString;
+import org.zkoss.poi.hssf.usermodel.HSSFRow;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.hwpf.converter.AbstractWordConverter;
+import org.zkoss.poi.hwpf.converter.DefaultFontReplacer;
+import org.zkoss.poi.hwpf.converter.FontReplacer;
+import org.zkoss.poi.hwpf.converter.NumberFormatter;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.util.Beta;
 import org.w3c.dom.Document;
 
 /**

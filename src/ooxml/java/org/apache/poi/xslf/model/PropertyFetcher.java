@@ -17,10 +17,10 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.model;
+package org.zkoss.poi.xslf.model;
 
-import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.xslf.usermodel.XSLFSimpleShape;
+import org.zkoss.poi.util.Internal;
 
 /**
  *  Used internally to navigate the PresentationML text style hierarchy and fetch properties

@@ -15,23 +15,27 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.charts;
+package org.zkoss.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.AxisOrientation;
-import org.apache.poi.ss.usermodel.charts.AxisCrosses;
-import org.apache.poi.util.Beta;
-import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.zkoss.poi.ss.usermodel.charts.AxisTickLabelPosition;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
+import org.zkoss.poi.ss.usermodel.charts.AxisPosition;
+import org.zkoss.poi.ss.usermodel.charts.AxisOrientation;
+import org.zkoss.poi.ss.usermodel.charts.AxisCrosses;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 
 /**
  * Base class for all axis types.
@@ -219,6 +223,46 @@ public abstract class XSSFChartAxis implements ChartAxis {
 			case STAxPos.INT_R: return AxisPosition.RIGHT;
 			case STAxPos.INT_T: return AxisPosition.TOP;
 			default: return AxisPosition.BOTTOM;
+		}
+	}
+
+	
+	//20111012, henrichen@zkoss.org: handle tickLblPos
+	protected abstract CTTickLblPos getTickLblPos();
+	
+	//20111012, henrichen@zkoss.org: handle tickLblPos
+	@Override
+	public AxisTickLabelPosition getTickLabelPosition() {
+		return toTickLabelPosition(getTickLblPos().getVal());
+	}
+
+	//20111012, henrichen@zkoss.org: handle tickLblPos
+	@Override
+	public void setTickLabelPosition(AxisTickLabelPosition tickLblPos) {
+		getTickLblPos().setVal(fromTickLabelPosition(tickLblPos));
+	}
+
+	//20111012, henrichen@zkoss.org: handle tickLblPos
+	private static STTickLblPos.Enum fromTickLabelPosition(AxisTickLabelPosition pos) {
+		switch(pos) {
+		case HIGH: return STTickLblPos.HIGH;
+		case LOW: return STTickLblPos.LOW;
+		case NEXT_TO: return STTickLblPos.NEXT_TO;
+		case NONE: return STTickLblPos.NONE;
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+
+	//20111012, henrichen@zkoss.org: handle tickLblPos
+	private static AxisTickLabelPosition toTickLabelPosition(STTickLblPos.Enum pos) {
+		switch (pos.intValue()) {
+		case STTickLblPos.INT_HIGH: return AxisTickLabelPosition.HIGH;
+		case STTickLblPos.INT_LOW: return  AxisTickLabelPosition.LOW;
+		case STTickLblPos.INT_NEXT_TO: return AxisTickLabelPosition.NEXT_TO;
+		case STTickLblPos.INT_NONE: return AxisTickLabelPosition.NONE;
+		default:
+			throw new IllegalArgumentException();
 		}
 	}
 }

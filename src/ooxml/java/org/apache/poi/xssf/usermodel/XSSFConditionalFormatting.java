@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.ConditionalFormatting;
-import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.usermodel.ConditionalFormatting;
+import org.zkoss.poi.ss.usermodel.ConditionalFormattingRule;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
 
 import java.util.ArrayList;

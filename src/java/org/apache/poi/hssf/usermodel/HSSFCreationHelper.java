@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.ss.usermodel.CreationHelper;
+import org.zkoss.poi.ss.usermodel.CreationHelper;
 
 public class HSSFCreationHelper implements CreationHelper {
 	private HSSFWorkbook workbook;
@@ -55,7 +55,7 @@ public class HSSFCreationHelper implements CreationHelper {
 	 * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
 	 *
 	 * @return a HSSFClientAnchor instance
-	 * @see org.apache.poi.ss.usermodel.Drawing
+	 * @see org.zkoss.poi.ss.usermodel.Drawing
 	 */
 	public HSSFClientAnchor createClientAnchor(){
 		return new HSSFClientAnchor();

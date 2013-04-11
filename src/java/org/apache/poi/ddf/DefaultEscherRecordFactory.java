@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Generates escher records when provided the byte array containing those records.

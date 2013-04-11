@@ -14,10 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.format;
+package org.zkoss.poi.ss.format;
 
-import org.apache.poi.ss.format.CellFormatPart.PartHandler;
+import org.zkoss.poi.ss.format.CellFormatPart.PartHandler;
+import org.zkoss.util.Pair;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 /**
@@ -29,10 +31,30 @@ public class CellTextFormatter extends CellFormatter {
     private final int[] textPos;
     private final String desc;
 
-    static final CellFormatter SIMPLE_TEXT = new CellTextFormatter("@");
+    //20111229, henrichen@zkoss.org: ZSS-68
+    /*package*/ enum FormatterType {
+    	SIMPLE_TEXT;
+    }
+    //20111229, henrichen@zkoss.org: ZSS-68
+    static CellFormatter getFormatter(FormatterType ft, Locale locale) {
+    	final Pair key = new Pair(ft, locale);
+    	CellFormatter formatter = (CellFormatter) _formatters.get(key);
+    	if (formatter != null) {  //in cache, use it
+    		return formatter;
+    	}
+    	switch(ft) {
+    	case SIMPLE_TEXT:
+        	formatter = new CellTextFormatter("@", locale);
+    		break;
+    	}
+    	_formatters.put(key, formatter); //cache in
+    	return formatter;
+    }
+    
+    //static final CellFormatter SIMPLE_TEXT = new CellTextFormatter("@");
 
-    public CellTextFormatter(String format) {
-        super(format);
+    public CellTextFormatter(String format, Locale locale) { //20111229, henrichen@zkoss.org: ZSS-68
+        super(format, locale);
 
         final int[] numPlaces = new int[1];
 
@@ -61,9 +83,6 @@ public class CellTextFormatter extends CellFormatter {
     public void formatValue(StringBuffer toAppendTo, Object obj) {
         int start = toAppendTo.length();
         String text = obj.toString();
-        if (obj instanceof Boolean) {
-            text = text.toUpperCase();
-        }
         toAppendTo.append(desc);
         for (int i = 0; i < textPos.length; i++) {
             int pos = start + textPos[i];
@@ -77,6 +96,6 @@ public class CellTextFormatter extends CellFormatter {
      * For text, this is just printing the text.
      */
     public void simpleValue(StringBuffer toAppendTo, Object value) {
-        SIMPLE_TEXT.formatValue(toAppendTo, value);
+        getFormatter(FormatterType.SIMPLE_TEXT, locale).formatValue(toAppendTo, value); //ZSS-68
     }
 }

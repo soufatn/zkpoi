@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.FieldDescriptor;
-import org.apache.poi.hwpf.model.PlexOfField;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.FieldDescriptor;
+import org.zkoss.poi.hwpf.model.PlexOfField;
+import org.zkoss.poi.util.Internal;
 
 /**
  * TODO: document me

@@ -15,24 +15,26 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
-import org.apache.poi.ss.formula.IStabilityClassifier;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
+import org.zkoss.poi.ss.formula.IStabilityClassifier;
+import org.zkoss.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
 
+import org.zkoss.poi.ss.formula.eval.HyperlinkEval;
 /**
  * Evaluates formula cells.<p/>
  *
@@ -42,6 +44,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * @author Josh Micich
+ * @author henrichen@zkoss.org: handle HYPERLINK function
  */
 public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 
@@ -205,7 +208,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 	 * int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
 	 * </pre>
 	 * Be aware that your cell will hold both the formula, and the result. If you want the cell
-	 * replaced with the result of the formula, use {@link #evaluateInCell(org.apache.poi.ss.usermodel.Cell)}
+	 * replaced with the result of the formula, use {@link #evaluateInCell(org.zkoss.poi.ss.usermodel.Cell)}
 	 * @param cell The cell to evaluate
 	 * @return -1 for non-formula cells, or the type of the <em>formula result</em>
 	 */
@@ -352,41 +355,57 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
 		ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
+		return getCellValueByValueEval(eval);
+	}
+	
+	@Override
+	public WorkbookEvaluator getWorkbookEvaluator() {
+		return _bookEvaluator;
+	}
+
+	//20111124, henrichen@zkoss.org: give ValueEval, evaluate to CellValue
+	@Override
+	public CellValue getCellValueByValueEval(ValueEval eval) {
+		//20100720, henrichen@zkoss.org: handle HYPERLINK function 
+		CellValue cv = null;
+		if (eval instanceof ArrayEval) {
+			return getCellValueByValueEval(((ArrayEval)eval).getValue(0, 0)); //recursive and get the 1st cell
+		}
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;
-			return new CellValue(ne.getNumberValue());
+			cv = new CellValue(ne.getNumberValue());
 		}
 		if (eval instanceof BoolEval) {
 			BoolEval be = (BoolEval) eval;
-			return CellValue.valueOf(be.getBooleanValue());
+			cv = CellValue.valueOf(be.getBooleanValue());
 		}
 		if (eval instanceof StringEval) {
 			StringEval ne = (StringEval) eval;
-			return new CellValue(ne.getStringValue());
+			cv = new CellValue(ne.getStringValue());
 		}
 		if (eval instanceof ErrorEval) {
-			return CellValue.getError(((ErrorEval)eval).getErrorCode());
+			//20110407, henrichne@zkoss.org: degenerate CIRCULAR_REF_ERROR to REF_INVALID
+			cv = CellValue.getError(((ErrorEval)eval).getErrorCode() == ErrorEval.CIRCULAR_REF_ERROR.getErrorCode() ?
+					ErrorEval.REF_INVALID.getErrorCode() : ((ErrorEval)eval).getErrorCode());
+		}
+		if (cv != null) {
+			if (eval instanceof HyperlinkEval) {
+				cv.setHyperlink(((HyperlinkEval)eval).getHyperlink());
+			}
+			return cv;
 		}
 		throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
 	}
-
-    /**
-     * Whether to ignore missing references to external workbooks and
-     * use cached formula results in the main workbook instead.
-     * <p>
-     * In some cases exetrnal workbooks referenced by formulas in the main workbook are not avaiable.
-     * With this method you can control how POI handles such missing references:
-     * <ul>
-     *     <li>by default ignoreMissingWorkbooks=false and POI throws {@link org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException}
-     *     if an external reference cannot be resolved</li>
-     *     <li>if ignoreMissingWorkbooks=true then POI uses cached formula result
-     *     that already exists in the main workbook</li>
-     * </ul>
-     *
-     * @param ignore whether to ignore missing references to external workbooks
-     */
-    public void setIgnoreMissingWorkbooks(boolean ignore){
-        _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
-    }
-
+	
+	//20111124, henrichen@zkoss.org: evaluate with sheet and formula text only.
+	@Override
+	public CellValue evaluateFormula(int sheetIndex, String formula) {
+		ValueEval eval = _bookEvaluator.evaluate(sheetIndex, formula, false);
+		return getCellValueByValueEval(eval);
+	}
+	//20111128, henrichen@zkoss.org: evaluate with sheet and formula text and return ValueEval.
+	@Override
+	public ValueEval evaluateFormulaValueEval(int sheetIndex, String formula, boolean ignoreDereference) {
+		return _bookEvaluator.evaluate(sheetIndex, formula, ignoreDereference);
+	}
 }

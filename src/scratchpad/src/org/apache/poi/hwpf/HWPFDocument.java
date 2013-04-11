@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf;
+package org.zkoss.poi.hwpf;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -24,51 +24,51 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hwpf.model.BookmarksTables;
-import org.apache.poi.hwpf.model.CHPBinTable;
-import org.apache.poi.hwpf.model.ComplexFileTable;
-import org.apache.poi.hwpf.model.DocumentProperties;
-import org.apache.poi.hwpf.model.EscherRecordHolder;
-import org.apache.poi.hwpf.model.FSPADocumentPart;
-import org.apache.poi.hwpf.model.FSPATable;
-import org.apache.poi.hwpf.model.FieldsTables;
-import org.apache.poi.hwpf.model.FontTable;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.NoteType;
-import org.apache.poi.hwpf.model.NotesTables;
-import org.apache.poi.hwpf.model.PAPBinTable;
-import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
-import org.apache.poi.hwpf.model.SavedByTable;
-import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.ShapesTable;
-import org.apache.poi.hwpf.model.SinglentonTextPiece;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.TextPiece;
-import org.apache.poi.hwpf.model.TextPieceTable;
-import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.hwpf.usermodel.Bookmarks;
-import org.apache.poi.hwpf.usermodel.BookmarksImpl;
-import org.apache.poi.hwpf.usermodel.Field;
-import org.apache.poi.hwpf.usermodel.Fields;
-import org.apache.poi.hwpf.usermodel.FieldsImpl;
-import org.apache.poi.hwpf.usermodel.HWPFList;
-import org.apache.poi.hwpf.usermodel.Notes;
-import org.apache.poi.hwpf.usermodel.NotesImpl;
-import org.apache.poi.hwpf.usermodel.OfficeDrawings;
-import org.apache.poi.hwpf.usermodel.OfficeDrawingsImpl;
-import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.EntryUtils;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hpsf.DocumentSummaryInformation;
+import org.zkoss.poi.hpsf.SummaryInformation;
+import org.zkoss.poi.hwpf.model.BookmarksTables;
+import org.zkoss.poi.hwpf.model.CHPBinTable;
+import org.zkoss.poi.hwpf.model.ComplexFileTable;
+import org.zkoss.poi.hwpf.model.DocumentProperties;
+import org.zkoss.poi.hwpf.model.EscherRecordHolder;
+import org.zkoss.poi.hwpf.model.FSPADocumentPart;
+import org.zkoss.poi.hwpf.model.FSPATable;
+import org.zkoss.poi.hwpf.model.FieldsTables;
+import org.zkoss.poi.hwpf.model.FontTable;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.model.NoteType;
+import org.zkoss.poi.hwpf.model.NotesTables;
+import org.zkoss.poi.hwpf.model.PAPBinTable;
+import org.zkoss.poi.hwpf.model.PicturesTable;
+import org.zkoss.poi.hwpf.model.RevisionMarkAuthorTable;
+import org.zkoss.poi.hwpf.model.SavedByTable;
+import org.zkoss.poi.hwpf.model.SectionTable;
+import org.zkoss.poi.hwpf.model.ShapesTable;
+import org.zkoss.poi.hwpf.model.SinglentonTextPiece;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.model.SubdocumentType;
+import org.zkoss.poi.hwpf.model.TextPiece;
+import org.zkoss.poi.hwpf.model.TextPieceTable;
+import org.zkoss.poi.hwpf.model.io.HWPFFileSystem;
+import org.zkoss.poi.hwpf.model.io.HWPFOutputStream;
+import org.zkoss.poi.hwpf.usermodel.Bookmarks;
+import org.zkoss.poi.hwpf.usermodel.BookmarksImpl;
+import org.zkoss.poi.hwpf.usermodel.Field;
+import org.zkoss.poi.hwpf.usermodel.Fields;
+import org.zkoss.poi.hwpf.usermodel.FieldsImpl;
+import org.zkoss.poi.hwpf.usermodel.HWPFList;
+import org.zkoss.poi.hwpf.usermodel.Notes;
+import org.zkoss.poi.hwpf.usermodel.NotesImpl;
+import org.zkoss.poi.hwpf.usermodel.OfficeDrawings;
+import org.zkoss.poi.hwpf.usermodel.OfficeDrawingsImpl;
+import org.zkoss.poi.hwpf.usermodel.Range;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.DocumentEntry;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.EntryUtils;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.Internal;
 
 
 /**
@@ -80,8 +80,8 @@ import org.apache.poi.util.Internal;
  */
 public final class HWPFDocument extends HWPFDocumentCore
 {
-    static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
-    private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
+    static final String PROPERTY_PRESERVE_BIN_TABLES = "org.zkoss.poi.hwpf.preserveBinTables";
+    private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.zkoss.poi.hwpf.preserveTextTable";
 
     private static final String STREAM_DATA = "Data";
     private static final String STREAM_TABLE_0 = "0Table";

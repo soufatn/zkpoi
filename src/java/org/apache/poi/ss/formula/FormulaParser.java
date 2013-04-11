@@ -15,21 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.formula.constant.ErrorConstant;
-import org.apache.poi.ss.formula.ptg.*;
-import org.apache.poi.ss.formula.function.FunctionMetadata;
-import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.CellReference.NameType;
+import org.zkoss.poi.ss.formula.ptg.*;
+import org.zkoss.poi.ss.formula.constant.ErrorConstant;
+import org.zkoss.poi.ss.formula.function.FunctionMetadata;
+import org.zkoss.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.zkoss.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.CellReference.NameType;
 
 /**
  * This class parses a formula string into a List of tokens in RPN order.
@@ -53,6 +53,7 @@ import org.apache.poi.ss.util.CellReference.NameType;
  *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  *  @author Josh Micich
  *  @author David Lewis (DLewis400 at gmail dot com)
+ *  @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public final class FormulaParser {
 	private static final class Identifier {
@@ -87,7 +88,20 @@ public final class FormulaParser {
 
 		private final String _bookName;
 		private final Identifier _sheetIdentifier;
-		public SheetIdentifier(String bookName, Identifier sheetIdentifier) {
+		public SheetIdentifier(String bookName, Identifier sheetIdentifier, FormulaParsingWorkbook book) {
+			if (bookName == null && sheetIdentifier.isQuoted()) { //might be '[Book.xls]Sheet 1'!
+				final String name = sheetIdentifier.getName();
+				if (name.charAt(0) == '[') {
+					int j = name.indexOf(']');
+					if (j > 1) {
+						bookName = name.substring(1, j);
+						sheetIdentifier = new Identifier(name.substring(j+1), true);
+					}
+				}
+			}
+			if (bookName != null) {
+				bookName = book.getBookNameFromExternalLinkIndex(bookName);
+			}
 			_bookName = bookName;
 			_sheetIdentifier = sheetIdentifier;
 		}
@@ -205,7 +219,7 @@ public final class FormulaParser {
 	}
 
 	/** Report What Was Expected */
-	private RuntimeException expected(String s) {
+/*	private RuntimeException expected(String s) {
 		String msg;
 
 		if (look == '=' && _formulaString.substring(0, _pointer-1).trim().length() < 1) {
@@ -218,7 +232,7 @@ public final class FormulaParser {
 		}
 		return new FormulaParseException(msg);
 	}
-
+*/
 	/** Recognize an Alpha Character */
 	private static boolean IsAlpha(char c) {
 		return Character.isLetter(c) || c == '$' || c=='_';
@@ -500,8 +514,10 @@ public final class FormulaParser {
 
 			if (part1.isRowOrColumn() || part2.isRowOrColumn()) {
 				if (dotCount != 2) {
-					throw new FormulaParseException("Dotted range (full row or column) expression '" + part1And2
-							+ "' must have exactly 2 dots.");
+					//henrichen@zkoss.org: shall return #NAME?
+					//throw new FormulaParseException("Dotted range (full row or column) expression '" + part1And2
+					//		+ "' must have exactly 2 dots.");
+					return parseNonRange(savePointer);
 				}
 			}
 			return createAreaRefParseNode(sheetIden, part1, part2);
@@ -564,17 +580,23 @@ public final class FormulaParser {
 			// Only test cases omit the book (expecting it not to be needed)
 			throw new IllegalStateException("Need book to evaluate name '" + name + "'");
 		}
-		EvaluationName evalName = _book.getName(name, _sheetIndex);
+		//20101115, henrichen@zkoss.org: shall provide a temporary defined named record
+		//EvaluationName evalName = _book.getName(name, _sheetIndex);
+		EvaluationName evalName = _book.getOrCreateName(name, _sheetIndex);
 		if (evalName == null) {
-			throw new FormulaParseException("Specified named range '"
-					+ name + "' does not exist in the current workbook.");
+			//20101112, henrichen@zkoss.org: shall return #NAME? error
+			//throw new FormulaParseException("Specified named range '"
+			//		+ name + "' does not exist in the current workbook.");
+			return new ParseNode(ErrPtg.NAME_INVALID);
 		}
-		if (evalName.isRange()) {
-			return new ParseNode(evalName.createPtg());
-		}
+		//20101115, henrichen@zkoss.org: unnecessary check
+		//if (evalName.isRange()) {
+		//	return new ParseNode(evalName.createPtg());
+		//}
 		// TODO - what about NameX ?
-		throw new FormulaParseException("Specified name '"
-				+ name + "' is not a range as expected.");
+		//throw new FormulaParseException("Specified name '"
+		//		+ name + "' is not a range as expected.");
+		return new ParseNode(evalName.createPtg());
 	}
 
 	/**
@@ -652,7 +674,7 @@ public final class FormulaParser {
 	/**
 	 * Matches a zero or one letter-runs followed by zero or one digit-runs.
 	 * Either or both runs man optionally be prefixed with a single '$'.
-	 * (copied+modified from {@link org.apache.poi.ss.util.CellReference#CELL_REF_PATTERN})
+	 * (copied+modified from {@link org.zkoss.poi.ss.util.CellReference#CELL_REF_PATTERN})
 	 */
 	private static final Pattern CELL_REF_PATTERN = Pattern.compile("(\\$?[A-Za-z]+)?(\\$?[0-9]+)?");
 
@@ -827,7 +849,7 @@ public final class FormulaParser {
 			SkipWhite();
 			if (look == '!') {
 				GetChar();
-				return new SheetIdentifier(bookName, iden);
+				return new SheetIdentifier(bookName, iden, _book);
 			}
 			return null;
 		}
@@ -843,7 +865,7 @@ public final class FormulaParser {
 			SkipWhite();
 			if (look == '!') {
 				GetChar();
-				return new SheetIdentifier(bookName, new Identifier(sb.toString(), false));
+				return new SheetIdentifier(bookName, new Identifier(sb.toString(), false), _book);
 			}
 			return null;
 		}
@@ -860,6 +882,7 @@ public final class FormulaParser {
 		switch(ch) {
 			case '.': // dot is OK
 			case '_': // underscore is OK
+			case ':': // colon is OK
 				return true;
 		}
 		return false;
@@ -912,7 +935,9 @@ public final class FormulaParser {
 				// Only test cases omit the book (expecting it not to be needed)
 				throw new IllegalStateException("Need book to evaluate name '" + name + "'");
 			}
-			EvaluationName hName = _book.getName(name, _sheetIndex);
+			//20101112, henrichen@zkoss.org: shall provide a temporary defined named record
+			//EvaluationName hName = _book.getName(name, _sheetIndex);
+			EvaluationName hName = _book.getOrCreateName(name, _sheetIndex);
 			if (hName == null) {
 
 				nameToken = _book.getNameXPtg(name);
@@ -921,11 +946,12 @@ public final class FormulaParser {
 							+ "' is completely unknown in the current workbook");
 				}
 			} else {
-				if (!hName.isFunctionName()) {
+				//20101112, henrichen@zkoss.org: unnecessary check
+/*				if (!hName.isFunctionName()) {
 					throw new FormulaParseException("Attempt to use name '" + name
 							+ "' as a function, but defined name in workbook does not refer to a function");
 				}
-
+*/
 				// calls to user-defined functions within the workbook
 				// get a Name token which points to a defined name record
 				nameToken = hName.createPtg();
@@ -1121,7 +1147,7 @@ public final class FormulaParser {
 		if (look == '.') {
 			return new ParseNode(parseNumber());
 		}
-		throw expected("cell ref or constant literal");
+		throw expected("cell reference or constant literal");
 	}
 
 
@@ -1292,7 +1318,7 @@ public final class FormulaParser {
 		Match('#');
 		String part1 = parseUnquotedIdentifier().toUpperCase();
 		if (part1 == null) {
-			throw expected("remainder of error constant literal");
+			throw expected("valid error constant literal");
 		}
 
 		switch(part1.charAt(0)) {
@@ -1579,5 +1605,19 @@ end;
 		// RVA is for 'operand class': 'reference', 'value', 'array'
 		oct.transformFormula(_rootNode);
 		return ParseNode.toTokenArray(_rootNode);
+	}
+	
+	//20101214, henrichen@zkoss.org: make parse error more end user readable
+	private RuntimeException expected(String s) {
+		String msg;
+	
+		if (look == '=' && _formulaString.substring(0, _pointer-1).trim().length() < 1) {
+			msg = "The specified formula '" + _formulaString
+				+ "' cannot starts with two equals signs.";
+		} else {
+			msg = "The specified formula '" + _formulaString
+				+ "' contains an error. Expects " + s + ".";
+		}
+		return new FormulaParseException(msg);
 	}
 }

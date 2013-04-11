@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 import java.awt.*;
 import java.awt.font.TextLayout;
@@ -55,8 +55,7 @@ class TextFragment {
      * @return full height of this text run which is sum of ascent, descent and leading
      */
     public float getHeight(){
-        double h = Math.ceil(_layout.getAscent()) + Math.ceil(_layout.getDescent()) + _layout.getLeading();
-        return (float)h;
+        return _layout.getAscent() + _layout.getDescent() + _layout.getLeading();
     }
 
     /**

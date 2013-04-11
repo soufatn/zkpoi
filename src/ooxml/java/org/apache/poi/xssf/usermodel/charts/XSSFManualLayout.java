@@ -15,14 +15,14 @@
    limitations under the License.
    ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.charts;
+package org.zkoss.poi.xssf.usermodel.charts;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.ss.usermodel.charts.ManualLayout;
-import org.apache.poi.ss.usermodel.charts.LayoutMode;
-import org.apache.poi.ss.usermodel.charts.LayoutTarget;
-import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.ss.usermodel.charts.ManualLayout;
+import org.zkoss.poi.ss.usermodel.charts.LayoutMode;
+import org.zkoss.poi.ss.usermodel.charts.LayoutTarget;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayout;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTManualLayout;
@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutMode;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutTarget;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
 
 /**
  * Represents a SpreadsheetML manual layout.

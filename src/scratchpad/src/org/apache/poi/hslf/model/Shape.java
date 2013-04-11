@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.record.ColorSchemeAtom;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 import java.util.*;
 import java.awt.*;
@@ -126,7 +126,7 @@ public abstract class Shape {
 
     /**
      * @return type of the shape.
-     * @see org.apache.poi.hslf.record.RecordTypes
+     * @see org.zkoss.poi.hslf.record.RecordTypes
      */
     public int getShapeType(){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
@@ -135,7 +135,7 @@ public abstract class Shape {
 
     /**
      * @param type type of the shape.
-     * @see org.apache.poi.hslf.record.RecordTypes
+     * @see org.zkoss.poi.hslf.record.RecordTypes
      */
     public void setShapeType(int type){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
@@ -363,73 +363,14 @@ public abstract class Shape {
         _sheet = sheet;
     }
 
-    Color getColor(short colorProperty, short opacityProperty, int defaultColor){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)getEscherProperty(opt, colorProperty);
-        if(p == null && defaultColor == -1) return null;
-
-        int val = p == null ? defaultColor : p.getPropertyValue();
-
-        int a = (val >> 24) & 0xFF;
-        int b = (val >> 16) & 0xFF;
-        int g = (val >> 8) & 0xFF;
-        int r = (val >> 0) & 0xFF;
-
-        boolean fPaletteIndex = (a & 1) != 0;
-        boolean fPaletteRGB = (a & (1 << 1)) != 0;
-        boolean fSystemRGB = (a & (1 << 2)) != 0;
-        boolean fSchemeIndex = (a & (1 << 3)) != 0;
-        boolean fSysIndex = (a & (1 << 4)) != 0;
-
-        Sheet sheet = getSheet();
-        if (fSchemeIndex && sheet != null)
-        {
-            //red is the index to the color scheme
-            ColorSchemeAtom ca = sheet.getColorScheme();
-            int schemeColor = ca.getColor(r);
-
-            r = (schemeColor >> 0) & 0xFF;
-            g = (schemeColor >> 8) & 0xFF;
-            b = (schemeColor >> 16) & 0xFF;
-        } else if (fPaletteIndex){
-            //TODO
-        } else if (fPaletteRGB){
-            //TODO
-        } else if (fSystemRGB){
-            //TODO
-        } else if (fSysIndex){
-            //TODO
-        }
-
-        EscherSimpleProperty op = (EscherSimpleProperty)getEscherProperty(opt, opacityProperty);
-        int defaultOpacity = 0x00010000;
-        int opacity = op == null ? defaultOpacity : op.getPropertyValue();
-        int i = (opacity >> 16);
-        int f = (opacity >> 0) & 0xFFFF ;
-        double alpha = (i + f/65536.0)*255;
-        return new Color(r, g, b, (int)alpha);
-    }
-
-    Color toRGB(int val){
-        int a = (val >> 24) & 0xFF;
-        int b = (val >> 16) & 0xFF;
-        int g = (val >> 8) & 0xFF;
-        int r = (val >> 0) & 0xFF;
-
-        if(a == 0xFE){
-            // Color is an sRGB value specified by red, green, and blue fields.
-        } else if (a == 0xFF){
-            // Color is undefined.
-        } else {
-            // index in the color scheme
+    protected Color getColor(int rgb, int alpha){
+        if (rgb >= 0x8000000) {
+            int idx = rgb - 0x8000000;
             ColorSchemeAtom ca = getSheet().getColorScheme();
-            int schemeColor = ca.getColor(a);
-
-            r = (schemeColor >> 0) & 0xFF;
-            g = (schemeColor >> 8) & 0xFF;
-            b = (schemeColor >> 16) & 0xFF;
+            if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
         }
-        return new Color(r, g, b);
+        Color tmp = new Color(rgb, true);
+        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed(), alpha);
     }
 
     /**

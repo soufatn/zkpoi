@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -39,7 +39,6 @@ public class SXSSFRow implements Row
     short _style=-1;
     short _height=-1;
     boolean _zHeight = false;
-    int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
 
     public SXSSFRow(SXSSFSheet sheet, int initialSize)
     {
@@ -54,14 +53,6 @@ public class SXSSFRow implements Row
     {
         return _height!=-1;
     }
-
-    int getOutlineLevel(){
-        return _outlineLevel;
-    }
-    void setOutlineLevel(int level){
-        _outlineLevel = level;
-    }
-
 //begin of interface implementation
     public Iterator<Cell> iterator()
     {
@@ -97,8 +88,6 @@ public class SXSSFRow implements Row
      */
     public Cell createCell(int column, int type)
     {
-        checkBounds(column);
-
         if(column>=_cells.length)
         {
             SXSSFCell[] newCells=new SXSSFCell[Math.max(column+1,_cells.length*2)];
@@ -108,19 +97,6 @@ public class SXSSFRow implements Row
         _cells[column]=new SXSSFCell(this,type);
         if(column>_maxColumn) _maxColumn=column;
         return _cells[column];
-    }
-
-    /**
-     * @throws RuntimeException if the bounds are exceeded.
-     */
-    private static void checkBounds(int cellIndex) {
-        SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
-        int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
-        if (cellIndex < 0 || cellIndex > maxcol) {
-            throw new IllegalArgumentException("Invalid column index (" + cellIndex
-                    + ").  Allowable column range for " + v.name() + " is (0.."
-                    + maxcol + ") or ('A'..'" + v.getLastColumnName() + "')");
-        }
     }
 
     /**
@@ -174,7 +150,7 @@ public class SXSSFRow implements Row
      *
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
-     * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
+     * @see #getCell(int, org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy)
      */
     public Cell getCell(int cellnum) {
         if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
@@ -202,7 +178,7 @@ public class SXSSFRow implements Row
     }
 
     /**
-     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     * Returns the cell at the given (0 based) index, with the specified {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
      * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
@@ -471,5 +447,12 @@ public class SXSSFRow implements Row
             throw new UnsupportedOperationException();
         }
     }
+	@Override
+	public boolean isCustomHeight() {
+		return false;
+	}
+	@Override
+	public void setCustomHeight(boolean b) {
+	}
 }
 

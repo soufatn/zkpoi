@@ -15,12 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 import java.util.Iterator;
+import java.util.List;
 
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * High level representation of a Excel worksheet.
@@ -889,6 +890,12 @@ public interface Sheet extends Iterable<Row> {
 
 
     /**
+     * 
+     * @return <code>true</code> if the sheet already has an autofilter 
+     */
+    boolean isAutoFilterMode(); 
+    
+    /**
      * Sets array formula to specified region for result.
      *
      * @param formula text representation of the formula
@@ -905,6 +912,13 @@ public interface Sheet extends Iterable<Row> {
      */
     CellRange<? extends Cell> removeArrayFormula(Cell cell);
     
+    
+    /**
+     * remove the autoFilter
+     * @return the {@link CellRange} of cells affected by this change
+     */
+    CellRangeAddress removeAutoFilter();
+    
     public DataValidationHelper getDataValidationHelper();
 
 	/**
@@ -918,7 +932,7 @@ public interface Sheet extends Iterable<Row> {
      * 
      * @param range the range of cells to filter
      */
-    AutoFilter setAutoFilter(CellRangeAddress range);
+    public AutoFilter setAutoFilter(CellRangeAddress range);
 
     /**
      * The 'Conditional Formatting' facet for this <tt>Sheet</tt>
@@ -927,4 +941,19 @@ public interface Sheet extends Iterable<Row> {
      */
     SheetConditionalFormatting getSheetConditionalFormatting();
 
+    //20110509, henrichen@zkoss.org: handle autofilter
+    /**
+     * Returns AutoFilter of this sheet; null if not exist.
+     * @return AutoFilter of this sheet; null if not exist.
+     */
+    public AutoFilter getAutoFilter();
+
+    //20110511, peterkuo@potix.com
+    public void removeValidationData(DataValidation dataValidation);
+    
+    //20111122, henrichen@zkoss.org: returns data validation of this sheet
+    public List<DataValidation> getDataValidations();
+
+	//20111124, henrichen@zkoss.org: returns data validation of the specified row,col
+	public DataValidation getDataValidation(int row, int col);
 }

@@ -14,7 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
+
 
 /**
  * High level representation of spreadsheet drawing.
@@ -64,4 +65,24 @@ public interface Drawing {
 	 * @return the newly created client anchor
 	 */
 	ClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2, int col1, int row1, int col2, int row2);
+
+	//20111109, henrichen@zkoss.org: delete Picture
+	/**
+	 * Remove an existing picture
+	 * @param pic the picture to be removed
+	 */
+	void deletePicture(Picture pic);
+	
+	//20111110, henrichen@zkoss.org: change Picture anchor
+	void movePicture(Picture pic, ClientAnchor anchor);
+
+	//20111110, henrichen@zkoss.org: change Picture anchor
+	void moveChart(ZssChartX chart, ClientAnchor anchor);
+	
+	//20111114, henrichen@zkoss.org: delete Chart
+	/**
+	 * Remove an existing chart
+	 * @param chartX the chart to be removed
+	 */
+	void deleteChart(ZssChartX chartX);
 }

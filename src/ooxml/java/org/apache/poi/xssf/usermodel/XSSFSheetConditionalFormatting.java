@@ -17,15 +17,16 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.ConditionalFormatting;
-import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.usermodel.ComparisonOperator;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.hssf.record.cf.CellRangeUtil;
+import org.zkoss.poi.ss.usermodel.ConditionalFormatting;
+import org.zkoss.poi.ss.usermodel.ConditionalFormattingRule;
+import org.zkoss.poi.ss.usermodel.SheetConditionalFormatting;
+import org.zkoss.poi.ss.usermodel.ComparisonOperator;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.hssf.record.cf.CellRangeUtil;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
@@ -33,6 +34,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormatti
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 /**
@@ -51,7 +53,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * TODO - formulas containing cell references are currently not parsed properly
      *
      * @param comparisonOperation - a constant value from
-     *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
+     *		 <tt>{@link org.zkoss.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
      * <ul>
      *		 <li>BETWEEN</li>
      *		 <li>NOT_BETWEEN</li>
@@ -65,8 +67,8 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      * </p>
      * @param formula1 - formula for the valued, compared with the cell
      * @param formula2 - second formula (only used with
-     * {@link org.apache.poi.ss.usermodel.ComparisonOperator#BETWEEN}) and
-     * {@link org.apache.poi.ss.usermodel.ComparisonOperator#NOT_BETWEEN} operations)
+     * {@link org.zkoss.poi.ss.usermodel.ComparisonOperator#BETWEEN}) and
+     * {@link org.zkoss.poi.ss.usermodel.ComparisonOperator#NOT_BETWEEN} operations)
      */
     public XSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,

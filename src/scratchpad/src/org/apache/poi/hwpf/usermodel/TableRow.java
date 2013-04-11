@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.TableSprmUncompressor;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.sprm.TableSprmUncompressor;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 public final class TableRow extends Range
 {

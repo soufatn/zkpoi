@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval;
+package org.zkoss.poi.ss.formula.eval;
 
-import org.apache.poi.ss.formula.TwoDEval;
+import org.zkoss.poi.ss.formula.TwoDEval;
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
@@ -90,4 +90,7 @@ public interface AreaEval extends TwoDEval {
      * of this area
      */
     AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx);
+    
+    //20111125, henrichen@zkoss.org: return the sheet depth
+    int getDepth();
 }

@@ -15,16 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.util.ImageUtils;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.hssf.model.InternalWorkbook;
+
+import org.zkoss.poi.ss.usermodel.PictureData;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
@@ -226,9 +232,60 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      *
      * @return picture data for this shape
      */
-    public HSSFPictureData getPictureData(){
+/*    public HSSFPictureData getPictureData(){
         InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
     	EscherBlipRecord blipRecord = iwb.getBSERecord(_pictureIndex).getBlipRecord();
     	return new HSSFPictureData(blipRecord);
     }
+*/
+    //20101014, henrichen@zkoss.org: picture name and alt
+    public PictureData getPictureData() {
+		final int pictureIndex = getPictureIndex();
+		final EscherBSERecord bseRecord = 
+			_patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(pictureIndex);
+        return bseRecord != null ? new HSSFPictureData(bseRecord) : null;
+    }
+    
+	private String _name;
+    private String _alt;
+    
+    public String getName() {
+		return _name;
+	}
+
+	public void setName(String name) {
+		this._name = name;
+	}
+
+	public String getAlt() {
+		return _alt;
+	}
+
+	public void setAlt(String alt) {
+		this._alt = alt;
+	}
+	
+	public ClientAnchor getClientAnchor() {
+		return (ClientAnchor) getAnchor();
+	}
+
+	//20111109, henrichen@zkoss.org: identify the picture widget
+	@Override
+	public String getPictureId() {
+		return ""+getPictureIndex();
+	}
+
+	//20111110, henrichen@zkoss.org: update picture anchor
+	@Override
+	public void setClientAnchor(ClientAnchor newanchor) {
+        HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
+    	anchor.setCol1(newanchor.getCol1());
+    	anchor.setCol2(newanchor.getCol2());
+    	anchor.setDx1(newanchor.getDx1());
+    	anchor.setDx2(newanchor.getDx2());
+    	anchor.setDy1(newanchor.getDy1());
+    	anchor.setDy2(newanchor.getDy2());
+    	anchor.setRow1(newanchor.getRow1());
+    	anchor.setRow2(newanchor.getRow2());
+	}
 }

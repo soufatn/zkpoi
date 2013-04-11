@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Label Record (0x0204) - read only support for strings stored directly in the cell..  Don't
@@ -28,7 +28,7 @@ import org.apache.poi.util.POILogger;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
- * @see org.apache.poi.hssf.record.LabelSSTRecord
+ * @see org.zkoss.poi.hssf.record.LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
     private final static POILogger logger = POILogFactory.getLogger(LabelRecord.class);

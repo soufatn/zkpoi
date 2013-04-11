@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.FRDAbstractType;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.types.FRDAbstractType;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public final class FootnoteReferenceDescriptor extends FRDAbstractType
