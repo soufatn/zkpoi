@@ -14,13 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
-import org.apache.poi.ss.usermodel.ConditionalFormatting;
-import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
+import org.zkoss.poi.hssf.record.aggregates.CFRecordsAggregate;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.Region;
 
 /**
  * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 
@@ -44,7 +43,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  *  </LI>
  *  </UL>
  * 
- * Use {@link org.apache.poi.hssf.usermodel.HSSFSheet#getSheetConditionalFormatting()} to get access to an instance of this class.
+ * Use {@link org.zkoss.poi.hssf.usermodel.HSSFSheet#getSheetConditionalFormatting()} to get access to an instance of this class.
  * <P>
  * To create a new Conditional Formatting set use the following approach:
  * 
@@ -75,7 +74,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * 
  * @author Dmitriy Kumshayev
  */
-public final class HSSFConditionalFormatting  implements ConditionalFormatting
+public final class HSSFConditionalFormatting
 {
 	private final HSSFWorkbook _workbook;
 	private final CFRecordsAggregate cfAggregate;
@@ -98,10 +97,10 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 	/**
 	 * @deprecated (Aug-2008) use {@link HSSFConditionalFormatting#getFormattingRanges()}
 	 */
-	public org.apache.poi.ss.util.Region[] getFormattingRegions()
+	public Region[] getFormattingRegions()
 	{
 		CellRangeAddress[] cellRanges = getFormattingRanges();
-		return org.apache.poi.ss.util.Region.convertCellRangesToRegions(cellRanges);
+		return Region.convertCellRangesToRegions(cellRanges);
 	}
 	/**
 	 * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 
@@ -123,10 +122,6 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 		cfAggregate.setRule(idx, cfRule.getCfRuleRecord());
 	}
 
-    public void setRule(int idx, ConditionalFormattingRule cfRule){
-        setRule(idx, (HSSFConditionalFormattingRule)cfRule);
-    }
-
 	/**
 	 * add a Conditional Formatting rule. 
 	 * Excel allows to create up to 3 Conditional Formatting rules.
@@ -136,10 +131,6 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 	{
 		cfAggregate.addRule(cfRule.getCfRuleRecord());
 	}
-
-    public void addRule(ConditionalFormattingRule cfRule){
-        addRule((HSSFConditionalFormattingRule)cfRule);
-    }
 
 	/**
 	 * @return the Conditional Formatting rule at position idx.

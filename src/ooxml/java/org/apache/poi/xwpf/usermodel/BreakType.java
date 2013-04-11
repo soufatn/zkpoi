@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,25 +59,26 @@ public enum BreakType {
     private final int value;
 
     private BreakType(int val) {
-       value = val;
+	value = val;
     }
 
     public int getValue() {
-       return value;
+	return value;
     }
 
     private static Map<Integer, BreakType> imap = new HashMap<Integer, BreakType>();
     static {
-       for (BreakType p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+	for (BreakType p : values()) {
+	    imap.put(p.getValue(), p);
+	}
     }
 
     public static BreakType valueOf(int type) {
-       BreakType bType = imap.get(new Integer(type));
-       if (bType == null)
-          throw new IllegalArgumentException("Unknown break type: "
-                + type);
-       return bType;
+	BreakType bType = imap.get(type);
+	if (bType == null)
+	    throw new IllegalArgumentException("Unknown break type: "
+		    + type);
+	return bType;
     }
+
 }

@@ -15,15 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
-import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
 
 /**
  * Mimics the 'data view' of a cell. This allows formula evaluator
  * to return a CellValue instead of precasting the value to String
  * or Number or boolean type.
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
+ * @author henrichen@zkoss.org: handle HYPERLINK function
  */
 public final class CellValue {
 	public static final CellValue TRUE = new CellValue(Cell.CELL_TYPE_BOOLEAN, 0.0, true,  null, 0);
@@ -109,5 +110,14 @@ public final class CellValue {
 				return ErrorEval.getText(_errorCode);
 		}
 		return "<error unexpected cell type " + _cellType + ">";
+	}
+	
+	//20100719, henrichen@zkoss.org: handle formula function HYPERLINK
+	private Hyperlink _hyperlink;
+	public Hyperlink getHyperlink() {
+		return _hyperlink;
+	}
+	public void setHyperlink(Hyperlink hyperlink) {
+		_hyperlink = hyperlink;
 	}
 }

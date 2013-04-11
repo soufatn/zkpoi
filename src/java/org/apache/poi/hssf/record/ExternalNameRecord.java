@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.ss.formula.constant.ConstantValueParser;
-import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.ss.formula.constant.ConstantValueParser;
+import org.zkoss.poi.ss.formula.Formula;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * EXTERNALNAME (0x0023)<p/>
@@ -176,16 +176,14 @@ public final class ExternalNameRecord extends StandardRecord {
             // another switch: the fWantAdvise bit specifies whether the body describes
             // an external defined name or a DDE data item
             if(isAutomaticLink()){
-                if(in.available() > 0) {
-                   //body specifies DDE data item
-                   int nColumns = in.readUByte() + 1;
-                   int nRows = in.readShort() + 1;
-   
-                   int totalCount = nRows * nColumns;
-                   _ddeValues = ConstantValueParser.parse(in, totalCount);
-                   _nColumns = nColumns;
-                   _nRows = nRows;
-                }
+                //body specifies DDE data item
+                int nColumns = in.readUByte() + 1;
+                int nRows = in.readShort() + 1;
+
+                int totalCount = nRows * nColumns;
+                _ddeValues = ConstantValueParser.parse(in, totalCount);
+                _nColumns = nColumns;
+                _nRows = nRows;
             } else {
                 //body specifies an external defined name
                 int formulaLen = in.readUShort();

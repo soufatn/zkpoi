@@ -14,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.eventusermodel;
+package org.zkoss.poi.xssf.eventusermodel;
 
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
+import org.zkoss.poi.ss.usermodel.DataFormatter;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
+import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -242,21 +242,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    if(formulasNotResults) {
                       thisStr = formula.toString();
                    } else {
-                      String fv = value.toString();
-                      
-                      if (this.formatString != null) {
-                         try {
-                            // Try to use the value as a formattable number
-                            double d = Double.parseDouble(fv);
-                            thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
-                         } catch(NumberFormatException e) {
-                            // Formula is a String result not a Numeric one
-                            thisStr = fv;
-                         }
-                      } else {
-                         // No formating applied, just do raw value in all cases
-                         thisStr = fv;
-                      }
+                      thisStr = value.toString();
                    }
                    break;
 

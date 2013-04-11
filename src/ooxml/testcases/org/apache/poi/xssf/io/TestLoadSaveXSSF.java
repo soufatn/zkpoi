@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.io;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -27,6 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.POIDataSamples;
 
 

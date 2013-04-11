@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.ObjectData;
-import org.apache.poi.hslf.record.ExObjList;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.ExEmbed;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.record.ExEmbed;
+import org.zkoss.poi.hslf.record.ExObjList;
+import org.zkoss.poi.hslf.record.Record;
+import org.zkoss.poi.hslf.usermodel.ObjectData;
+import org.zkoss.poi.hslf.usermodel.SlideShow;
+import org.zkoss.poi.util.POILogger;
 
 
 /**
@@ -83,17 +83,16 @@ public final class OLEShape extends Picture {
         ObjectData[] ole = ppt.getEmbeddedObjects();
 
         //persist reference
-        ExEmbed exEmbed = getExEmbed();
-        ObjectData data = null;
-        if(exEmbed != null) {
-            int ref = exEmbed.getExOleObjAtom().getObjStgDataRef();
+        int ref = getExEmbed().getExOleObjAtom().getObjStgDataRef();
 
-            for (int i = 0; i < ole.length; i++) {
-                if(ole[i].getExOleObjStg().getPersistId() == ref) {
-                    data=ole[i];
-                }
+        ObjectData data = null;
+
+        for (int i = 0; i < ole.length; i++) {
+            if(ole[i].getExOleObjStg().getPersistId() == ref) {
+                data=ole[i];
             }
         }
+
         if (data==null) {
             logger.log(POILogger.WARN, "OLE data not found");
         }

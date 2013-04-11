@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpsf;
+package org.zkoss.poi.hpsf;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * <p>Class for writing little-endian data and more.</p>
@@ -39,12 +39,17 @@ public class TypeWriter
      * @return The number of bytes that have been written.
      * @exception IOException if an I/O error occurs
      */
-    public static int writeToStream( final OutputStream out, final short n )
-            throws IOException
+    public static int writeToStream(final OutputStream out, final short n)
+        throws IOException
     {
-        LittleEndian.putShort( out, n ); // FIXME: unsigned
-        return LittleEndian.SHORT_SIZE;
+        final int length = LittleEndian.SHORT_SIZE;
+        byte[] buffer = new byte[length];
+        LittleEndian.putShort(buffer, 0, n); // FIXME: unsigned
+        out.write(buffer, 0, length);
+        return length;
     }
+
+
 
     /**
      * <p>Writes a four-byte value to an output stream.</p>
@@ -54,12 +59,18 @@ public class TypeWriter
      * @exception IOException if an I/O error occurs
      * @return The number of bytes written to the output stream. 
      */
-    public static int writeToStream( final OutputStream out, final int n )
-            throws IOException
+    public static int writeToStream(final OutputStream out, final int n)
+        throws IOException
     {
-        LittleEndian.putInt( n, out );
-        return LittleEndian.INT_SIZE;
+        final int l = LittleEndian.INT_SIZE;
+        final byte[] buffer = new byte[l];
+        LittleEndian.putInt(buffer, 0, n);
+        out.write(buffer, 0, l);
+        return l;
+        
     }
+
+
 
     /**
      * <p>Writes a eight-byte value to an output stream.</p>
@@ -67,14 +78,20 @@ public class TypeWriter
      * @param out The stream to write to.
      * @param n The value to write.
      * @exception IOException if an I/O error occurs
-     * @return The number of bytes written to the output stream.
+     * @return The number of bytes written to the output stream. 
      */
-    public static int writeToStream( final OutputStream out, final long n )
-            throws IOException
+    public static int writeToStream(final OutputStream out, final long n)
+        throws IOException
     {
-        LittleEndian.putLong( n, out );
-        return LittleEndian.LONG_SIZE;
+        final int l = LittleEndian.LONG_SIZE;
+        final byte[] buffer = new byte[l];
+        LittleEndian.putLong(buffer, 0, n);
+        out.write(buffer, 0, l);
+        return l;
+        
     }
+
+
 
     /**
      * <p>Writes an unsigned two-byte value to an output stream.</p>
@@ -83,15 +100,17 @@ public class TypeWriter
      * @param n The value to write
      * @exception IOException if an I/O error occurs
      */
-    public static void writeUShortToStream( final OutputStream out, final int n )
-            throws IOException
+    public static void writeUShortToStream(final OutputStream out, final int n)
+        throws IOException
     {
         int high = n & 0xFFFF0000;
-        if ( high != 0 )
-            throw new IllegalPropertySetDataException( "Value " + n
-                    + " cannot be represented by 2 bytes." );
-        LittleEndian.putUShort( n, out );
+        if (high != 0)
+            throw new IllegalPropertySetDataException
+                ("Value " + n + " cannot be represented by 2 bytes.");
+        writeToStream(out, (short) n);
     }
+
+
 
     /**
      * <p>Writes an unsigned four-byte value to an output stream.</p>
@@ -101,16 +120,17 @@ public class TypeWriter
      * @return The number of bytes that have been written to the output stream.
      * @exception IOException if an I/O error occurs
      */
-    public static int writeUIntToStream( final OutputStream out, final long n )
-            throws IOException
+    public static int writeUIntToStream(final OutputStream out, final long n)
+        throws IOException
     {
         long high = n & 0xFFFFFFFF00000000L;
-        if ( high != 0 && high != 0xFFFFFFFF00000000L )
-            throw new IllegalPropertySetDataException( "Value " + n
-                    + " cannot be represented by 4 bytes." );
-        LittleEndian.putUInt( n, out );
-        return LittleEndian.INT_SIZE;
+        if (high != 0 && high != 0xFFFFFFFF00000000L)
+            throw new IllegalPropertySetDataException
+                ("Value " + n + " cannot be represented by 4 bytes.");
+        return writeToStream(out, (int) n);
     }
+
+
 
     /**
      * <p>Writes a 16-byte {@link ClassID} to an output stream.</p>
@@ -180,11 +200,14 @@ public class TypeWriter
      * @exception IOException if an I/O error occurs
      * @return The number of bytes written to the output stream. 
      */
-    public static int writeToStream( final OutputStream out, final double n )
-            throws IOException
+    public static int writeToStream(final OutputStream out, final double n)
+        throws IOException
     {
-        LittleEndian.putDouble( n, out );
-        return LittleEndian.DOUBLE_SIZE;
+        final int l = LittleEndian.DOUBLE_SIZE;
+        final byte[] buffer = new byte[l];
+        LittleEndian.putDouble(buffer, 0, n);
+        out.write(buffer, 0, l);
+        return l;
     }
 
 }

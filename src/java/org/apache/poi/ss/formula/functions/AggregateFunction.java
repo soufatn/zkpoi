@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -80,41 +80,11 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 		}
 	}
 
-    protected AggregateFunction() {
-        super(false, false);
-    }
+	protected AggregateFunction() {
+		super(false, false);
+	}
 
-    /**
-     * Create an instance to use in the {@link Subtotal} function.
-     *
-     * <p>
-     *     If there are other subtotals within argument refs (or nested subtotals),
-     *     these nested subtotals are ignored to avoid double counting.
-     * </p>
-     *
-     * @param   func  the function to wrap
-     * @return  wrapped instance. The actual math is delegated to the argument function.
-     */
-    /*package*/ static Function subtotalInstance(Function func) {
-        final AggregateFunction arg = (AggregateFunction)func;
-        return new AggregateFunction() {
-            @Override
-            protected double evaluate(double[] values) throws EvaluationException {
-                return arg.evaluate(values);
-            }
-
-            /**
-             *  ignore nested subtotals.
-             */
-            @Override
-            public boolean isSubtotalCounted(){
-                return false;
-            }
-
-        };
-    }
-
-    public static final Function AVEDEV = new AggregateFunction() {
+	public static final Function AVEDEV = new AggregateFunction() {
 		protected double evaluate(double[] values) {
 			return StatsLib.avedev(values);
 		}

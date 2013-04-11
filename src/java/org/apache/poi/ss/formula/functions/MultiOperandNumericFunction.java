@@ -15,18 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
+import org.zkoss.poi.ss.formula.eval.RefEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.eval.ValuesEval;
+import org.zkoss.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -39,10 +40,10 @@ public abstract class MultiOperandNumericFunction implements Function {
 	private final boolean _isReferenceBoolCounted;
 	private final boolean _isBlankCounted;
 
-    protected MultiOperandNumericFunction(boolean isReferenceBoolCounted, boolean isBlankCounted) {
-        _isReferenceBoolCounted = isReferenceBoolCounted;
-        _isBlankCounted = isBlankCounted;
-    }
+	protected MultiOperandNumericFunction(boolean isReferenceBoolCounted, boolean isBlankCounted) {
+		_isReferenceBoolCounted = isReferenceBoolCounted;
+		_isBlankCounted = isBlankCounted;
+	}
 
 	static final double[] EMPTY_DOUBLE_ARRAY = { };
 
@@ -129,13 +130,6 @@ public abstract class MultiOperandNumericFunction implements Function {
 		return retval.toArray();
 	}
 
-    /**
-     *  Whether to count nested subtotals.
-     */
-    public boolean isSubtotalCounted(){
-        return true;
-    }
-
 	/**
 	 * Collects values from a single argument
 	 */
@@ -148,8 +142,7 @@ public abstract class MultiOperandNumericFunction implements Function {
 			for (int rrIx=0; rrIx<height; rrIx++) {
 				for (int rcIx=0; rcIx<width; rcIx++) {
 					ValueEval ve = ae.getValue(rrIx, rcIx);
-                    if(!isSubtotalCounted() && ae.isSubTotal(rrIx, rcIx)) continue;
-                    collectValue(ve, true, temp);
+					collectValue(ve, true, temp);
 				}
 			}
 			return;
@@ -196,6 +189,14 @@ public abstract class MultiOperandNumericFunction implements Function {
 		if (ve == BlankEval.instance) {
 			if (_isBlankCounted) {
 				temp.add(0.0);
+			}
+			return;
+		}
+		//henrichen@zkoss.org: handle multiple ValueEval from 3d area references
+		if (ve instanceof ValuesEval) {
+			ValueEval[] ves = ((ValuesEval) ve).getValueEvals();
+			for(ValueEval xve : ves) {
+				collectValue(xve, isViaReference, temp); //recursive
 			}
 			return;
 		}

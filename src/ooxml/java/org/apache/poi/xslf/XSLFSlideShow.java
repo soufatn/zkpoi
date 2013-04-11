@@ -14,18 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf;
+package org.zkoss.poi.xslf;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.util.Internal;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
@@ -41,15 +35,19 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.xslf.usermodel.XSLFRelation;
 
 /**
- * Experimental class to do low level processing of pptx files.
- * 
- * Most users should use the higher level {@link XMLSlideShow} instead.
+ * Experimental class to do low level processing
+ *  of pptx files.
  *  
  * If you are using these low level classes, then you
  *  will almost certainly need to refer to the OOXML
@@ -78,15 +76,14 @@ public class XSLFSlideShow extends POIXMLDocument {
 		
       embedds = new LinkedList<PackagePart>();
       for (CTSlideIdListEntry ctSlide : getSlideReferences().getSldIdList()) {
-             PackagePart corePart = getCorePart();
-	          PackagePart slidePart = corePart.getRelatedPart(
-	                corePart.getRelationship(ctSlide.getId2()));
-
+	          PackagePart slidePart =
+	                getTargetPart(getCorePart().getRelationship(ctSlide.getId2()));
+	          
 	          for(PackageRelationship rel : slidePart.getRelationshipsByType(OLE_OBJECT_REL_TYPE))
-	              embedds.add(slidePart.getRelatedPart(rel)); // TODO: Add this reference to each slide as well
-
+	              embedds.add(getTargetPart(rel)); // TODO: Add this reference to each slide as well
+	          
 	          for(PackageRelationship rel : slidePart.getRelationshipsByType(PACK_OBJECT_REL_TYPE))
-                  embedds.add(slidePart.getRelatedPart(rel));
+                  embedds.add(getTargetPart(rel));
 		}
 	}
 	public XSLFSlideShow(String file) throws OpenXML4JException, IOException, XmlException {
@@ -116,7 +113,6 @@ public class XSLFSlideShow extends POIXMLDocument {
        }
        return getPresentation().getSldIdLst();
 	}
-    
 	/**
 	 * Returns the references from the presentation to its
 	 *  slide masters.
@@ -130,9 +126,8 @@ public class XSLFSlideShow extends POIXMLDocument {
 	
 	public PackagePart getSlideMasterPart(CTSlideMasterIdListEntry master) throws IOException, XmlException {
 		try {
-		   PackagePart corePart = getCorePart(); 
-			return corePart.getRelatedPart(
-				corePart.getRelationship(master.getId2())
+			return getTargetPart(
+				getCorePart().getRelationship(master.getId2())
 			);
 		} catch(InvalidFormatException e) {
 			throw new XmlException(e);
@@ -152,10 +147,9 @@ public class XSLFSlideShow extends POIXMLDocument {
 
 	public PackagePart getSlidePart(CTSlideIdListEntry slide) throws IOException, XmlException {
 		try {
-	      PackagePart corePart = getCorePart(); 
-	      return corePart.getRelatedPart(
-	         corePart.getRelationship(slide.getId2())
-	      );
+			return getTargetPart(
+					getCorePart().getRelationship(slide.getId2())
+			);
 		} catch(InvalidFormatException e) {
 			throw new XmlException(e);
 		}
@@ -195,7 +189,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 		}
 		
 		try {
-		   return slidePart.getRelatedPart(notes.getRelationship(0));
+			return getTargetPart(notes.getRelationship(0));
 		} catch(InvalidFormatException e) {
 			throw new IllegalStateException(e);
 		}
@@ -239,7 +233,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 		}
 		
 		try {
-			PackagePart cPart = slidePart.getRelatedPart(
+			PackagePart cPart = getTargetPart(
 					commentRels.getRelationship(0)
 			);
 			CmLstDocument commDoc = 

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,34 +30,85 @@ import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.SSCellRange;
-import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFilter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFilterColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFilters;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.hssf.record.PasswordRecord;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellRange;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.usermodel.Footer;
+import org.zkoss.poi.ss.usermodel.Header;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.SSCellRange;
+import org.zkoss.poi.ss.util.SheetUtil;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter;
+import org.zkoss.poi.xssf.model.CommentsTable;
+import org.zkoss.poi.xssf.model.Table;
+import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
+import org.zkoss.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -79,19 +130,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
-    /**
+    
+    
+        
+	/**
      * cache of master shared formulas in this sheet.
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
      */
     private Map<Integer, CTCellFormula> sharedFormulas;
-    private TreeMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
     private XSSFDataValidationHelper dataValidationHelper;    
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
      *
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createSheet()
+     * @see org.zkoss.poi.xssf.usermodel.XSSFWorkbook#createSheet()
      */
     protected XSSFSheet() {
         super();
@@ -144,20 +197,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         // Look for bits we're interested in
         for(POIXMLDocumentPart p : getRelations()){
+        	//TODO: test to dump p
             if(p instanceof CommentsTable) {
                sheetComments = (CommentsTable)p;
                break;
-            }
-            if(p instanceof XSSFTable) {
-               tables.put( p.getPackageRelationship().getId(), (XSSFTable)p );
             }
         }
         
         // Process external hyperlinks for the sheet, if there are any
         initHyperlinks();
+        
+        // for autofilter
+        initAutofilter();
+        
     }
 
-    /**
+	/**
      * Initialize worksheet data when creating a new sheet.
      */
     @Override
@@ -171,7 +226,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private void initRows(CTWorksheet worksheet) {
         _rows = new TreeMap<Integer, XSSFRow>();
-        tables = new TreeMap<String, XSSFTable>();
         sharedFormulas = new HashMap<Integer, CTCellFormula>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
         for (CTRow row : worksheet.getSheetData().getRowArray()) {
@@ -208,7 +262,38 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
     }
 
+    //for autofilter
+    private void initAutofilter(){
+			CTAutoFilter af = worksheet.getAutoFilter();			
+			if(af != null){
+				autoFilter = new XSSFAutoFilter(this, af);
+				fillInAutoFilter(af);
+			}
+				
+    }
+    
     /**
+     * Parse from CTAutoFilter to fill the user model autoFilter
+     * @param af
+     */
+    private void fillInAutoFilter(CTAutoFilter af) {
+		CTFilterColumn[] fcList = af.getFilterColumnArray();
+		if(fcList == null || fcList.length == 0)
+			return;
+		
+		for(CTFilterColumn fc: fcList){
+			autoFilter.addFilterColumn(fc);
+		}
+		
+		List<FilterColumn> fcs = autoFilter.getFilterColumns();
+		if (fcs != null) {
+			for(FilterColumn fc: fcs) {
+				((XSSFFilterColumn)fc).init();
+			}
+		}
+	}
+
+	/**
      * Create a new CTWorksheet instance with all values set to defaults
      *
      * @return a new instance
@@ -334,15 +419,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public void autoSizeColumn(int column, boolean useMergedCells) {
         double width = SheetUtil.getColumnWidth(this, column, useMergedCells);
-
-        if (width != -1) {
-            width *= 256;
-            int maxColumnWidth = 255*256; // The maximum column width for an individual cell is 255 characters
-            if (width > maxColumnWidth) {
-                width = maxColumnWidth;
-            }
-            setColumnWidth(column, (int)(width));
+        if(width != -1){
             columnHelper.setColBestFit(column, true);
+            columnHelper.setCustomWidth(column, true);
+            columnHelper.setColWidth(column, width);
         }
     }
 
@@ -353,7 +433,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public XSSFDrawing createDrawingPatriarch() {
         XSSFDrawing drawing = null;
-        CTDrawing ctDrawing = getCTDrawing();
+        CTDrawing ctDrawing = worksheet.getDrawing();
         if(ctDrawing == null) {
             //drawingNumber = #drawings.size() + 1
             int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
@@ -393,7 +473,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     protected XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
         XSSFVMLDrawing drawing = null;
-        CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
+        CTLegacyDrawing ctDrawing = worksheet.getLegacyDrawing();
         if(ctDrawing == null) {
             if(autoCreate) {
                 //drawingNumber = #drawings.size() + 1
@@ -425,13 +505,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return drawing;
     }
-    
-    protected CTDrawing getCTDrawing() {
-       return worksheet.getDrawing();
-    }
-    protected CTLegacyDrawing getCTLegacyDrawing() {
-       return worksheet.getLegacyDrawing();
-    }
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
@@ -444,54 +517,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
-     *
-     * <p>
-     *     If both colSplit and rowSplit are zero then the existing freeze pane is removed
-     * </p>
-     *
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
-     * @param leftmostColumn   Left column visible in right pane.
      * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
      */
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
-        CTSheetView ctView = getDefaultSheetView();
-
-        // If both colSplit and rowSplit are zero then the existing freeze pane is removed
-        if(colSplit == 0 && rowSplit == 0){
-            if(ctView.isSetPane()) ctView.unsetPane();
-            ctView.setSelectionArray(null);
-            return;
-        }
-
-        if (!ctView.isSetPane()) {
-            ctView.addNewPane();
-        }
-        CTPane pane = ctView.getPane();
-
-        if (colSplit > 0) {
-           pane.setXSplit(colSplit);
-        } else {
-           if(pane.isSetXSplit()) pane.unsetXSplit();
-        }
-        if (rowSplit > 0) {
-           pane.setYSplit(rowSplit);
-        } else {
-           if(pane.isSetYSplit()) pane.unsetYSplit();
-        }
-        
+        CTPane pane = getPane();
+        if (colSplit > 0) pane.setXSplit(colSplit);
+        if (rowSplit > 0) pane.setYSplit(rowSplit);
         pane.setState(STPaneState.FROZEN);
         if (rowSplit == 0) {
-            pane.setTopLeftCell(new CellReference(0, leftmostColumn).formatAsString());
+            pane.setTopLeftCell(new CellReference(0, topRow).formatAsString());
             pane.setActivePane(STPane.TOP_RIGHT);
         } else if (colSplit == 0) {
-            pane.setTopLeftCell(new CellReference(topRow, 0).formatAsString());
+            pane.setTopLeftCell(new CellReference(rowSplit, 0).formatAsString());
             pane.setActivePane(STPane.BOTTOM_LEFT);
         } else {
-            pane.setTopLeftCell(new CellReference(topRow, leftmostColumn).formatAsString());
+            pane.setTopLeftCell(new CellReference(leftmostColumn, topRow).formatAsString());
             pane.setActivePane(STPane.BOTTOM_RIGHT);
         }
 
+        CTSheetView ctView = getDefaultSheetView();
         ctView.setSelectionArray(null);
         CTSelection sel = ctView.addNewSelection();
         sel.setPane(pane.getActivePane());
@@ -502,8 +549,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  need to assign it to a cell though
      *
      * @deprecated since Nov 2009 this method is not compatible with the common SS interfaces,
-     * use {@link org.apache.poi.xssf.usermodel.XSSFDrawing#createCellComment
-     *  (org.apache.poi.ss.usermodel.ClientAnchor)} instead
+     * use {@link org.zkoss.poi.xssf.usermodel.XSSFDrawing#createCellComment
+     *  (org.zkoss.poi.ss.usermodel.ClientAnchor)} instead
      */
     @Deprecated
     public XSSFComment createComment() {
@@ -515,7 +562,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param rownum  row number
      * @return High level {@link XSSFRow} object representing a row in the sheet
-     * @see #removeRow(org.apache.poi.ss.usermodel.Row)
+     * @see #removeRow(org.zkoss.poi.ss.usermodel.Row)
      */
     public XSSFRow createRow(int rownum) {
         CTRow ctRow;
@@ -524,15 +571,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             ctRow = prev.getCTRow();
             ctRow.set(CTRow.Factory.newInstance());
         } else {
-        	if(_rows.isEmpty() || rownum > _rows.lastKey()) {
-        		// we can append the new row at the end
-        		ctRow = worksheet.getSheetData().addNewRow();
-        	} else {
-        		// get number of rows where row index < rownum
-        		// --> this tells us where our row should go
-        		int idx = _rows.headMap(rownum).size();
-        		ctRow = worksheet.getSheetData().insertNewRow(idx);
-        	}
+            ctRow = worksheet.getSheetData().addNewRow();
         }
         XSSFRow r = new XSSFRow(ctRow, this);
         r.setRowNum(rownum);
@@ -548,10 +587,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
      *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_LOWER_RIGHT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_LEFT
-     * @see org.apache.poi.ss.usermodel.Sheet#PANE_UPPER_RIGHT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_LOWER_LEFT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_LOWER_RIGHT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_UPPER_LEFT
+     * @see org.zkoss.poi.ss.usermodel.Sheet#PANE_UPPER_RIGHT
      */
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
@@ -600,9 +639,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
             CTBreak brk = brkArray[i];
-            breaks[i] = (int)brk.getId() - 1;
+            breaks[i] = (int)brk.getId();
         }
         return breaks;
+    }
+
+    private CTPageBreak getSheetTypeColumnBreaks() {
+        if (worksheet.getColBreaks() == null) {
+            worksheet.setColBreaks(CTPageBreak.Factory.newInstance());
+        }
+        return worksheet.getColBreaks();
     }
 
     /**
@@ -674,27 +720,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return getWorkbook().getCellStyleAt((short)(idx == -1 ? 0 : idx));
     }
 
-    /**
-     * Sets whether the worksheet is displayed from right to left instead of from left to right.
-     *
-     * @param value true for right to left, false otherwise.
-     */
-    public void setRightToLeft(boolean value)
-    {
-       CTSheetView view = getDefaultSheetView();
-       view.setRightToLeft(value);
-    }
-
-    /**
-     * Whether the text is displayed in right-to-left mode in the window
-     *
-     * @return whether the text is displayed in right-to-left mode in the window
-     */
-    public boolean isRightToLeft()
-    {
-       CTSheetView view = getDefaultSheetView();
-       return view == null ? false : view.getRightToLeft();
-    }
 
     /**
      * Get whether to display the guts or not,
@@ -775,8 +800,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return worksheet.getHeaderFooter();
     }
-
-
 
     /**
      * Returns the default footer for the sheet,
@@ -975,14 +998,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return null if no pane configured, or the pane information.
      */
     public PaneInformation getPaneInformation() {
-        CTPane pane = getDefaultSheetView().getPane();
-        // no pane configured
-        if(pane == null)  return null;
-
+        CTPane pane = getPane();
         CellReference cellRef = pane.isSetTopLeftCell() ? new CellReference(pane.getTopLeftCell()) : null;
         return new PaneInformation((short)pane.getXSplit(), (short)pane.getYSplit(),
                 (short)(cellRef == null ? 0 : cellRef.getRow()),(cellRef == null ? 0 : cellRef.getCol()),
-                (byte)(pane.getActivePane().intValue() - 1), pane.getState() == STPaneState.FROZEN);
+                (byte)pane.getActivePane().intValue(), pane.getState() == STPaneState.FROZEN);
     }
 
     /**
@@ -1072,7 +1092,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
             CTBreak brk = brkArray[i];
-            breaks[i] = (int)brk.getId() - 1;
+            breaks[i] = (int)brk.getId();
         }
         return breaks;
     }
@@ -1378,25 +1398,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Sets a page break at the indicated row
-     * Breaks occur above the specified row and left of the specified column inclusive.
-     *
-     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
-     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
-     * and rows starting with rownum=4 in the second.
-     *
-     * @param row the row to break, inclusive
      */
     public void setRowBreak(int row) {
         CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
         if (! isRowBroken(row)) {
             CTBreak brk = pgBreak.addNewBrk();
-            brk.setId(row + 1); // this is id of the row element which is 1-based: <row r="1" ... >
-            brk.setMan(true);
-            brk.setMax(SpreadsheetVersion.EXCEL2007.getLastColumnIndex()); //end column of the break
-
-            pgBreak.setCount(pgBreak.sizeOfBrkArray());
-            pgBreak.setManualBreakCount(pgBreak.sizeOfBrkArray());
+            brk.setId(row);
         }
     }
 
@@ -1405,16 +1412,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeColumnBreak(int column) {
-        if (!worksheet.isSetColBreaks()) {
-            // no breaks
-            return;
-        }
-
-        CTPageBreak pgBreak = worksheet.getColBreaks();
-        CTBreak[] brkArray = pgBreak.getBrkArray();
+        CTBreak[] brkArray = getSheetTypeColumnBreaks().getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == (column + 1)) {
-                pgBreak.removeBrk(i);
+            if (brkArray[i].getId() == column) {
+                getSheetTypeColumnBreaks().removeBrk(i);
             }
         }
     }
@@ -1458,9 +1459,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         for(XSSFCell cell : cellsToDelete) row.removeCell(cell);
 
-        int idx = _rows.headMap(row.getRowNum()).size();
         _rows.remove(row.getRowNum());
-        worksheet.getSheetData().removeRow(idx);
     }
 
     /**
@@ -1468,66 +1467,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeRowBreak(int row) {
-        if(!worksheet.isSetRowBreaks()) {
-            return;
-        }
-        CTPageBreak pgBreak = worksheet.getRowBreaks();
+        CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
         CTBreak[] brkArray = pgBreak.getBrkArray();
         for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == (row + 1)) {
+            if (brkArray[i].getId() == row) {
                 pgBreak.removeBrk(i);
             }
         }
     }
 
-    /**
-     * Control if Excel should be asked to recalculate all formulas on this sheet
-     * when the workbook is opened.
-     *
-     *  <p>
-     *  Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
-     *  recommended solution, but this may be used for certain cases where
-     *  evaluation in POI is not possible.
-     *  </p>
-     *
-     *  <p>
-     *  It is recommended to force recalcuation of formulas on workbook level using
-     *  {@link org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)}
-     *  to ensure that all cross-worksheet formuals and external dependencies are updated.
-     *  </p>
-     * @param value true if the application will perform a full recalculation of
-     * this worksheet values when the workbook is opened
-     *
-     * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
-     */
-    public void setForceFormulaRecalculation(boolean value) {
-       if(worksheet.isSetSheetCalcPr()) {
-          // Change the current setting
-          CTSheetCalcPr calc = worksheet.getSheetCalcPr();
-          calc.setFullCalcOnLoad(value);
-       }
-       else if(value) {
-          // Add the Calc block and set it
-          CTSheetCalcPr calc = worksheet.addNewSheetCalcPr();
-          calc.setFullCalcOnLoad(value);
-       }
-       else {
-          // Not set, requested not, nothing to do
-       }
-    }
-
-    /**
-     * Whether Excel will be asked to recalculate all formulas when the
-     *  workbook is opened.  
-     */
-    public boolean getForceFormulaRecalculation() {
-       if(worksheet.isSetSheetCalcPr()) {
-          CTSheetCalcPr calc = worksheet.getSheetCalcPr();
-          return calc.getFullCalcOnLoad();
-       }
-       return false;
-    }
-    
     /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
@@ -1569,26 +1517,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Sets a page break at the indicated column.
-     * Breaks occur above the specified row and left of the specified column inclusive.
+     * Sets a page break at the indicated column
      *
-     * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
-     * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
-     * and rows starting with rownum=4 in the second.
-     *
-     * @param column the column to break, inclusive
+     * @param column the column to break
      */
     public void setColumnBreak(int column) {
         if (! isColumnBroken(column)) {
-            CTPageBreak pgBreak = worksheet.isSetColBreaks() ? worksheet.getColBreaks() : worksheet.addNewColBreaks();
-            CTBreak brk = pgBreak.addNewBrk();
-            brk.setId(column + 1);  // this is id of the row element which is 1-based: <row r="1" ... >
-            brk.setMan(true);
-            brk.setMax(SpreadsheetVersion.EXCEL2007.getLastRowIndex()); //end row of the break
-
-            pgBreak.setCount(pgBreak.sizeOfBrkArray());
-            pgBreak.setManualBreakCount(pgBreak.sizeOfBrkArray());
+            CTBreak brk = getSheetTypeColumnBreaks().addNewBrk();
+            brk.setId(column);
         }
     }
 
@@ -1943,47 +1879,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Set the width (in units of 1/256th of a character width)
-     *
      * <p>
      * The maximum column width for an individual cell is 255 characters.
      * This value represents the number of characters that can be displayed
-     * in a cell that is formatted with the standard font (first font in the workbook).
+     * in a cell that is formatted with the standard font.
      * </p>
-     *
-     * <p>
-     * Character width is defined as the maximum digit width
-     * of the numbers <code>0, 1, 2, ... 9</code> as rendered
-     * using the default font (first font in the workbook).
-     * <br/>
-     * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)
-     * </p>
-     *
-     * <p>
-     * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
-     * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
-     * This results is a slightly less value of visible characters than passed to this method (approx. 1/2 of a character).
-     * </p>
-     * <p>
-     * To compute the actual number of visible characters,
-     *  Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):
-     * </p>
-     * <code>
-     *     width = Truncate([{Number of Visible Characters} *
-     *      {Maximum Digit Width} + {5 pixel padding}]/{Maximum Digit Width}*256)/256
-     * </code>
-     * <p>Using the Calibri font as an example, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
-     *  If you set a column width to be eight characters wide, e.g. <code>setColumnWidth(columnIndex, 8*256)</code>,
-     *  then the actual value of visible characters (the value shown in Excel) is derived from the following equation:
-     *  <code>
-            Truncate([numChars*7+5]/7*256)/256 = 8;
-     *  </code>
-     *
-     *  which gives <code>7.29</code>.
      *
      * @param columnIndex - the column to set (0-based)
      * @param width - the width in units of 1/256th of a character width
-     * @throws IllegalArgumentException if width > 255*256 (the maximum column width in Excel is 255 characters)
+     * @throws IllegalArgumentException if width > 65280 (the maximum column width in Excel)
      */
     public void setColumnWidth(int columnIndex, int width) {
         if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
@@ -2014,7 +1918,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param  height default row height in  twips (1/20 of  a point)
      */
     public void setDefaultRowHeight(short height) {
-        setDefaultRowHeightInPoints((float)height / 20);
+        getSheetTypeSheetFormatPr().setDefaultRowHeight((double)height / 20);
+
     }
 
     /**
@@ -2023,9 +1928,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param height default row height measured in point size.
      */
     public void setDefaultRowHeightInPoints(float height) {
-        CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
-        pr.setDefaultRowHeight(height);
-        pr.setCustomHeight(true);
+        getSheetTypeSheetFormatPr().setDefaultRowHeight(height);
+
     }
 
     /**
@@ -2319,7 +2223,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-    	for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
             if(rownum < startRow) continue;
@@ -2329,10 +2233,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
 
             if (removeRow(startRow, endRow, n, rownum)) {
-            	// remove row from worksheet.getSheetData row array
-            	int idx = _rows.headMap(row.getRowNum()).size();
-                worksheet.getSheetData().removeRow(idx);
-                // remove row from _rows
                 it.remove();
             }
             else if (rownum >= startRow && rownum <= endRow) {
@@ -2359,7 +2259,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         rowShifter.updateNamedRanges(shifter);
         rowShifter.updateFormulas(shifter);
         rowShifter.shiftMerged(startRow, endRow, n);
-        rowShifter.updateConditionalFormatting(shifter);
 
         //rebuild the _rows map
         TreeMap<Integer, XSSFRow> map = new TreeMap<Integer, XSSFRow>();
@@ -2480,7 +2379,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param cellRef cell region
      * @param comment the comment to assign
-     * @deprecated since Nov 2009 use {@link XSSFCell#setCellComment(org.apache.poi.ss.usermodel.Comment)} instead
+     * @deprecated since Nov 2009 use {@link XSSFCell#setCellComment(org.zkoss.poi.ss.usermodel.Comment)} instead
      */
     @Deprecated
     public static void setCellComment(String cellRef, XSSFComment comment) {
@@ -2490,13 +2389,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         comment.setColumn(cellReference.getCol());
     }
 
-    /**
-     * Register a hyperlink in the collection of hyperlinks on this sheet
-     *
-     * @param hyperlink the link to add
-     */
-    @Internal
-    public void addHyperlink(XSSFHyperlink hyperlink) {
+    protected void setCellHyperlink(XSSFHyperlink hyperlink) {
         hyperlinks.add(hyperlink);
     }
 
@@ -2567,18 +2460,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     protected CommentsTable getCommentsTable(boolean create) {
         if(sheetComments == null && create){
-           // Try to create a comments table with the same number as
-           //  the sheet has (i.e. sheet 1 -> comments 1)
-           try {
-              sheetComments = (CommentsTable)createRelationship(
-                    XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
-           } catch(PartAlreadyExistsException e) {
-              // Technically a sheet doesn't need the same number as
-              //  it's comments, and clearly someone has already pinched
-              //  our number! Go for the next available one instead
-              sheetComments = (CommentsTable)createRelationship(
-                    XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), -1);
-           }
+            sheetComments = (CommentsTable)createRelationship(XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
         }
         return sheetComments;
     }
@@ -2624,20 +2506,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
             // save a detached  copy to avoid XmlValueDisconnectedException,
             // this may happen when the master cell of a shared formula is changed
-            CTCellFormula sf = (CTCellFormula)f.copy();
-            CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
-            CellReference cellRef = new CellReference(cell);
-            // If the shared formula range preceeds the master cell then the preceding  part is discarded, e.g.
-            // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
-            // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
-            if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
-                String effectiveRef = new CellRangeAddress(
-                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), sfRef.getLastRow(),
-                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), sfRef.getLastColumn()).formatAsString();
-                sf.setRef(effectiveRef);
-            }
-
-            sharedFormulas.put((int)f.getSi(), sf);
+            sharedFormulas.put((int)f.getSi(), (CTCellFormula)f.copy());
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
@@ -2681,6 +2550,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for(XSSFRow row : _rows.values()){
             row.onDocumentWrite();
         }
+        ensureRowOrdering();
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorksheet.type.getName().getNamespaceURI(), "worksheet"));
@@ -2689,6 +2559,39 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         xmlOptions.setSaveSuggestedPrefixes(map);
 
         worksheet.save(out, xmlOptions);
+    }
+
+    /**
+     * ensure that the array of CTRow written to CTSheetData is ordered by row index
+     */
+    private void ensureRowOrdering(){
+        CTSheetData sheetData = worksheet.getSheetData();
+        // check if row indexes in CTSheetData match the internal model:
+        // rows in the internal model (_rows) are always ordered while
+        // CTRow beans held by CTSheetData may be not, for example, user can
+        // insert rows in random order, shift rows after insertion, etc.
+        boolean isOrdered = true;
+        if(sheetData.sizeOfRowArray() != _rows.size()) isOrdered = false;
+        else {
+            int i = 0;
+            for (XSSFRow row : _rows.values()) {
+                CTRow c1 = row.getCTRow();
+                CTRow c2 = sheetData.getRowArray(i++); 
+                if (c1.getR() != c2.getR()){
+                    isOrdered = false;
+                    break;
+                }
+            }
+        }
+        
+        if(!isOrdered){
+            CTRow[] cArray = new CTRow[_rows.size()];
+            int i = 0;
+            for(XSSFRow row : _rows.values()){
+                cArray[i++] = row.getCTRow();
+            }
+            sheetData.setRowArray(cArray);
+        }
     }
 
     /**
@@ -3113,76 +3016,166 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
 	}
 
-    public XSSFAutoFilter setAutoFilter(CellRangeAddress range) {
-        CTAutoFilter af = worksheet.getAutoFilter();
-        if(af == null) af = worksheet.addNewAutoFilter();
+	@Override
+    public AutoFilter setAutoFilter(CellRangeAddress range) {
+    	if(isAutoFilterMode()){
+    		removeAutoFilter();
+    		if (range == null) {
+    			return null;
+    		}
+    	}
+    	
+        CTAutoFilter ctaf = worksheet.getAutoFilter();
+        if(ctaf == null) ctaf = worksheet.addNewAutoFilter();
 
-        CellRangeAddress norm = new CellRangeAddress(range.getFirstRow(), range.getLastRow(),
-                range.getFirstColumn(), range.getLastColumn());
-        String ref = norm.formatAsString();
-        af.setRef(ref);
-
+        String ref = range.formatAsString();
+        ctaf.setRef(ref);
+        
+        final int left = range.getFirstColumn();
+        final int top = range.getFirstRow();
+        final int right = range.getLastColumn();
+        final int bottom = range.getLastRow();
         XSSFWorkbook wb = getWorkbook();
         int sheetIndex = getWorkbook().getSheetIndex(this);
         XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
         if (name == null) {
             name = wb.createBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
             name.getCTName().setHidden(true); 
-            CellReference r1 = new CellReference(getSheetName(), range.getFirstRow(), range.getFirstColumn(), true, true);
-            CellReference r2 = new CellReference(null, range.getLastRow(), range.getLastColumn(), true, true);
+            CellReference r1 = new CellReference(getSheetName(), top, left, true, true);
+            CellReference r2 = new CellReference(null, bottom, right, true, true);
             String fmla = r1.formatAsString() + ":" + r2.formatAsString();
             name.setRefersToFormula(fmla);
         }
-
-        return new XSSFAutoFilter(this);
-    }
-    
-    /**
-     * Creates a new Table, and associates it with this Sheet
-     */
-    public XSSFTable createTable() {
-       if(! worksheet.isSetTableParts()) {
-          worksheet.addNewTableParts();
-       }
-       
-       CTTableParts tblParts = worksheet.getTableParts();
-       CTTablePart tbl = tblParts.addNewTablePart();
-       
-       // Table numbers need to be unique in the file, not just
-       //  unique within the sheet. Find the next one
-       int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
-       XSSFTable table = (XSSFTable)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
-       tbl.setId(table.getPackageRelationship().getId());
-       
-       tables.put(tbl.getId(), table);
-       
-       return table;
+        
+        //set FilterMode in SheetPr to true
+        CTSheetPr sheetPr = worksheet.getSheetPr();
+        if (sheetPr == null) {
+        	sheetPr = worksheet.addNewSheetPr();
+        }
+        sheetPr.setFilterMode(true);
+        
+        autoFilter = new XSSFAutoFilter(this, ctaf);
+        
+        //handle the showButton on merged cell
+		for (int i = 0; i < this.getNumMergedRegions(); i++) {
+			final CellRangeAddress mrng = this.getMergedRegion(i);
+			final int t = mrng.getFirstRow();
+	        final int b = mrng.getLastRow();
+	        final int l = mrng.getFirstColumn();
+	        final int r = mrng.getLastColumn();
+	        
+	        if (t == top && l <= right && l >= left) { // to be add filter column to hide button
+	        	for(int c = l; c < r; ++c) {
+		        	final int colId = c - left; 
+		        	final XSSFFilterColumn fc = (XSSFFilterColumn) autoFilter.getOrCreateFilterColumn(colId);
+		        	fc.setProperties(null, AutoFilter.FILTEROP_AND, null, false);
+	        	}
+	        }
+		}
+		
+        return autoFilter; 
     }
     
     /**
      * Returns any tables associated with this Sheet
      */
-    public List<XSSFTable> getTables() {
-       List<XSSFTable> tableList = new ArrayList<XSSFTable>(
-             tables.values()
-       );
-       return tableList;
+    public List<Table> getTables() {
+       List<Table> tables = new ArrayList<Table>();
+       for(POIXMLDocumentPart p : getRelations()) {
+          if (p.getPackageRelationship().getRelationshipType().equals(XSSFRelation.TABLE.getRelation())) {
+             Table table = (Table) p;
+             tables.add(table);
+          }
+       }
+       return tables;
+    }
+	
+	//20100914, henrichen@zkoss.org: expose _rows
+	protected TreeMap<Integer, XSSFRow> getRows() {
+		return _rows;
+	}
+	//20100914, henrichen@zkoss.org: expose _rows
+	protected void setRows(TreeMap<Integer, XSSFRow> rows) {
+		_rows = rows;
+	}
+
+    //20110506, peterkuo@potix.com
+    public boolean isAutoFilterMode() {
+        return worksheet.getAutoFilter() != null;
+	}
+
+    //TO remove current autofilter
+    //20110506, peterkuo@potix.com
+    public CellRangeAddress removeAutoFilter(){
+    	//remove CTAutoFilter and related name range
+    	//TODO:also have to remove related button? send a event?
+    	//TODO:also have to restore the height of certain rows
+    	CTSheetPr sheetPr = worksheet.getSheetPr();
+    	if (sheetPr != null) {
+    		sheetPr.setFilterMode(false);
+    	}
+    	worksheet.unsetAutoFilter();
+    	autoFilter = null;
+    	
+        XSSFWorkbook wb = getWorkbook();
+        int sheetIndex = getWorkbook().getSheetIndex(this);
+        XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
+        
+    	wb.removeName(name.getNameName());
+    	return CellRangeAddress.valueOf(name.getRefersToFormula());
     }
 
-    public XSSFSheetConditionalFormatting getSheetConditionalFormatting(){
-        return new XSSFSheetConditionalFormatting(this);
-    }
-
+    //20100504: peterkuo@zkoss.org: get autofilter
+    private XSSFAutoFilter autoFilter;
+    
+    @Override
+    public AutoFilter getAutoFilter() {
+		return autoFilter;
+	}
+    
+    //20110504, henrichen@zkoss.org: set auto filter mode
     /**
-     * Set background color of the sheet tab
-     *
-     * @param colorIndex  the indexed color to set, must be a constant from {@link IndexedColors}
+     * Set false to remove AutoFilter; set true is ignored.
+     * @param b false to remove current AutoFilter; set true is ignored.
      */
-    public void setTabColor(int colorIndex){
-        CTSheetPr pr = worksheet.getSheetPr();
-        if(pr == null) pr = worksheet.addNewSheetPr();
-        CTColor color = CTColor.Factory.newInstance();
-        color.setIndexed(colorIndex);
-        pr.setTabColor(color);
+    public void setAutoFilterMode(boolean b) {
+    	if (!b && isAutoFilterMode()) {
+    		removeAutoFilter();
+    	}
     }
+    
+    //20110504, henrichne@zkoss.org: returns whther auto filter mode is in use.
+    public boolean isFilterMode() {
+    	if (autoFilter != null) {
+    		final List<FilterColumn> fcs = autoFilter.getFilterColumns();
+    		if (fcs != null) {
+    			for(FilterColumn fc : fcs) {
+    				List<String> filters = fc.getFilters();
+    				if (filters.size() > 0) { //in use
+    					return true;
+    				}
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+	//20110512, peterkuo@potix.com
+	public void removeValidationData(DataValidation dataValidation) {
+		XSSFDataValidation xssfDataValidation = (XSSFDataValidation)dataValidation;		
+		CTDataValidations dataValidations = worksheet.getDataValidations();
+		if( dataValidations==null ) {
+			return;
+		}
+		int currentCount = dataValidations.sizeOfDataValidationArray();
+		
+		CTDataValidation[] dvArray = dataValidations.getDataValidationArray();
+		
+		for(int i = 0;i<dvArray.length;i++){
+			if(dvArray[i].equals(xssfDataValidation.getCtDdataValidation())){
+				dataValidations.removeDataValidation(i);
+			}
+		}
+		dataValidations.setCount(currentCount - 1);
+	}
 }

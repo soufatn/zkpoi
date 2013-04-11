@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel;
-
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
+package org.zkoss.poi.xslf.usermodel;
 
 import java.util.List;
+
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 
 public class DrawingTableRow {
     private final CTTableRow row;

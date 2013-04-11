@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.openxml4j.util;
+package org.zkoss.poi.openxml4j.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -108,20 +108,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 			super(entry.getName());
 			
 			// Grab the de-compressed contents for later
-            ByteArrayOutputStream baos;
-
-            long entrySize = entry.getSize();
-
-            if (entrySize !=-1) {
-                if (entrySize>=Integer.MAX_VALUE) {
-                    throw new IOException("ZIP entry size is too large");
-                }
-
-                baos = new ByteArrayOutputStream((int) entrySize);
-            } else {
-    			baos = new ByteArrayOutputStream();
-            }
-
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			byte[] buffer = new byte[4096];
 			int read = 0;
 			while( (read = inp.read(buffer)) != -1 ) {

@@ -15,15 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.record;
+package org.zkoss.poi.hslf.record;
 
 import java.io.*;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.Hashtable;
 
-import org.apache.poi.util.BoundedInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Storage for embedded OLE objects.
@@ -74,21 +73,13 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
         System.arraycopy(source,start+8,_data,0,len-8);
     }
 
-    public boolean isCompressed() {
-        return LittleEndian.getShort(_header, 0)!=0;
-    }
-
     /**
      * Gets the uncompressed length of the data.
      *
      * @return the uncompressed length of the data.
      */
     public int getDataLength() {
-        if (isCompressed()) {
-            return LittleEndian.getInt(_data, 0);
-        } else {
-            return _data.length;
-        }
+        return LittleEndian.getInt(_data, 0);
     }
 
     /**
@@ -97,14 +88,8 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
      * @return the data input stream.
      */
     public InputStream getData() {
-        if (isCompressed()) {
-            int size = LittleEndian.getInt(_data);
-
-            InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
-            return new BoundedInputStream(new InflaterInputStream(compressedStream), size);
-        } else {
-            return new ByteArrayInputStream(_data, 0, _data.length);
-        }
+        InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
+        return new InflaterInputStream(compressedStream);
     }
 
     public byte[] getRawData() {

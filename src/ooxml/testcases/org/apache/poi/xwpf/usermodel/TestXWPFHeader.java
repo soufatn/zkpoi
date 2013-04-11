@@ -29,27 +29,21 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
 public final class TestXWPFHeader extends TestCase {
 
-	public void testSimpleHeader() throws IOException {
+	public void testSimpleHeader() {
 		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerFooter.docx");
 
 		XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
+
 
 		XWPFHeader header = policy.getDefaultHeader();
 		XWPFFooter footer = policy.getDefaultFooter();
 		assertNotNull(header);
 		assertNotNull(footer);
+
+		// TODO verify if the following is correct
+		assertNull(header.toString());
+
 	}
-
-    public void testImageInHeader() throws IOException {
-        XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
-
-        XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
-
-        XWPFHeader header = policy.getDefaultHeader();
-
-        assertNotNull(header.getRelations());
-        assertEquals(1, header.getRelations().size());
-    }
 
 	public void testSetHeader() throws IOException {
 		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
@@ -110,7 +104,7 @@ public final class TestXWPFHeader extends TestCase {
 		// make sure that it contains two paragraphs of text and that
 		// both do hold what is expected.
 		footer = policy.getDefaultFooter();
-		
+
 		XWPFParagraph[] paras = new XWPFParagraph[footer.getParagraphs().size()];
 		int i=0;
 		for(XWPFParagraph p : footer.getParagraphs()) {
@@ -122,7 +116,7 @@ public final class TestXWPFHeader extends TestCase {
 		assertEquals("Second paragraph for the footer", paras[1].getText());
 	}
 
-	public void testSetWatermark() throws IOException {
+	public void testSetWatermark() {
 		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
 		// no header is set (yet)
 		XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
@@ -135,21 +129,5 @@ public final class TestXWPFHeader extends TestCase {
 		assertNotNull(policy.getDefaultHeader());
 		assertNotNull(policy.getFirstPageHeader());
 		assertNotNull(policy.getEvenPageHeader());
-	}
-	
-	public void testAddPictureData() {
-	    
-	}
-	
-	public void testGetAllPictures() {
-	    
-	}
-	
-	public void testGetAllPackagePictures() {
-	    
-	}
-	
-	public void testGetPictureDataById() {
-	    
 	}
 }

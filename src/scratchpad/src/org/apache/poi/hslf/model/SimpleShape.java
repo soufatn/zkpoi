@@ -15,23 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.exceptions.HSLFException;
+import org.zkoss.poi.hslf.record.ColorSchemeAtom;
+import org.zkoss.poi.hslf.record.InteractiveInfo;
+import org.zkoss.poi.hslf.record.InteractiveInfoAtom;
+import org.zkoss.poi.hslf.record.Record;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -139,11 +137,23 @@ public abstract class SimpleShape extends Shape {
     public Color getLineColor(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
 
-        EscherSimpleProperty p = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
-        if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
-
-        Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY, -1);
-        return clr == null ? Color.black : clr;
+        EscherSimpleProperty p1 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__COLOR);
+        EscherSimpleProperty p2 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        int p2val = p2 == null ? 0 : p2.getPropertyValue();
+        Color clr = null;
+        if ((p2val  & 0x8) != 0 || (p2val  & 0x10) != 0){
+            int rgb = p1 == null ? 0 : p1.getPropertyValue();
+            if (rgb >= 0x8000000) {
+                int idx = rgb % 0x8000000;
+                if(getSheet() != null) {
+                    ColorSchemeAtom ca = getSheet().getColorScheme();
+                    if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
+                }
+            }
+            Color tmp = new Color(rgb, true);
+            clr = new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+        }
+        return clr;
     }
 
     /**
@@ -247,37 +257,27 @@ public abstract class SimpleShape extends Shape {
         setEscherProperty(EscherProperties.TRANSFORM__ROTATION, (theta << 16));
     }
 
-    /**
-     *
-     * @return 'absolute' anchor of this shape relative to the parent sheet
-     */
     public Rectangle2D getLogicalAnchor2D(){
         Rectangle2D anchor = getAnchor2D();
 
         //if it is a groupped shape see if we need to transform the coordinates
         if (_parent != null){
-            List<Shape> lst = new ArrayList<Shape>();
-            lst.add(_parent);
             Shape top = _parent;
-            while(top.getParent() != null) {
-                top = top.getParent();
-                lst.add(top);
-            }
+            while(top.getParent() != null) top = top.getParent();
 
-            AffineTransform tx = new AffineTransform();
-            for(int i = lst.size() - 1; i >= 0; i--) {
-                ShapeGroup prnt = (ShapeGroup)lst.get(i);
-                Rectangle2D exterior = prnt.getAnchor2D();
-                Rectangle2D interior = prnt.getCoordinates();
+            Rectangle2D clientAnchor = top.getAnchor2D();
+            Rectangle2D spgrAnchor = ((ShapeGroup)top).getCoordinates();
 
-                double scaleX =  exterior.getWidth() / interior.getWidth();
-                double scaleY = exterior.getHeight() / interior.getHeight();
+            double scalex = spgrAnchor.getWidth()/clientAnchor.getWidth();
+            double scaley = spgrAnchor.getHeight()/clientAnchor.getHeight();
 
-                tx.translate(exterior.getX(), exterior.getY());
-                tx.scale(scaleX, scaleY);
-                tx.translate(-interior.getX(), -interior.getY());
-            }
-            anchor = tx.createTransformedShape(anchor).getBounds2D();
+            double x = clientAnchor.getX() + (anchor.getX() - spgrAnchor.getX())/scalex;
+            double y = clientAnchor.getY() + (anchor.getY() - spgrAnchor.getY())/scaley;
+            double width = anchor.getWidth()/scalex;
+            double height = anchor.getHeight()/scaley;
+
+            anchor = new Rectangle2D.Double(x, y, width, height);
+
         }
 
         int angle = getRotation();

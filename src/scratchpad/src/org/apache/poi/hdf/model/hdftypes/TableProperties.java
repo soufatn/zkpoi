@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.zkoss.poi.hdf.model.hdftypes;
 
-import org.apache.poi.hdf.model.hdftypes.definitions.TAPAbstractType;
+import org.zkoss.poi.hdf.model.hdftypes.definitions.TAPAbstractType;
 
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class TableProperties extends TAPAbstractType
 {
 

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hdgf.streams;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.hdgf.chunks.Chunk;

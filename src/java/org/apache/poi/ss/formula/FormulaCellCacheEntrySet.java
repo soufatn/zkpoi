@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 /**
  * A custom implementation of {@link java.util.HashSet} in order to reduce memory consumption.
@@ -76,7 +76,8 @@ final class FormulaCellCacheEntrySet {
 
 
 	private static boolean addInternal(CellCacheEntry[] arr, CellCacheEntry cce) {
-		int startIx = Math.abs(cce.hashCode() % arr.length);
+
+		int startIx = cce.hashCode() % arr.length;
 
 		for(int i=startIx; i<arr.length; i++) {
 			CellCacheEntry item = arr[i];
@@ -129,7 +130,7 @@ final class FormulaCellCacheEntrySet {
 		// else - usual case
 		// delete single element (without re-hashing)
 
-		int startIx = Math.abs(cce.hashCode() % arr.length);
+		int startIx = cce.hashCode() % arr.length;
 
 		// note - can't exit loops upon finding null because of potential previous deletes
 		for(int i=startIx; i<arr.length; i++) {

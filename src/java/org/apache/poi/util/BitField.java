@@ -17,7 +17,7 @@
 ==================================================================== */
         
 
-package org.apache.poi.util;
+package org.zkoss.poi.util;
 
 /**
  * Manage operations dealing with bit-mapped fields.
@@ -71,7 +71,7 @@ public class BitField
 
     public int getValue(final int holder)
     {
-        return getRawValue(holder) >>> _shift_count;
+        return getRawValue(holder) >> _shift_count;
     }
 
     /**

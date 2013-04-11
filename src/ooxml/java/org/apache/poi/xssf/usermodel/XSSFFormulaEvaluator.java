@@ -15,21 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.ss.formula.IStabilityClassifier;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Workbook;
+import java.util.Iterator;
+
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.HyperlinkEval;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.formula.IStabilityClassifier;
+import org.zkoss.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
 
 /**
  * Evaluates formula cells.<p/>
@@ -44,7 +47,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class XSSFFormulaEvaluator implements FormulaEvaluator {
 
 	private WorkbookEvaluator _bookEvaluator;
-	private XSSFWorkbook _book;
 
 	public XSSFFormulaEvaluator(XSSFWorkbook workbook) {
 		this(workbook, null, null);
@@ -53,16 +55,14 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * @param stabilityClassifier used to optimise caching performance. Pass <code>null</code>
 	 * for the (conservative) assumption that any cell may have its definition changed after
 	 * evaluation begins.
-	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(XSSFWorkbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)}
+	 * @deprecated (Sep 2009) (reduce overloading) use {@link #create(XSSFWorkbook, org.zkoss.poi.ss.formula.IStabilityClassifier, org.zkoss.poi.hssf.record.formula.udf.UDFFinder)} 
 	 */
     @Deprecated
     public XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier) {
 		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, null);
-		_book = workbook;
 	}
 	private XSSFFormulaEvaluator(XSSFWorkbook workbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
 		_bookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(workbook), stabilityClassifier, udfFinder);
-      _book = workbook;
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * </pre>
 	 * Be aware that your cell will hold both the formula,
 	 *  and the result. If you want the cell replaced with
-	 *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
+	 *  the result of the formula, use {@link #evaluate(org.zkoss.poi.ss.usermodel.Cell)} }
 	 * @param cell The cell to evaluate
 	 * @return The type of the formula result (the cell's type remains as HSSFCell.CELL_TYPE_FORMULA however)
 	 */
@@ -167,7 +167,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 * </pre>
 	 * Be aware that your cell value will be changed to hold the
 	 *  result of the formula. If you simply want the formula
-	 *  value computed for you, use {@link #evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)} }
+	 *  value computed for you, use {@link #evaluateFormulaCell(org.zkoss.poi.ss.usermodel.Cell)} }
 	 * @param cell
 	 */
 	public XSSFCell evaluateInCell(Cell cell) {
@@ -235,48 +235,57 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 	 *  cells, and calling evaluateFormulaCell on each one.
 	 */
 	public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
-	   HSSFFormulaEvaluator.evaluateAllFormulaCells((Workbook)wb);
+		XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
+		for(int i=0; i<wb.getNumberOfSheets(); i++) {
+			Sheet sheet = wb.getSheetAt(i);
+
+			for (Iterator<Row> rit = sheet.rowIterator(); rit.hasNext();) {
+				Row r = rit.next();
+
+				for (Iterator cit = r.cellIterator(); cit.hasNext();) {
+					XSSFCell c = (XSSFCell) cit.next();
+					if (c.getCellType() == XSSFCell.CELL_TYPE_FORMULA)
+						evaluator.evaluateFormulaCell(c);
+				}
+			}
+		}
 	}
-   /**
-    * Loops over all cells in all sheets of the supplied
-    *  workbook.
-    * For cells that contain formulas, their formulas are
-    *  evaluated, and the results are saved. These cells
-    *  remain as formula cells.
-    * For cells that do not contain formulas, no changes
-    *  are made.
-    * This is a helpful wrapper around looping over all
-    *  cells, and calling evaluateFormulaCell on each one.
-    */
-   public void evaluateAll() {
-      HSSFFormulaEvaluator.evaluateAllFormulaCells(_book);
-   }
 
 	/**
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
-        if(!(cell instanceof XSSFCell)){
-            throw new IllegalArgumentException("Unexpected type of cell: " + cell.getClass() + "." +
-                    " Only XSSFCells can be evaluated.");
-        }
-
 		ValueEval eval = _bookEvaluator.evaluate(new XSSFEvaluationCell((XSSFCell) cell));
+		//20100917, henrichen@zkoss.org: handle HYPERLINK function 
+		CellValue cv = null;
 		if (eval instanceof NumberEval) {
 			NumberEval ne = (NumberEval) eval;
-			return new CellValue(ne.getNumberValue());
+			cv = new CellValue(ne.getNumberValue());
 		}
 		if (eval instanceof BoolEval) {
 			BoolEval be = (BoolEval) eval;
-			return CellValue.valueOf(be.getBooleanValue());
+			cv =CellValue.valueOf(be.getBooleanValue());
 		}
 		if (eval instanceof StringEval) {
 			StringEval ne = (StringEval) eval;
-			return new CellValue(ne.getStringValue());
+			cv = new CellValue(ne.getStringValue());
 		}
 		if (eval instanceof ErrorEval) {
-			return CellValue.getError(((ErrorEval)eval).getErrorCode());
+			//20110407, henrichne@zkoss.org: degenerate CIRCULAR_REF_ERROR to REF_INVALID
+			cv = CellValue.getError(((ErrorEval)eval).getErrorCode() == ErrorEval.CIRCULAR_REF_ERROR.getErrorCode() ? 
+					ErrorEval.REF_INVALID.getErrorCode() : ((ErrorEval)eval).getErrorCode());
+		}
+		if (cv != null) {
+			if (eval instanceof HyperlinkEval) {
+				cv.setHyperlink(((HyperlinkEval)eval).getHyperlink());
+			}
+			return cv;
 		}
 		throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
+	}
+	
+	@Override
+	public WorkbookEvaluator getWorkbookEvaluator() {
+		return _bookEvaluator;
 	}
 }

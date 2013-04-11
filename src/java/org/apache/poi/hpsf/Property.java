@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpsf;
+package org.zkoss.poi.hpsf;
 
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * <p>A property in a {@link Section} of a {@link PropertySet}.</p>
@@ -193,7 +193,7 @@ public class Property
      * @throws UnsupportedEncodingException if the dictionary's codepage is not
      *         (yet) supported.
      */
-    protected Map<?, ?> readDictionary(final byte[] src, final long offset,
+    protected Map readDictionary(final byte[] src, final long offset,
                                  final int length, final int codepage)
     throws UnsupportedEncodingException
     {
@@ -210,8 +210,7 @@ public class Property
         final long nrEntries = LittleEndian.getUInt(src, o);
         o += LittleEndian.INT_SIZE;
 
-        final Map<Object, Object> m = new LinkedHashMap<Object, Object>(
-                (int) nrEntries, (float) 1.0 );
+        final Map m = new HashMap((int) nrEntries, (float) 1.0);
 
         try
         {
@@ -414,9 +413,9 @@ public class Property
         b.append(getType());
         final Object value = getValue();
         b.append(", value: ");
+        b.append(value.toString());
         if (value instanceof String)
         {
-            b.append(value.toString());
             final String s = (String) value;
             final int l = s.length();
             final byte[] bytes = new byte[l * 2];
@@ -428,24 +427,10 @@ public class Property
                 bytes[i * 2]     = high;
                 bytes[i * 2 + 1] = low;
             }
+            final String hex = HexDump.dump(bytes, 0L, 0);
             b.append(" [");
-            if(bytes.length > 0) {
-                final String hex = HexDump.dump(bytes, 0L, 0);
-                b.append(hex);
-            }
+            b.append(hex);
             b.append("]");
-        }
-        else if (value instanceof byte[])
-        {
-            byte[] bytes = (byte[])value;
-            if(bytes.length > 0) {
-                String hex = HexDump.dump(bytes, 0L, 0);
-                b.append(hex);
-            }
-        }
-        else
-        {
-            b.append(value.toString());
         }
         b.append(']');
         return b.toString();

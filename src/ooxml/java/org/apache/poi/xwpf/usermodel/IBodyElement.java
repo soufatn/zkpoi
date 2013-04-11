@@ -15,9 +15,8 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
 
 /**
  * 9 Jan 2010
@@ -25,8 +24,7 @@ import org.apache.poi.POIXMLDocumentPart;
  *
  */
 public interface IBodyElement{
-	IBody getBody();
-    POIXMLDocumentPart getPart();
+	IBody getPart();
 	BodyType getPartType();
 	BodyElementType getElementType();
 }

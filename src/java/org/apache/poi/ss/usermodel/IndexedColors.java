@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 /**
  * A deprecated indexing scheme for colours that is still required for some records, and for backwards
@@ -80,10 +80,10 @@ public enum IndexedColors {
     GREY_80_PERCENT(63),
     AUTOMATIC(64);
 
-    public final short index;
+    private int index;
 
     IndexedColors(int idx){
-        index = (short)idx;
+        index = idx;
     }
 
     /**
@@ -92,6 +92,6 @@ public enum IndexedColors {
      * @return index of this color
      */
     public short getIndex(){
-        return index;
+        return (short)index;
     }
 }

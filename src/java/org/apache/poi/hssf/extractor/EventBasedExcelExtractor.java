@@ -15,33 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.extractor;
+package org.zkoss.poi.hssf.extractor;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
-import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
-import org.apache.poi.hssf.eventusermodel.HSSFRequest;
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.LabelRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.POIOLE2TextExtractor;
+import org.zkoss.poi.hpsf.DocumentSummaryInformation;
+import org.zkoss.poi.hpsf.SummaryInformation;
+import org.zkoss.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
+import org.zkoss.poi.hssf.eventusermodel.HSSFEventFactory;
+import org.zkoss.poi.hssf.eventusermodel.HSSFListener;
+import org.zkoss.poi.hssf.eventusermodel.HSSFRequest;
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.record.BOFRecord;
+import org.zkoss.poi.hssf.record.BoundSheetRecord;
+import org.zkoss.poi.hssf.record.FormulaRecord;
+import org.zkoss.poi.hssf.record.LabelRecord;
+import org.zkoss.poi.hssf.record.LabelSSTRecord;
+import org.zkoss.poi.hssf.record.NoteRecord;
+import org.zkoss.poi.hssf.record.NumberRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.SSTRecord;
+import org.zkoss.poi.hssf.record.StringRecord;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * A text extractor for Excel files, that is based
@@ -61,39 +61,27 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
    private DirectoryNode _dir;
+	private POIFSFileSystem _fs;
 	boolean _includeSheetNames = true;
 	boolean _formulasNotResults = false;
 
-    /**
-     * @deprecated Use {@link #EventBasedExcelExtractor(DirectoryNode)} instead
-     */
-    @Deprecated
-    @SuppressWarnings( "unused" )
-    public EventBasedExcelExtractor( DirectoryNode dir, POIFSFileSystem fs )
-    {
-        this( dir );
-    }
-
-    public EventBasedExcelExtractor( DirectoryNode dir )
-    {
-        super( null );
-        _dir = dir;
-    }
-
+	public EventBasedExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) {
+		super(null);
+		_dir = dir;
+		_fs = fs;
+	}
    public EventBasedExcelExtractor(POIFSFileSystem fs) {
-      this(fs.getRoot());
+      this(fs.getRoot(), fs);
    }
 
    /**
     * Return the underlying POIFS FileSystem of
     *  this document.
-    *
-    * @deprecated Use {@link #getRoot()} instead
     */
    public POIFSFileSystem getFileSystem() {
-      return _dir.getFileSystem();
+      return _fs;
    }
-
+   
 	/**
 	 * Would return the document information metadata for the document,
 	 *  if we supported it
@@ -212,7 +200,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 						outputNextStringValue = true;
 						nextRow = frec.getRow();
 					} else {
-						thisText = _ft.formatNumberDateCell(frec);
+						thisText = _ft.formatNumberDateCell(frec); 
 					}
 				}
 				break;
@@ -246,7 +234,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 			case NumberRecord.sid:
 				NumberRecord numrec = (NumberRecord) record;
 				thisRow = numrec.getRow();
-				thisText = _ft.formatNumberDateCell(numrec);
+				thisText = _ft.formatNumberDateCell(numrec); 
 				break;
 			default:
 				break;

@@ -14,16 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel.extensions;
+package org.zkoss.poi.xssf.usermodel.extensions;
 
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.poi.xssf.model.ThemesTable;
+import org.zkoss.poi.xssf.usermodel.XSSFColor;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+
+
 
 /**
  * This element contains border formatting information, specifying border definition formats (left, right, top, bottom, diagonal)
@@ -38,34 +40,19 @@ public class XSSFCellBorder {
      * Creates a Cell Border from the supplied XML definition
      */
     public XSSFCellBorder(CTBorder border, ThemesTable theme) {
-        this(border);
-        this._theme = theme;
-    }
-
-    /**
-     * Creates a Cell Border from the supplied XML definition
-     */
-    public XSSFCellBorder(CTBorder border) {
         this.border = border;
+        this._theme = theme;
     }
 
     /**
      * Creates a new, empty Cell Border.
      * You need to attach this to the Styles Table
      */
-    public XSSFCellBorder() {
+    public XSSFCellBorder(ThemesTable theme) {
         border = CTBorder.Factory.newInstance();
+        this._theme = theme;
     }
 
-    /**
-     * Records the Themes Table that is associated with
-     *  the current font, used when looking up theme
-     *  based colours and properties.
-     */
-    public void setThemesTable(ThemesTable themes) {
-       this._theme = themes;
-    }
-    
     /**
      * The enumeration value indicating the side being used for a cell border.
      */

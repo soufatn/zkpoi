@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.MissingArgEval;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.OperationEvaluationContext;
 
 /**
  * Implementation for Excel function INDIRECT<p/>
@@ -94,11 +94,12 @@ public final class Indirect implements FreeRefFunction {
 		int plingPos = text.lastIndexOf('!');
 
 		String workbookName;
-		String sheetName;
+		String sheetName, lastSheetName; //henrichen@zkoss.org: handle 3d area reference
 		String refText; // whitespace around this gets trimmed OK
 		if (plingPos < 0) {
 			workbookName = null;
 			sheetName = null;
+			lastSheetName = null; //henrichen@zkoss.org: handle 3d area reference
 			refText = text;
 		} else {
 			String[] parts = parseWorkbookAndSheetName(text.subSequence(0, plingPos));
@@ -107,6 +108,7 @@ public final class Indirect implements FreeRefFunction {
 			}
 			workbookName = parts[0];
 			sheetName = parts[1];
+			lastSheetName = parts[2]; //henrichen@zkoss.org: : handle 3d area reference
 			refText = text.substring(plingPos + 1);
 		}
 
@@ -121,12 +123,13 @@ public final class Indirect implements FreeRefFunction {
 			refStrPart1 = refText.substring(0, colonPos).trim();
 			refStrPart2 = refText.substring(colonPos + 1).trim();
 		}
-		return ec.getDynamicReference(workbookName, sheetName, refStrPart1, refStrPart2, isA1style);
+		return ec.getDynamicReference(workbookName, sheetName, lastSheetName, refStrPart1, refStrPart2, isA1style);
 	}
 
 	/**
-	 * @return array of length 2: {workbookName, sheetName,}.  Second element will always be
-	 * present.  First element may be null if sheetName is unqualified.
+	 * @author henrichen@zkoss.org (modify to return sheetName2)
+	 * @return array of length 3: {workbookName, sheetName, sheetName2}.  Second element and third 
+	 * element will always be present.  First element may be null if sheetName is unqualified.
 	 * Returns <code>null</code> if text cannot be parsed.
 	 */
 	private static String[] parseWorkbookAndSheetName(CharSequence text) {
@@ -174,7 +177,10 @@ public final class Indirect implements FreeRefFunction {
 									 // start/end with whitespace
 				return null;
 			}
-			return new String[] { wbName, sheetName, };
+			//henrichen@zkoss.org: handle 3d area reference
+			final int j = sheetName.indexOf(':');
+			return j < 0 ? new String[] { wbName, sheetName, sheetName} :
+				new String[] {wbName, sheetName.substring(0, j), sheetName.substring(j+1)};
 		}
 
 		if (firstChar == '[') {
@@ -190,10 +196,16 @@ public final class Indirect implements FreeRefFunction {
 			if (canTrim(sheetName)) {
 				return null;
 			}
-			return new String[] { wbName.toString(), sheetName.toString(), };
+			//henrichen@zkoss.org: handle 3d area reference
+			final String xsheetName = sheetName.toString(); 
+			final int j = xsheetName.indexOf(':');
+			return j < 0 ? new String[] { wbName.toString(), xsheetName, xsheetName} :
+				new String[] {wbName.toString(), xsheetName.substring(0, j), xsheetName.substring(j+1)};
 		}
 		// else - just sheet name
-		return new String[] { null, text.toString(), };
+		//henrichen@zkoss.org: handle 3d area reference
+		final String sheetName = text.toString();
+		return new String[] { null, sheetName, sheetName};
 	}
 
 	/**

@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.RecordFormatException;
 
 /**
  * The spgr record defines information about a shape group.  Groups in escher
@@ -89,8 +89,7 @@ public class EscherSpgrRecord
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
+                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
                 "  RectX: " + field_1_rectX1 + '\n' +
                 "  RectY: " + field_2_rectY1 + '\n' +
                 "  RectWidth: " + field_3_rectX2 + '\n' +

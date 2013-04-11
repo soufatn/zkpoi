@@ -17,9 +17,8 @@
 ==================================================================== */
 
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,26 +36,26 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.dev.POIFSViewable;
-import org.apache.poi.poifs.nio.ByteArrayBackedDataSource;
-import org.apache.poi.poifs.nio.DataSource;
-import org.apache.poi.poifs.nio.FileBackedDataSource;
-import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.NPropertyTable;
-import org.apache.poi.poifs.storage.BATBlock;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
-import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
-import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
-import org.apache.poi.util.CloseIgnoringInputStream;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LongField;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.dev.POIFSViewable;
+import org.zkoss.poi.poifs.nio.ByteArrayBackedDataSource;
+import org.zkoss.poi.poifs.nio.DataSource;
+import org.zkoss.poi.poifs.nio.FileBackedDataSource;
+import org.zkoss.poi.poifs.property.DirectoryProperty;
+import org.zkoss.poi.poifs.property.NPropertyTable;
+import org.zkoss.poi.poifs.storage.BATBlock;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableReader;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableWriter;
+import org.zkoss.poi.poifs.storage.HeaderBlock;
+import org.zkoss.poi.poifs.storage.HeaderBlockConstants;
+import org.zkoss.poi.poifs.storage.HeaderBlockWriter;
+import org.zkoss.poi.poifs.storage.BATBlock.BATBlockAndIndex;
+import org.zkoss.poi.util.CloseIgnoringInputStream;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.LongField;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This is the main class of the POIFS system; it manages the entire
@@ -65,7 +64,7 @@ import org.apache.poi.util.POILogger;
  */
 
 public class NPOIFSFileSystem extends BlockStore
-    implements POIFSViewable, Closeable
+    implements POIFSViewable
 {
 	private static final POILogger _logger =
 		POILogFactory.getLogger(NPOIFSFileSystem.class);
@@ -93,38 +92,17 @@ public class NPOIFSFileSystem extends BlockStore
     private POIFSBigBlockSize bigBlockSize = 
        POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
 
-    private NPOIFSFileSystem(boolean newFS)
-    {
-        _header         = new HeaderBlock(bigBlockSize);
-        _property_table = new NPropertyTable(_header);
-        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
-        _xbat_blocks    = new ArrayList<BATBlock>();
-        _bat_blocks     = new ArrayList<BATBlock>();
-        _root           = null;
-        
-        if(newFS) {
-           // Data needs to initially hold just the header block,
-           //  a single bat block, and an empty properties section
-           _data        = new ByteArrayBackedDataSource(new byte[bigBlockSize.getBigBlockSize()*3]);
-        }
-    }
-    
     /**
      * Constructor, intended for writing
      */
     public NPOIFSFileSystem()
     {
-       this(true);
-       
-        // Mark us as having a single empty BAT at offset 0
-        _header.setBATCount(1);
-        _header.setBATArray(new int[] { 0 });
-        _bat_blocks.add(BATBlock.createEmptyBATBlock(bigBlockSize, false));
-        setNextBlock(0, POIFSConstants.FAT_SECTOR_BLOCK);
-        
-        // Now associate the properties with the empty block
-        _property_table.setStartBlock(1);
-        setNextBlock(1, POIFSConstants.END_OF_CHAIN);
+        _header         = new HeaderBlock(bigBlockSize);
+        _property_table = new NPropertyTable(_header);
+        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), new ArrayList<BATBlock>(), _header);
+        _xbat_blocks     = new ArrayList<BATBlock>();
+        _bat_blocks     = new ArrayList<BATBlock>();
+        _root           = null;
     }
 
     /**
@@ -187,7 +165,7 @@ public class NPOIFSFileSystem extends BlockStore
     private NPOIFSFileSystem(FileChannel channel, boolean closeChannelOnError)
          throws IOException
     {
-       this(false);
+       this();
 
        try {
           // Get the header
@@ -248,7 +226,7 @@ public class NPOIFSFileSystem extends BlockStore
     public NPOIFSFileSystem(InputStream stream)
         throws IOException
     {
-        this(false);
+        this();
         
         ReadableByteChannel channel = null;
         boolean success = false;
@@ -369,7 +347,7 @@ public class NPOIFSFileSystem extends BlockStore
           
           for(int j=0; j<bigBlockSize.getXBATEntriesPerBlock(); j++) {
              int fatAt = xfat.getValueAt(j);
-             if(fatAt == POIFSConstants.UNUSED_BLOCK || fatAt == POIFSConstants.END_OF_CHAIN) break;
+             if(fatAt == POIFSConstants.UNUSED_BLOCK) break;
              readBAT(fatAt, loopDetector);
           }
        }
@@ -692,7 +670,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
        // HeaderBlock
        HeaderBlockWriter hbw = new HeaderBlockWriter(_header);
-       hbw.writeBlock( getBlockAt(-1) );
+       hbw.writeBlock( getBlockAt(0) );
        
        // BATs
        for(BATBlock bat : _bat_blocks) {

@@ -15,14 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor;
+package org.zkoss.poi.hdf.extractor;
 
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-@Deprecated
 public final class StyleSheet {
 
   private static final int NIL_STYLE = 4095;

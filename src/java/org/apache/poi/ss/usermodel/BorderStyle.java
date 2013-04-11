@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 /**
  * The enumeration value indicating the line style of a border in a cell,
@@ -100,7 +100,7 @@ package org.apache.poi.ss.usermodel;
      * medium dash-dot-dot border
      */
 
-    MEDIUM_DASH_DOT_DOTC,
+    MEDIUM_DASH_DOT_DOT,
 
     /**
      * slanted dash-dot border

@@ -15,20 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval.forked;
+package org.zkoss.poi.ss.formula.eval.forked;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationName;
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.formula.ptg.NamePtg;
+import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationName;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.Workbook;
 
 /**
  * Represents a workbook being used for forked evaluation. Most operations are delegated to the
@@ -36,6 +37,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
@@ -85,6 +87,10 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return _masterBook.convertFromExternSheetIndex(externSheetIndex);
+	}
+
+	public int convertLastIndexFromExternSheetIndex(int externSheetIndex) {
+		return _masterBook.convertLastIndexFromExternSheetIndex(externSheetIndex);
 	}
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {

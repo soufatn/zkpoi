@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.LittleEndianOutputStream;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianOutputStream;
 
 import java.io.ByteArrayOutputStream;
 
@@ -59,6 +59,11 @@ public abstract class SubRecord {
 				return new LbsDataSubRecord(in, secondUShort, cmoOt);
             case FtCblsSubRecord.sid:
                 return new FtCblsSubRecord(in, secondUShort);
+            //20101014, henrichen@zkoss.org
+            case FtCfSubRecord.sid: 
+                return new FtCfSubRecord(in, secondUShort);
+            case FtPioGrbitSubRecord.sid: 
+                return new FtPioGrbitSubRecord(in, secondUShort);
 		}
 		return new UnknownSubRecord(in, sid, secondUShort);
 	}

@@ -15,23 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdgf.extractor;
+package org.zkoss.poi.hdgf.extractor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hdgf.HDGFDiagram;
-import org.apache.poi.hdgf.chunks.Chunk;
-import org.apache.poi.hdgf.chunks.Chunk.Command;
-import org.apache.poi.hdgf.streams.ChunkStream;
-import org.apache.poi.hdgf.streams.PointerContainingStream;
-import org.apache.poi.hdgf.streams.Stream;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.POIOLE2TextExtractor;
+import org.zkoss.poi.hdgf.HDGFDiagram;
+import org.zkoss.poi.hdgf.chunks.Chunk;
+import org.zkoss.poi.hdgf.chunks.Chunk.Command;
+import org.zkoss.poi.hdgf.streams.ChunkStream;
+import org.zkoss.poi.hdgf.streams.PointerContainingStream;
+import org.zkoss.poi.hdgf.streams.Stream;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to find all the text in a Visio file, and return it.
@@ -40,26 +39,18 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	private HDGFDiagram hdgf;
+	private POIFSFileSystem fs;
 
 	public VisioTextExtractor(HDGFDiagram hdgf) {
 		super(hdgf);
 		this.hdgf = hdgf;
 	}
 	public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot());
+		this(fs.getRoot(), fs);
 	}
-   public VisioTextExtractor(NPOIFSFileSystem fs) throws IOException {
-      this(fs.getRoot());
-   }
-   public VisioTextExtractor(DirectoryNode dir) throws IOException {
-      this(new HDGFDiagram(dir));
-   }
-   /**
-    * @deprecated Use {@link #VisioTextExtractor(DirectoryNode)} instead 
-    */
-   @Deprecated
 	public VisioTextExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
 		this(new HDGFDiagram(dir, fs));
+		this.fs = fs;
 	}
 	public VisioTextExtractor(InputStream inp) throws IOException {
 		this(new POIFSFileSystem(inp));

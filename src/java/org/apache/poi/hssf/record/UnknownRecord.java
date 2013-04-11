@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Unknown Record (for debugging)<p/>
@@ -177,8 +177,8 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x0874: return "DROPDOWNOBJIDS";
 			case 0x0876: return "DCONN";
 			case 0x087B: return "CFEX";
-			case 0x087C: return "XFCRC";
-			case 0x087D: return "XFEXT";
+//			case 0x087C: return "XFCRC";
+//			case 0x087D: return "XFEXT";
 			case 0x087F: return "CONTINUEFRT12";
 			case 0x088B: return "PLV";
 			case 0x088C: return "COMPAT12";

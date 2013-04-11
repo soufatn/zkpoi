@@ -15,14 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndian;
 
-@Internal
 public final class PieceDescriptor
 {
 
@@ -31,7 +29,7 @@ public final class PieceDescriptor
    private static BitField fPaphNil = BitFieldFactory.getInstance(0x02);
    private static BitField fCopied = BitFieldFactory.getInstance(0x04);
   int fc;
-  PropertyModifier prm;
+  short prm;
   boolean unicode;
 
 
@@ -41,7 +39,7 @@ public final class PieceDescriptor
     offset += LittleEndian.SHORT_SIZE;
     fc = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
-    prm = new PropertyModifier( LittleEndian.getShort(buf, offset));
+    prm = LittleEndian.getShort(buf, offset);
 
     // see if this piece uses unicode.
     if ((fc & 0x40000000) == 0)
@@ -72,11 +70,6 @@ public final class PieceDescriptor
     return unicode;
   }
 
-    public PropertyModifier getPrm()
-    {
-        return prm;
-    }
-
   protected byte[] toByteArray()
   {
     // set up the fc
@@ -93,7 +86,7 @@ public final class PieceDescriptor
     offset += LittleEndian.SHORT_SIZE;
     LittleEndian.putInt(buf, offset, tempFc);
     offset += LittleEndian.INT_SIZE;
-    LittleEndian.putShort(buf, offset, prm.getValue());
+    LittleEndian.putShort(buf, offset, prm);
 
     return buf;
 
@@ -104,46 +97,10 @@ public final class PieceDescriptor
     return 8;
   }
 
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + descriptor;
-        result = prime * result + ( ( prm == null ) ? 0 : prm.hashCode() );
-        result = prime * result + ( unicode ? 1231 : 1237 );
-        return result;
-    }
+  public boolean equals(Object o)
+  {
+    PieceDescriptor pd = (PieceDescriptor)o;
 
-    @Override
-    public boolean equals( Object obj )
-    {
-        if ( this == obj )
-            return true;
-        if ( obj == null )
-            return false;
-        if ( getClass() != obj.getClass() )
-            return false;
-        PieceDescriptor other = (PieceDescriptor) obj;
-        if ( descriptor != other.descriptor )
-            return false;
-        if ( prm == null )
-        {
-            if ( other.prm != null )
-                return false;
-        }
-        else if ( !prm.equals( other.prm ) )
-            return false;
-        if ( unicode != other.unicode )
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "PieceDescriptor (pos: " + getFilePosition() + "; "
-                + ( isUnicode() ? "unicode" : "non-unicode" ) + "; prm: "
-                + getPrm() + ")";
-    }
+    return descriptor == pd.descriptor && prm == pd.prm && unicode == pd.unicode;
+  }
 }

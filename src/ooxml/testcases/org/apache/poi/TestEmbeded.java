@@ -19,6 +19,8 @@
 
 package org.apache.poi;
 
+import java.io.File;
+
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

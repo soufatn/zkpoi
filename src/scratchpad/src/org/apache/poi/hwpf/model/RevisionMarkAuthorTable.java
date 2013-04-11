@@ -15,15 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.util.Internal;
+
+import org.zkoss.poi.hwpf.model.io.HWPFOutputStream;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * String table containing the names of authors of revision marks, e-mails and
@@ -31,8 +33,22 @@ import org.apache.poi.util.Internal;
  * 
  * @author Ryan Lauck
  */
-@Internal
 public final class RevisionMarkAuthorTable {
+	/**
+	 * must be 0xFFFF
+	 */
+	private short fExtend = (short) 0xFFFF;
+	
+	/**
+	 * the number of entries in the table
+	 */
+	private short cData = 0;
+	
+	/**
+	 * must be 0
+	 */
+	private short cbExtra = 0;
+
 	/**
 	 * Array of entries.
 	 */
@@ -45,11 +61,36 @@ public final class RevisionMarkAuthorTable {
 	 * @param offset the offset into the byte array.
 	 * @param size the size of the table in the byte array.
 	 */
-    public RevisionMarkAuthorTable( byte[] tableStream, int offset, int size )
-            throws IOException
-    {
-        entries = SttbUtils.readSttbfRMark( tableStream, offset );
-    }
+	public RevisionMarkAuthorTable(byte[] tableStream, int offset, int size) throws IOException {
+		// Read fExtend - it isn't used
+		fExtend = LittleEndian.getShort(tableStream, offset);
+		if(fExtend != 0xFFFF) {
+			//TODO: throw an exception here?
+		}
+		offset += 2;
+
+		// Read the number of entries
+		cData = LittleEndian.getShort(tableStream, offset);
+		offset += 2;
+
+		// Read cbExtra - it isn't used
+		cbExtra = LittleEndian.getShort(tableStream, offset);
+		if(cbExtra != 0) {
+			//TODO: throw an exception here?
+		}
+		offset += 2;
+		
+		entries = new String[cData];
+		for (int i = 0; i < cData; i++) {
+			int len = LittleEndian.getShort(tableStream, offset);
+			offset += 2;
+			
+			String name = StringUtil.getFromUnicodeLE(tableStream, offset, len);
+			offset += len * 2;
+
+			entries[i] = name;
+		}
+	}
 
 	/**
 	 * Gets the entries. The returned list cannot be modified.
@@ -79,7 +120,7 @@ public final class RevisionMarkAuthorTable {
 	 * @return the number of entries.
 	 */
 	public int getSize() {
-		return entries.length;
+		return cData;
 	}
 
 	/**
@@ -88,9 +129,19 @@ public final class RevisionMarkAuthorTable {
 	 * @param tableStream  the table stream to write to.
 	 * @throws IOException  if an error occurs while writing.
 	 */
-    public void writeTo( HWPFOutputStream tableStream ) throws IOException
-    {
-        SttbUtils.writeSttbfRMark( entries, tableStream );
-    }
+	public void writeTo(HWPFOutputStream tableStream) throws IOException {
+		byte[] header = new byte[6];
+		LittleEndian.putShort(header, 0, fExtend);
+		LittleEndian.putShort(header, 2, cData);
+		LittleEndian.putShort(header, 4, cbExtra);
+		tableStream.write(header);
+
+		for (String name : entries) {
+			byte[] buf = new byte[name.length() * 2 + 2];
+			LittleEndian.putShort(buf, 0, (short) name.length());
+			StringUtil.putUnicodeLE(name, buf, 2);
+			tableStream.write(buf);
+		}
+	}
 
 }

@@ -15,11 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.HexDump;
 
 /**
  * Label Record (0x0204) - read only support for strings stored directly in the cell..  Don't
@@ -28,11 +26,9 @@ import org.apache.poi.util.POILogger;
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
- * @see org.apache.poi.hssf.record.LabelSSTRecord
+ * @see org.zkoss.poi.hssf.record.LabelSSTRecord
  */
 public final class LabelRecord extends Record implements CellValueRecordInterface {
-    private final static POILogger logger = POILogFactory.getLogger(LabelRecord.class);
-
     public final static short sid = 0x0204;
 
     private int               field_1_row;
@@ -65,13 +61,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
             }
         } else {
             field_6_value = "";
-        }
-
-        if (in.remaining() > 0) {
-           logger.log(POILogger.INFO,
-                   "LabelRecord data remains: " + in.remaining() +
-                           " : " + HexDump.toHex(in.readRemainder())
-           );
         }
     }
 
@@ -108,7 +97,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      */
     public boolean isUnCompressedUnicode()
     {
-        return (field_5_unicode_flag & 0x01) != 0;
+        return (field_5_unicode_flag == 1);
     }
 
     /**

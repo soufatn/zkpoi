@@ -15,38 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.exceptions.HSLFException;
+import org.zkoss.poi.hslf.record.*;
+import org.zkoss.poi.hslf.usermodel.RichTextRun;
+import org.zkoss.poi.util.POILogger;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
-import org.apache.poi.hslf.record.OutlineTextRefAtom;
-import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.util.POILogger;
 
 /**
  * A common superclass of all shapes that can hold text.
@@ -537,8 +519,7 @@ public abstract class TextShape extends SimpleShape {
                 logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
             }
         } else {
-            EscherSpRecord escherSpRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-            int shapeId = escherSpRecord.getShapeId();
+            int shapeId = _escherContainer.getChildById(EscherSpRecord.RECORD_ID).getShapeId();
             if(runs != null) for (int i = 0; i < runs.length; i++) {
                 if(runs[i].getShapeId() == shapeId){
                     _txtrun = runs[i];
@@ -579,7 +560,7 @@ public abstract class TextShape extends SimpleShape {
      * @param linkId    id of the hyperlink, @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
      * @param      beginIndex   the beginning index, inclusive.
      * @param      endIndex     the ending index, exclusive.
-     * @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
+     * @see org.zkoss.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
      */
     public void setHyperlink(int linkId, int beginIndex, int endIndex){
         //TODO validate beginIndex and endIndex and throw IllegalArgumentException

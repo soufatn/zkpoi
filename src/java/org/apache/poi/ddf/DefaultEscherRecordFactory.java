@@ -15,13 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Generates escher records when provided the byte array containing those records.
@@ -32,13 +30,11 @@ import org.apache.poi.util.LittleEndian;
  * @see EscherRecordFactory
  */
 public class DefaultEscherRecordFactory implements EscherRecordFactory {
-    private static Class<?>[] escherRecordClasses = { EscherBSERecord.class,
-            EscherOptRecord.class, EscherTertiaryOptRecord.class,
-            EscherClientAnchorRecord.class, EscherDgRecord.class,
-            EscherSpgrRecord.class, EscherSpRecord.class,
-            EscherClientDataRecord.class, EscherDggRecord.class,
-            EscherSplitMenuColorsRecord.class, EscherChildAnchorRecord.class,
-            EscherTextboxRecord.class };
+    private static Class<?>[] escherRecordClasses = {
+        EscherBSERecord.class, EscherOptRecord.class, EscherClientAnchorRecord.class, EscherDgRecord.class,
+        EscherSpgrRecord.class, EscherSpRecord.class, EscherClientDataRecord.class, EscherDggRecord.class,
+        EscherSplitMenuColorsRecord.class, EscherChildAnchorRecord.class, EscherTextboxRecord.class
+    };
     private static Map<Short, Constructor<? extends EscherRecord>> recordsMap = recordsToMap( escherRecordClasses );
 
     /**
@@ -57,45 +53,43 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
      * @return The generated escher record
      */
     public EscherRecord createRecord(byte[] data, int offset) {
-        short options = LittleEndian.getShort( data, offset );
-        short recordId = LittleEndian.getShort( data, offset + 2 );
-        // int remainingBytes = LittleEndian.getInt( data, offset + 4 );
+        EscherRecord.EscherRecordHeader header = EscherRecord.EscherRecordHeader.readHeader( data, offset );
 
         // Options of 0x000F means container record
         // However, EscherTextboxRecord are containers of records for the
         //  host application, not of other Escher records, so treat them
         //  differently
-        if ( ( options & (short) 0x000F ) == (short) 0x000F
-             && recordId != EscherTextboxRecord.RECORD_ID ) {
+        if ( ( header.getOptions() & (short) 0x000F ) == (short) 0x000F
+             && header.getRecordId() != EscherTextboxRecord.RECORD_ID ) {
             EscherContainerRecord r = new EscherContainerRecord();
-            r.setRecordId( recordId );
-            r.setOptions( options );
+            r.setRecordId( header.getRecordId() );
+            r.setOptions( header.getOptions() );
             return r;
         }
 
-        if (recordId >= EscherBlipRecord.RECORD_ID_START
-                && recordId <= EscherBlipRecord.RECORD_ID_END) {
+        if (header.getRecordId() >= EscherBlipRecord.RECORD_ID_START
+                && header.getRecordId() <= EscherBlipRecord.RECORD_ID_END) {
             EscherBlipRecord r;
-            if (recordId == EscherBitmapBlip.RECORD_ID_DIB ||
-                    recordId == EscherBitmapBlip.RECORD_ID_JPEG ||
-                    recordId == EscherBitmapBlip.RECORD_ID_PNG)
+            if (header.getRecordId() == EscherBitmapBlip.RECORD_ID_DIB ||
+                    header.getRecordId() == EscherBitmapBlip.RECORD_ID_JPEG ||
+                    header.getRecordId() == EscherBitmapBlip.RECORD_ID_PNG)
             {
                 r = new EscherBitmapBlip();
             }
-            else if (recordId == EscherMetafileBlip.RECORD_ID_EMF ||
-                    recordId == EscherMetafileBlip.RECORD_ID_WMF ||
-                    recordId == EscherMetafileBlip.RECORD_ID_PICT)
+            else if (header.getRecordId() == EscherMetafileBlip.RECORD_ID_EMF ||
+                    header.getRecordId() == EscherMetafileBlip.RECORD_ID_WMF ||
+                    header.getRecordId() == EscherMetafileBlip.RECORD_ID_PICT)
             {
                 r = new EscherMetafileBlip();
             } else {
                 r = new EscherBlipRecord();
             }
-            r.setRecordId( recordId );
-            r.setOptions( options );
+            r.setRecordId( header.getRecordId() );
+            r.setOptions( header.getOptions() );
             return r;
         }
 
-        Constructor<? extends EscherRecord> recordConstructor = recordsMap.get(Short.valueOf(recordId));
+        Constructor<? extends EscherRecord> recordConstructor = recordsMap.get(Short.valueOf(header.getRecordId()));
         EscherRecord escherRecord = null;
         if (recordConstructor == null) {
             return new UnknownEscherRecord();
@@ -105,8 +99,8 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
         } catch (Exception e) {
             return new UnknownEscherRecord();
         }
-        escherRecord.setRecordId(recordId);
-        escherRecord.setOptions(options);
+        escherRecord.setRecordId(header.getRecordId());
+        escherRecord.setOptions(header.getOptions());
         return escherRecord;
     }
 

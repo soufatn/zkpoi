@@ -17,16 +17,16 @@
 ==================================================================== */
 
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.BlockStore.ChainLoopDetector;
-import org.apache.poi.poifs.property.Property;
-import org.apache.poi.poifs.storage.HeaderBlock;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.filesystem.BlockStore.ChainLoopDetector;
+import org.zkoss.poi.poifs.property.Property;
+import org.zkoss.poi.poifs.storage.HeaderBlock;
 
 /**
  * This handles reading and writing a stream within a
@@ -102,7 +102,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
    public void updateContents(byte[] contents) throws IOException {
       // How many blocks are we going to need?
       int blockSize = blockStore.getBlockStoreBlockSize();
-      int blocks = (int)Math.ceil( ((double)contents.length) / blockSize );
+      int blocks = (int)Math.ceil(contents.length / blockSize);
       
       // Make sure we don't encounter a loop whilst overwriting
       //  the existing blocks
@@ -141,9 +141,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
          
          // Write it
          ByteBuffer buffer = blockStore.createBlockIfNeeded(thisBlock);
-         int startAt = i*blockSize;
-         int endAt = Math.min(contents.length - startAt, blockSize);
-         buffer.put(contents, startAt, endAt); 
+         buffer.put(contents, i*blockSize, blockSize);
          
          // Update pointers
          prevBlock = thisBlock;

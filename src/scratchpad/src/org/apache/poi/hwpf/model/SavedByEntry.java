@@ -15,9 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
-
-import org.apache.poi.util.Internal;
+package org.zkoss.poi.hwpf.model;
 
 
 /**
@@ -25,7 +23,6 @@ import org.apache.poi.util.Internal;
  *
  * @author Daniel Noll
  */
-@Internal
 public final class SavedByEntry
 {
   private String userName;

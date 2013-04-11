@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianByteArrayOutputStream;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Subclasses of this class (the majority of BIFF records) are non-continuable.  This allows for
@@ -31,13 +31,6 @@ public abstract class StandardRecord extends Record {
 	public final int getRecordSize() {
 		return 4 + getDataSize();
 	}
-
-    /**
-     * Write the data content of this BIFF record including the sid and record length.<br/>
-     *
-     * The subclass must write the exact number of bytes as reported by
-     *  {@link org.apache.poi.hssf.record.Record#getRecordSize()}}
-     */
 	@Override
 	public final int serialize(int offset, byte[] data) {
 		int dataSize = getDataSize();
@@ -54,14 +47,11 @@ public abstract class StandardRecord extends Record {
 		return recSize;
 	}
 
-    /**
-     * Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
-     * have already been written by the superclass.<br/>
-     *
-     * The number of bytes written must equal the record size reported by
-     *  {@link org.apache.poi.hssf.record.Record#getRecordSize()}} minus four
-     *  ( record header consiting of a 'ushort sid' and 'ushort reclength' has already been written
-     *  by thye superclass).
-     */
+	/**
+	 * Write the data content of this BIFF record.  The 'ushort sid' and 'ushort size' header fields
+	 * have already been written by the superclass.<br/>
+	 *
+	 * The subclass must write the exact number of bytes as reported by {@link org.zkoss.poi.hssf.record.Record#getRecordSize()}}
+	 */
 	protected abstract void serialize(LittleEndianOutput out);
 }

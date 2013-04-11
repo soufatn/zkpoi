@@ -15,21 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.model;
+package org.zkoss.poi.xssf.model;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 
 
 /**
@@ -83,14 +86,6 @@ public class SharedStringsTable extends POIXMLDocumentPart {
 
     private SstDocument _sstDoc;
 
-    private final static XmlOptions options = new XmlOptions();
-    static {
-        options.put( XmlOptions.SAVE_INNER );
-     	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-     	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
-        options.setSaveImplicitNamespaces(Collections.singletonMap("", "http://schemas.openxmlformats.org/spreadsheetml/2006/main"));
-    }
-
     public SharedStringsTable() {
         super();
         _sstDoc = SstDocument.Factory.newInstance();
@@ -117,17 +112,13 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();
             for (CTRst st : sst.getSiArray()) {
-                stmap.put(getKey(st), cnt);
+                stmap.put(st.toString(), cnt);
                 strings.add(st);
                 cnt++;
             }
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
-    }
-
-    private String getKey(CTRst st) {
-        return st.xmlText(options);
     }
 
     /**
@@ -173,7 +164,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @return index the index of added entry
      */
     public int addEntry(CTRst st) {
-        String s = getKey(st);
+        String s = st.toString();
         count++;
         if (stmap.containsKey(s)) {
             return stmap.get(s);

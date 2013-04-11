@@ -17,6 +17,8 @@
 
 package org.apache.poi.hdgf;
 
+import java.io.FileInputStream;
+
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;

@@ -15,13 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model.io;
+package org.zkoss.poi.hwpf.model.io;
 
 import java.io.ByteArrayOutputStream;
 
-import org.apache.poi.util.Internal;
-
-@Internal
 public final class HWPFOutputStream extends ByteArrayOutputStream
 {
 
@@ -37,19 +34,19 @@ public final class HWPFOutputStream extends ByteArrayOutputStream
     return _offset;
   }
 
-  public synchronized void reset()
+  public void reset()
   {
     super.reset();
     _offset = 0;
   }
 
-  public synchronized void write(byte[] buf, int off, int len)
+  public void write(byte[] buf, int off, int len)
   {
     super.write(buf, off, len);
     _offset += len;
   }
 
-  public synchronized void write(int b)
+  public void write(int b)
   {
     super.write(b);
     _offset++;

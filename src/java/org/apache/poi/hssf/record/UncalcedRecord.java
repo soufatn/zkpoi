@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title: Uncalced Record
@@ -30,10 +30,7 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class UncalcedRecord extends StandardRecord  {
 	public final static short sid = 0x005E;
 
-    private short _reserved;
-
 	public UncalcedRecord() {
-        _reserved = 0;
 	}
 
 	public short getSid() {
@@ -41,19 +38,18 @@ public final class UncalcedRecord extends StandardRecord  {
 	}
 
 	public UncalcedRecord(RecordInputStream in) {
-		_reserved = in.readShort(); // unused
+		in.readShort(); // unused
 	}
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[UNCALCED]\n");
-        buffer.append("    _reserved: ").append(_reserved).append('\n');
 		buffer.append("[/UNCALCED]\n");
 		return buffer.toString();
 	}
 
 	public void serialize(LittleEndianOutput out) {
-		out.writeShort(_reserved);
+		out.writeShort(0);
 	}
 
 	protected int getDataSize() {

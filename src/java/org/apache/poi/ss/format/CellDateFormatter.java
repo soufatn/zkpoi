@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.format;
+package org.zkoss.poi.ss.format;
 
 import java.text.AttributedCharacterIterator;
 import java.text.CharacterIterator;
@@ -55,6 +55,8 @@ public class CellDateFormatter extends CellFormatter {
         private int mLen;
         private int hStart = -1;
         private int hLen;
+        private int sStart = -1;
+        private boolean everMinute = false;
 
         public String handlePart(Matcher m, String part, CellFormatType type,
                 StringBuffer desc) {
@@ -64,10 +66,13 @@ public class CellDateFormatter extends CellFormatter {
             switch (firstCh) {
             case 's':
             case 'S':
-                if (mStart >= 0) {
+                if (!everMinute && mStart >= 0 && mLen <= 2) {
                     for (int i = 0; i < mLen; i++)
                         desc.setCharAt(mStart + i, 'm');
                     mStart = -1;
+                    everMinute = true;
+                } else {
+                	sStart = pos;
                 }
                 return part.toLowerCase();
 
@@ -88,13 +93,14 @@ public class CellDateFormatter extends CellFormatter {
 
             case 'm':
             case 'M':
-                mStart = pos;
-                mLen = part.length();
-                // For 'm' after 'h', output minutes ('m') not month ('M')
-                if (hStart >= 0)
-                    return part.toLowerCase();
-                else
-                    return part.toUpperCase();
+            	if (!everMinute && (hStart >= 0 || sStart >=0) && part.length() <= 2) { //20101201, henrichen@zkoss.org: m after h shall be a minute if length <= 2
+            		everMinute = true;
+            		return part.toLowerCase();
+            	} else {
+	                mStart = pos;
+	                mLen = part.length();
+	                return part.toUpperCase();
+            	}
 
             case 'y':
             case 'Y':

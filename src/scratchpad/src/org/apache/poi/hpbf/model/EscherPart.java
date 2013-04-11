@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpbf.model;
+package org.zkoss.poi.hpbf.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.ddf.DefaultEscherRecordFactory;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
 
 /**
  * Parent class of all Escher parts
@@ -41,7 +41,7 @@ public abstract class EscherPart extends HPBFPart {
 		DefaultEscherRecordFactory erf =
 			new DefaultEscherRecordFactory();
 
-		ArrayList<EscherRecord> ec = new ArrayList<EscherRecord>();
+		ArrayList ec = new ArrayList();
 		int left = data.length;
 		while(left > 0) {
 			EscherRecord er = erf.createRecord(data, 0);
@@ -51,7 +51,8 @@ public abstract class EscherPart extends HPBFPart {
 			ec.add(er);
 		}
 
-		records = ec.toArray(new EscherRecord[ec.size()]);
+		records = (EscherRecord[])
+			ec.toArray(new EscherRecord[ec.size()]);
 	}
 
 	public EscherRecord[] getEscherRecords() {

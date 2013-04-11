@@ -17,12 +17,11 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.util.Arrays;
+import junit.framework.*;
+import org.apache.poi.hwpf.*;
 
-import junit.framework.TestCase;
-import org.apache.poi.hwpf.HWPFDocFixture;
+import java.lang.reflect.*;
+import java.util.Arrays;
 
 public final class TestDocumentProperties
   extends TestCase
@@ -39,7 +38,7 @@ public final class TestDocumentProperties
     _documentProperties.serialize(buf, 0);
 
     DocumentProperties newDocProperties =
-      new DocumentProperties(buf, 0, size);
+      new DocumentProperties(buf, 0);
 
     Field[] fields = DocumentProperties.class.getSuperclass().getDeclaredFields();
     AccessibleObject.setAccessible(fields, true);
@@ -71,7 +70,7 @@ public final class TestDocumentProperties
 
     _hWPFDocFixture.setUp();
 
-    _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
+    _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop());
   }
 
   protected void tearDown()

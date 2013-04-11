@@ -15,16 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
-import org.apache.poi.hssf.record.cf.BorderFormatting;
-import org.apache.poi.hssf.record.cf.FontFormatting;
-import org.apache.poi.hssf.record.cf.PatternFormatting;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
+import org.zkoss.poi.hssf.record.CFRuleRecord.ComparisonOperator;
+import org.zkoss.poi.hssf.record.cf.BorderFormatting;
+import org.zkoss.poi.hssf.record.cf.FontFormatting;
+import org.zkoss.poi.hssf.record.cf.PatternFormatting;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
 
 /**
  *
@@ -34,7 +33,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
  *
  * @author Dmitriy Kumshayev
  */
-public final class HSSFConditionalFormattingRule implements ConditionalFormattingRule
+public final class HSSFConditionalFormattingRule
 {
 	private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
 

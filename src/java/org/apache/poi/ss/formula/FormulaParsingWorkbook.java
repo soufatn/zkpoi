@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 
 /**
  * Abstracts a workbook for the purpose of formula parsing.<br/>
@@ -51,5 +51,18 @@ public interface FormulaParsingWorkbook {
 	 * max column and row numbers, max arguments to a function, etc.)
 	 */
 	SpreadsheetVersion getSpreadsheetVersion();
+	
+	/**
+	 * Return the associated book name of the specified ExternalLink index.
+	 * Excel stores ExternalLink index in place of the [].(e.g. [1]Sheet1:Sheet3!xxx)
+	 * @param externalLinkIndex external link index 
+	 * @return the associated book name of the specified ExternalLink index.
+	 */
+	String getBookNameFromExternalLinkIndex(String externalLinkIndex);
 
+	//20101112, henrichen@zkoss.org: handle user defined name parsing
+	/**
+	 *  named range name matching is case insensitive
+	 */
+	EvaluationName getOrCreateName(String name, int sheetIndex);
 }

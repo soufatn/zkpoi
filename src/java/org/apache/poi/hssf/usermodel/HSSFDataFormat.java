@@ -21,17 +21,18 @@
  *
  * Created on December 18, 2001, 12:42 PM
  */
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Vector;
 
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.DataFormat;
+import org.zkoss.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.hssf.record.FormatRecord;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
+import org.zkoss.poi.ss.usermodel.DataFormat;
 
 /**
  * Identifies both built-in and user defined formats within a workbook.<p/>
@@ -141,14 +142,8 @@ public final class HSSFDataFormat implements DataFormat {
 		if (_movedBuiltins) {
 			return _formats.get(index);
 		}
-
-        if(index == -1) {
-            // YK: formatIndex can be -1, for example, for cell in column Y in test-data/spreadsheet/45322.xls
-            // return null for those
-            return null;
-        }
-
-		String fmt = _formats.size() > index ? _formats.get(index) : null;
+		
+		String fmt = _formats.get(index);
 		if (_builtinFormats.length > index && _builtinFormats[index] != null) {
 		   // It's in the built in range
 		   if (fmt != null) {

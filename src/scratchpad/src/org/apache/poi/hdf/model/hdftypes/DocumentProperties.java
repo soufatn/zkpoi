@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.zkoss.poi.hdf.model.hdftypes;
 
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class DocumentProperties implements HDFType
 {
 

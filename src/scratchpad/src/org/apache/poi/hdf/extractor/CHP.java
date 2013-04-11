@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor;
+package org.zkoss.poi.hdf.extractor;
 
 
 /**
@@ -23,7 +23,7 @@ package org.apache.poi.hdf.extractor;
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class CHP implements Cloneable
 {
   boolean _bold;

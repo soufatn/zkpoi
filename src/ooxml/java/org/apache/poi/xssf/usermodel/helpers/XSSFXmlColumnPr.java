@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.helpers;
+package org.zkoss.poi.xssf.usermodel.helpers;
 
-import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
+import org.zkoss.poi.xssf.model.Table;
 
 
 /**
@@ -33,11 +33,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
  */
 public class XSSFXmlColumnPr {
 	
-	private XSSFTable table;
+	private Table table;
 	private CTTableColumn ctTableColumn;
 	private CTXmlColumnPr ctXmlColumnPr;
 	
-	public XSSFXmlColumnPr(XSSFTable table ,CTTableColumn ctTableColum,CTXmlColumnPr ctXmlColumnPr){
+	public XSSFXmlColumnPr(Table table ,CTTableColumn ctTableColum,CTXmlColumnPr ctXmlColumnPr){
 		this.table = table;
 		this.ctTableColumn = ctTableColum;
 		this.ctXmlColumnPr = ctXmlColumnPr;

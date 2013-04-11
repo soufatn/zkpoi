@@ -53,8 +53,7 @@ public class TestEscherClientDataRecord extends TestCase
 
         String expected = "org.apache.poi.ddf.EscherClientDataRecord:" + nl +
                 "  RecordId: 0xF011" + nl +
-                "  Version: 0x0002" + nl +
-                "  Instance: 0x0000" + nl +
+                "  Options: 0x0002" + nl +
                 "  Extra Data:" + nl +
                 "No Data" + nl ;
         assertEquals( expected, createRecord().toString() );

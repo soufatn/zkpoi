@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
 /**
  * HSSF wrapper for a cell under evaluation
  * 
@@ -68,8 +68,5 @@ final class HSSFEvaluationCell implements EvaluationCell {
 	}
 	public String getStringCellValue() {
 		return _cell.getRichStringCellValue().getString();
-	}
-	public int getCachedFormulaResultType() {
-		return _cell.getCachedFormulaResultType();
 	}
 }

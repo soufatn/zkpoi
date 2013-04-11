@@ -15,21 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc.internal;
+package org.zkoss.poi.openxml4j.opc.internal;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
-import org.apache.poi.util.IOUtils;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 
 /**
  * Memory version of a package part. Use to
@@ -114,20 +111,7 @@ public final class MemoryPackagePart extends PackagePart {
 
 	@Override
 	public boolean load(InputStream ios) throws InvalidFormatException {
-	   // Grab the data
-	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	   try {
-	      IOUtils.copy(ios, baos);
-	   } catch(IOException e) {
-	      throw new InvalidFormatException(e.getMessage());
-	   }
-	   
-	   // Save it
-	   data = baos.toByteArray();
-	   length = data.length;
-	   
-	   // All done
-	   return true;
+		throw new InvalidFormatException("Method not implemented");
 	}
 
 	@Override

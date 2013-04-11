@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.format;
+package org.zkoss.poi.ss.format;
 
 import java.util.Formatter;
 
@@ -72,8 +72,6 @@ public class CellGeneralFormatter extends CellFormatter {
                     toAppendTo.deleteCharAt(removeFrom--);
                 }
             }
-        } else if (value instanceof Boolean) {
-            toAppendTo.append(value.toString().toUpperCase());
         } else {
             toAppendTo.append(value.toString());
         }

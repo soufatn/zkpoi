@@ -15,8 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
+import java.lang.Iterable;
 import java.util.Iterator;
 
 /**
@@ -78,12 +79,12 @@ public interface Row extends Iterable<Cell> {
      *
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
-     * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
+     * @see #getCell(int, org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy)
      */
     Cell getCell(int cellnum);
     
     /**
-     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     * Returns the cell at the given (0 based) index, with the specified {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
      * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
@@ -176,25 +177,6 @@ public interface Row extends Iterable<Cell> {
      */
     float getHeightInPoints();
 
-    /**
-     * Is this row formatted? Most aren't, but some rows
-     *  do have whole-row styles. For those that do, you
-     *  can get the formatting from {@link #getRowStyle()}
-     */
-    boolean isFormatted();
-    
-    /**
-     * Returns the whole-row cell styles. Most rows won't
-     *  have one of these, so will return null. Call
-     *  {@link #isFormatted()} to check first.
-     */
-    CellStyle getRowStyle();
-    
-    /**
-     * Applies a whole-row cell styling to the row.
-     */
-    void setRowStyle(CellStyle style);
-    
     /**
      * @return Cell iterator of the physically defined cells.  Note element 4 may
      * actually be row cell depending on how many are defined!

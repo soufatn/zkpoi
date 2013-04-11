@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.chart;
+package org.zkoss.poi.hssf.record.chart;
 
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.hssf.record.RecordInputStream;
+import org.zkoss.poi.hssf.record.StandardRecord;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * ENDOBJECT - Chart Future Record Type End Object (0x0855)<br/>
@@ -33,23 +33,15 @@ public final class ChartEndObjectRecord extends StandardRecord {
 	private short rt;
 	private short grbitFrt;
 	private short iObjectKind;
-	private byte[] reserved;
+	private byte[] unused;
 
 	public ChartEndObjectRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
 		iObjectKind = in.readShort();
 
-		// The spec says that there should be 6 bytes at the
-		//  end, which must be there and must be zero
-		// However, sometimes Excel forgets them...
-		reserved = new byte[6];
-		if(in.available() == 0) {
-		   // They've gone missing...
-		} else {
-		   // Read the reserved bytes 
-		   in.readFully(reserved);
-		}
+		unused = new byte[6];
+		in.readFully(unused);
 	}
 
 	@Override
@@ -68,7 +60,7 @@ public final class ChartEndObjectRecord extends StandardRecord {
 		out.writeShort(grbitFrt);
 		out.writeShort(iObjectKind);
 		// 6 bytes unused
-		out.write(reserved);
+		out.write(unused);
 	}
 
 	@Override
@@ -79,7 +71,7 @@ public final class ChartEndObjectRecord extends StandardRecord {
 		buffer.append("    .rt         =").append(HexDump.shortToHex(rt)).append('\n');
 		buffer.append("    .grbitFrt   =").append(HexDump.shortToHex(grbitFrt)).append('\n');
 		buffer.append("    .iObjectKind=").append(HexDump.shortToHex(iObjectKind)).append('\n');
-		buffer.append("    .reserved   =").append(HexDump.toHex(reserved)).append('\n');
+		buffer.append("    .unused     =").append(HexDump.toHex(unused)).append('\n');
 		buffer.append("[/ENDOBJECT]\n");
 		return buffer.toString();
 	}

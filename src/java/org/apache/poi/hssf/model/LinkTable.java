@@ -15,23 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.zkoss.poi.hssf.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.record.CRNCountRecord;
-import org.apache.poi.hssf.record.CRNRecord;
-import org.apache.poi.hssf.record.CountryRecord;
-import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.ExternalNameRecord;
-import org.apache.poi.hssf.record.NameCommentRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.ss.formula.ptg.*;
+import org.zkoss.poi.hssf.record.CRNCountRecord;
+import org.zkoss.poi.hssf.record.CRNRecord;
+import org.zkoss.poi.hssf.record.CountryRecord;
+import org.zkoss.poi.hssf.record.ExternSheetRecord;
+import org.zkoss.poi.hssf.record.ExternalNameRecord;
+import org.zkoss.poi.hssf.record.NameCommentRecord;
+import org.zkoss.poi.hssf.record.NameRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.SupBookRecord;
+import org.zkoss.poi.ss.formula.ptg.*;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p/>
@@ -63,6 +63,7 @@ import org.apache.poi.ss.formula.ptg.*;
  *
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 final class LinkTable {
 
@@ -361,13 +362,16 @@ final class LinkTable {
 		}
 		// Sheet name only applies if not a global reference
 		int shIx = _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
+		int shIx2 = _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
 		String usSheetName = null;
 		if(shIx >= 0) {
 		   usSheetName = ebr.getSheetNames()[shIx];
 		}
+		String usSheetName2 = shIx2 >= 0 ? ebr.getSheetNames()[shIx2] : null;
 		return new String[] {
 				ebr.getURL(),
 				usSheetName,
+				usSheetName2,
 		};
 	}
 
@@ -388,12 +392,17 @@ final class LinkTable {
 		if (ebrTarget == null) {
 			throw new RuntimeException("No external workbook with name '" + workbookName + "'");
 		}
-		int sheetIndex = getSheetIndex(ebrTarget.getSheetNames(), sheetName);
+		final int j = sheetName.indexOf(':');
+		final String sheetName1 = j < 0 ? sheetName : sheetName.substring(0, j);
+		final String sheetName2 = j < 0 ? sheetName : sheetName.substring(j+1);
+		
+		final int sheetIndex1 = getSheetIndex(ebrTarget.getSheetNames(), sheetName1);
+		final int sheetIndex2 = getSheetIndex(ebrTarget.getSheetNames(), sheetName2);
 
-		int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, sheetIndex);
+		int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, sheetIndex1, sheetIndex2);
 		if (result < 0) {
 			throw new RuntimeException("ExternSheetRecord does not contain combination ("
-					+ externalBookIndex + ", " + sheetIndex + ")");
+					+ externalBookIndex + ", " + sheetIndex1 + ", " + sheetIndex2 +")");
 		}
 		return result;
 	}
@@ -415,6 +424,10 @@ final class LinkTable {
 	public int getIndexToInternalSheet(int extRefIndex) {
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
+	
+	public int getLastIndexToInternalSheet(int extRefIndex) {
+		return _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
+	}
 
 	public int getSheetIndexFromExternSheetIndex(int extRefIndex) {
 		if (extRefIndex >= _externSheetRecord.getNumOfRefs()) {
@@ -422,8 +435,15 @@ final class LinkTable {
 		}
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
+	
+	public int getLastSheetIndexFromExternSheetIndex(int extRefIndex) {
+		if (extRefIndex >= _externSheetRecord.getNumOfRefs()) {
+			return -1;
+		}
+		return _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
+	}
 
-	public int checkExternSheet(int sheetIndex) {
+	public int checkExternSheet(int sheetIndex, int sheetIndex2) {
 		int thisWbIndex = -1; // this is probably always zero
 		for (int i=0; i<_externalBookBlocks.length; i++) {
 			SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
@@ -437,12 +457,12 @@ final class LinkTable {
 		}
 
 		//Trying to find reference to this sheet
-		int i = _externSheetRecord.getRefIxForSheet(thisWbIndex, sheetIndex);
+		int i = _externSheetRecord.getRefIxForSheet(thisWbIndex, sheetIndex, sheetIndex2);
 		if (i>=0) {
 			return i;
 		}
 		//We haven't found reference to this sheet
-		return _externSheetRecord.addRef(thisWbIndex, sheetIndex, sheetIndex);
+		return _externSheetRecord.addRef(thisWbIndex, sheetIndex, sheetIndex2);
 	}
 
 
@@ -545,34 +565,29 @@ final class LinkTable {
         int numberOfNames = extBlock.getNumberOfNames();
         // a new name is inserted in the end of the SupBookRecord, after the last name
         _workbookRecordList.add(supLinkIndex + numberOfNames, extNameRecord);
-        int ix = _externSheetRecord.getRefIxForSheet(extBlockIndex, -2 /* the scope is workbook*/);
+        int ix = _externSheetRecord.getRefIxForSheet(extBlockIndex, -2, -2/* the scope is workbook*/);
         return new NameXPtg(ix, nameIndex);
     }
 
     private int findRefIndexFromExtBookIndex(int extBookIndex) {
 		return _externSheetRecord.findRefIndexFromExtBookIndex(extBookIndex);
 	}
-   
-	/**
-	 * Changes an external referenced file to another file.
-	 * A formular in Excel which refers a cell in another file is saved in two parts: 
-	 * The referenced file is stored in an reference table. the row/cell information is saved separate.
-	 * This method invokation will only change the reference in the lookup-table itself.
-	 * @param oldUrl The old URL to search for and which is to be replaced
-	 * @param newUrl The URL replacement
-	 * @return true if the oldUrl was found and replaced with newUrl. Otherwise false
-	 */
-	public boolean changeExternalReference(String oldUrl, String newUrl) {
-		for(ExternalBookBlock ex : _externalBookBlocks) {
-			SupBookRecord externalRecord = ex.getExternalBookRecord();
-			if (externalRecord.isExternalReferences() 
-				&& externalRecord.getURL().equals(oldUrl)) {
-				
-				externalRecord.setURL(newUrl);
-				return true;
+	
+	//20101213, henrichen@zkoss.org: handle externSheetRecord when remove a sheet
+	/*package*/ void removeSheet(int sheetIdx) {
+		if (_externSheetRecord != null) {
+			int thisWbIndex = -1; // this is probably always zero
+			for (int i=0; i<_externalBookBlocks.length; i++) {
+				SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
+				if (ebr.isInternalReferences()) {
+					thisWbIndex = i;
+					break;
+				}
 			}
+			if (thisWbIndex < 0) {
+				throw new RuntimeException("Could not find 'internal references' EXTERNALBOOK");
+			}
+			_externSheetRecord.removeSheet(sheetIdx, thisWbIndex);
 		}
-		return false;
 	}
-
 }

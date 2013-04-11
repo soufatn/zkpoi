@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor.data;
+package org.zkoss.poi.hdf.extractor.data;
 
 import java.util.*;
 
-import org.apache.poi.hdf.extractor.*;
+import org.zkoss.poi.hdf.extractor.*;
 
 
 /**
@@ -27,7 +27,7 @@ import org.apache.poi.hdf.extractor.*;
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class ListTables
 {
 

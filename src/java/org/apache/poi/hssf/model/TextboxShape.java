@@ -16,11 +16,11 @@
 ==================================================================== */
 
 
-package org.apache.poi.hssf.model;
+package org.zkoss.poi.hssf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.*;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hssf.record.*;
+import org.zkoss.poi.hssf.usermodel.*;
 
 /**
  * Represents an textbox shape and converts between the highlevel records
@@ -59,7 +59,7 @@ public class TextboxShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType( (short) ( (HSSFSimpleShape) shape ).getShapeType() );
-        c.setObjectId( getCmoObjectId(shapeId) );
+        c.setObjectId( shapeId );
         c.setLocked( true );
         c.setPrintable( true );
         c.setAutofill( true );
@@ -166,5 +166,4 @@ public class TextboxShape
     {
         return escherTextbox;
     }
-
 }

@@ -15,13 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import java.util.Collections;
-
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This class holds all of the character formatting 
@@ -31,7 +28,6 @@ import org.apache.poi.util.LittleEndian;
  * In common with the rest of the old support, it 
  *  is read only
  */
-@Internal
 public final class OldCHPBinTable extends CHPBinTable
 {
   /**
@@ -53,18 +49,18 @@ public final class OldCHPBinTable extends CHPBinTable
     {
       GenericPropertyNode node = binTable.getProperty(x);
 
-      int pageNum = LittleEndian.getUShort(node.getBytes());
+      int pageNum = LittleEndian.getShort(node.getBytes());
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
-        pageOffset, tpt);
+        pageOffset, fcMin, tpt);
 
-            for ( CHPX chpx : cfkp.getCHPXs() )
-            {
-                if ( chpx != null )
-                    _textRuns.add( chpx );
-            }
+      int fkpSize = cfkp.size();
+
+      for (int y = 0; y < fkpSize; y++)
+      {
+        _textRuns.add(cfkp.getCHPX(y));
+      }
     }
-    Collections.sort( _textRuns, PropertyNode.StartComparator.instance );
   }
 }

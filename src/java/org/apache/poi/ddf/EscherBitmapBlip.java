@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 import java.io.ByteArrayOutputStream;
 
@@ -108,8 +108,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + nl +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + nl +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
                 "  UID: 0x" + HexDump.toHex( field_1_UID ) + nl +
                 "  Marker: 0x" + HexDump.toHex( field_2_marker ) + nl +
                 "  Extra Data:" + nl + extraData;

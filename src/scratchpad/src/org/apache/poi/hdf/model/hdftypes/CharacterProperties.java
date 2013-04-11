@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.zkoss.poi.hdf.model.hdftypes;
 
-import org.apache.poi.hdf.model.hdftypes.definitions.CHPAbstractType;
+import org.zkoss.poi.hdf.model.hdftypes.definitions.CHPAbstractType;
 /**
  * Properties for character runs.
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class CharacterProperties extends CHPAbstractType implements Cloneable
 {
 

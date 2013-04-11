@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.extractor;
+package org.zkoss.poi.xssf.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,19 +24,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.poi.POIXMLProperties;
-import org.apache.poi.POIXMLTextExtractor;
-import org.apache.poi.POIXMLProperties.CoreProperties;
-import org.apache.poi.POIXMLProperties.CustomProperties;
-import org.apache.poi.POIXMLProperties.ExtendedProperties;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
-import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
-import org.apache.poi.xssf.model.StylesTable;
+import org.zkoss.poi.POIXMLProperties;
+import org.zkoss.poi.POIXMLTextExtractor;
+import org.zkoss.poi.POIXMLProperties.CoreProperties;
+import org.zkoss.poi.POIXMLProperties.CustomProperties;
+import org.zkoss.poi.POIXMLProperties.ExtendedProperties;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.ss.usermodel.DataFormatter;
+import org.zkoss.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
+import org.zkoss.poi.xssf.eventusermodel.XSSFReader;
+import org.zkoss.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
+import org.zkoss.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
+import org.zkoss.poi.xssf.model.StylesTable;
 import org.apache.xmlbeans.XmlException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;

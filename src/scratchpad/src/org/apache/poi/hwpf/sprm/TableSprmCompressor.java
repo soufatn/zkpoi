@@ -15,20 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.sprm;
+package org.zkoss.poi.hwpf.sprm;
+
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.TableCellDescriptor;
+import org.zkoss.poi.hwpf.usermodel.TableProperties;
+import org.zkoss.poi.util.LittleEndian;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
-import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
-import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-
-@Internal
 public final class TableSprmCompressor
 {
   public TableSprmCompressor()
@@ -37,7 +33,7 @@ public final class TableSprmCompressor
   public static byte[] compressTableProperty(TableProperties newTAP)
   {
     int size = 0;
-    List<byte[]> sprmList = new ArrayList<byte[]>();
+    ArrayList sprmList = new ArrayList();
 
     if (newTAP.getJc() != 0)
     {
@@ -103,13 +99,10 @@ public final class TableSprmCompressor
 //      }
 //      size += SprmUtils.addSpecialSprm((short)0xD609, buf, sprmList);
     }
-
-        if ( newTAP.getTlp() != null && !newTAP.getTlp().isEmpty() )
-        {
-            byte[] buf = new byte[TableAutoformatLookSpecifier.SIZE];
-            newTAP.getTlp().serialize( buf, 0 );
-            size += SprmUtils.addSprm( (short) 0x740a, 0, buf, sprmList );
-        }
+    if (newTAP.getTlp() != 0)
+    {
+      size += SprmUtils.addSprm((short)0x740a, newTAP.getTlp(), null, sprmList);
+    }
 
     return SprmUtils.getGrpprl(sprmList, size);
   }

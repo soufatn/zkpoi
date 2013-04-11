@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.RecordFormatException;
 
 /**
  * Holds data from the parent application. Most commonly used to store
@@ -132,8 +132,7 @@ public class EscherTextboxRecord extends EscherRecord
 
         return getClass().getName() + ":" + nl +
                 "  isContainer: " + isContainerRecord() + nl +
-                "  version: 0x" + HexDump.toHex( getVersion() ) + nl +
-                "  instance: 0x" + HexDump.toHex( getInstance() ) + nl +
+                "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
                 "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
                 "  numchildren: " + getChildRecords().size() + nl +
                 theDumpHex;

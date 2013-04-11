@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.Ffn;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.model.CHPX;
+import org.zkoss.poi.hwpf.model.Ffn;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * This class represents a run of text that share common properties.
@@ -397,7 +397,7 @@ public final class CharacterRun
 
   public void setVerticalOffset(int hpsPos)
   {
-    _props.setHpsPos((short) hpsPos);
+    _props.setHpsPos(hpsPos);
     _chpx.updateSprm(SPRM_HPSPOS, (byte)hpsPos);
   }
 
@@ -417,11 +417,6 @@ public final class CharacterRun
     return _props.isFHighlight();
   }
 
-  public byte getHighlightedColor()
-  {
-      return _props.getIcoHighlight();
-  }
-
   public void setHighlighted(byte color)
   {
     _props.setFHighlight(true);
@@ -431,10 +426,6 @@ public final class CharacterRun
 
   public String getFontName()
   {
-    if (_doc.getFontTable() == null)
-      // old word format
-      return null;
-
     return _doc.getFontTable().getMainFont(_props.getFtcAscii());
   }
 
@@ -538,10 +529,7 @@ public final class CharacterRun
   /**
    * clone the CharacterProperties object associated with this
    * characterRun so that you can apply it to another CharacterRun
-   * 
-   * @deprecated This method shall not be public and should not be called from high-level code
    */
-  @Deprecated
   public CharacterProperties cloneProperties() {
     try {
        return (CharacterProperties)_props.clone();
@@ -606,13 +594,8 @@ public final class CharacterRun
   public Ffn getSymbolFont()
   {
     if (isSymbol()) {
-      if (_doc.getFontTable() == null)
-        return null;
-      
-      // Fetch all font names
       Ffn[] fontNames = _doc.getFontTable().getFontNames();
 
-      // Try to find the name of the font for our symbol
       if (fontNames.length <= _props.getFtcSym())
         return null;
 
@@ -625,10 +608,6 @@ public final class CharacterRun
     return _props.getBrc();
   }
 
-  public int getLanguageCode() {
-      return _props.getLidDefault();
-  }
-  
   public String toString() {
      String text = text();
      return "CharacterRun of " + text.length() + " characters - " + text; 
