@@ -14,19 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.model;
+package org.zkoss.poi.xssf.model;
 
-import java.io.IOException;
-
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTScRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.xssf.usermodel.XSSFColor;
 
 /**
  * Class that represents theme of XLSX document. The theme includes specific
@@ -37,14 +37,9 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 public class ThemesTable extends POIXMLDocumentPart {
     private ThemeDocument theme;
 
-    public ThemesTable(PackagePart part, PackageRelationship rel) throws IOException {
+    public ThemesTable(PackagePart part, PackageRelationship rel) throws Exception {
         super(part, rel);
-        
-        try {
-           theme = ThemeDocument.Factory.parse(part.getInputStream());
-        } catch(XmlException e) {
-           throw new IOException(e.getLocalizedMessage());
-        }
+        theme = ThemeDocument.Factory.parse(part.getInputStream());
     }
 
     public ThemesTable(ThemeDocument theme) {
@@ -53,28 +48,34 @@ public class ThemesTable extends POIXMLDocumentPart {
 
     public XSSFColor getThemeColor(int idx) {
         CTColorScheme colorScheme = theme.getTheme().getThemeElements().getClrScheme();
-        CTColor ctColor = null;
-        int cnt = 0;
-        for (XmlObject obj : colorScheme.selectPath("./*")) {
-            if (obj instanceof org.openxmlformats.schemas.drawingml.x2006.main.CTColor) {
-                if (cnt == idx) {
-                    ctColor = (org.openxmlformats.schemas.drawingml.x2006.main.CTColor) obj;
-                    
-                    byte[] rgb = null;
-                    if (ctColor.getSrgbClr() != null) {
-                       // Colour is a regular one 
-                       rgb = ctColor.getSrgbClr().getVal();
-                    } else if (ctColor.getSysClr() != null) {
-                       // Colour is a tint of white or black
-                       rgb = ctColor.getSysClr().getLastClr();
-                    }
-
-                    return new XSSFColor(rgb);
-                }
-                cnt++;
-            }
-        }
-        return null;
+        //20101123, henrichen@zkoss.org: shall handle System Color case
+    	switch(idx) {
+    	case 0: //lt1
+    		return new XSSFColor(colorScheme.getLt1().getSysClr().getLastClr());
+    	case 1: //dk1
+    		return new XSSFColor(colorScheme.getDk1().getSysClr().getLastClr());
+    	case 2: //lt2
+    		return new XSSFColor(colorScheme.getLt2().getSrgbClr().getVal());
+    	case 3: //dk2
+    		return new XSSFColor(colorScheme.getDk2().getSrgbClr().getVal());
+    	default:
+	        CTColor ctColor = null;
+	        int cnt = 0;
+	        for (XmlObject obj : colorScheme.selectPath("./*")) {
+	            if (obj instanceof org.openxmlformats.schemas.drawingml.x2006.main.CTColor) {
+	                if (cnt == idx) {
+	                    ctColor = (org.openxmlformats.schemas.drawingml.x2006.main.CTColor) obj;
+	                    CTSRgbColor srgbClr = ctColor.getSrgbClr();
+	                    if (srgbClr != null)
+	                    	return new XSSFColor(srgbClr.getVal());
+	                    else
+	                    	break;
+	                }
+	                cnt++;
+	            }
+	        }
+	        return null;
+    	}
     }
     
     /**
@@ -95,8 +96,7 @@ public class ThemesTable extends POIXMLDocumentPart {
        // Get the theme colour
        XSSFColor themeColor = getThemeColor(color.getTheme());
        // Set the raw colour, not the adjusted one
-       // Do a raw set, no adjusting at the XSSFColor layer either
-       color.getCTColor().setRgb(themeColor.getCTColor().getRgb());
+       color.setRgb(themeColor.getCTColor().getRgb());
        
        // All done
     }

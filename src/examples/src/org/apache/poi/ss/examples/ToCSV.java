@@ -389,7 +389,7 @@ public class ToCSV {
             // formatted String encapsulating the cells contents.
             this.workbook = WorkbookFactory.create(fis);
             this.evaluator = this.workbook.getCreationHelper().createFormulaEvaluator();
-            this.formatter = new DataFormatter(true);
+            this.formatter = new DataFormatter();
         }
         finally {
             if(fis != null) {

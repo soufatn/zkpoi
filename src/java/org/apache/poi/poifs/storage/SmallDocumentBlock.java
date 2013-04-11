@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.storage;
+package org.zkoss.poi.poifs.storage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
 
 /**
  * Storage for documents that are too small to use regular

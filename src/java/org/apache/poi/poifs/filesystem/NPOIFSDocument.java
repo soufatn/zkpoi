@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,13 +24,12 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.dev.POIFSViewable;
-import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.IOUtils;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.dev.POIFSViewable;
+import org.zkoss.poi.poifs.property.DocumentProperty;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.IOUtils;
 
 /**
  * This class manages a document in the NIO POIFS filesystem.
@@ -107,12 +106,7 @@ public final class NPOIFSDocument implements POIFSViewable {
    }
    
    Iterator<ByteBuffer> getBlockIterator() {
-      if(getSize() > 0) {
-         return _stream.getBlockIterator();
-      } else {
-         List<ByteBuffer> empty = Collections.emptyList();
-         return empty.iterator();
-      }
+      return _stream.getBlockIterator();
    }
 
    /**

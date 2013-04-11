@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.zkoss.poi.hdf.model.hdftypes;
 
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Represents a PAP FKP. The style properties for paragraph and character runs
@@ -35,7 +35,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-@Deprecated
 public final class PAPFormattedDiskPage extends FormattedDiskPage
 {
 

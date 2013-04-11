@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.ArrayPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.zkoss.poi.ss.formula.ptg.ArrayPtg;
+import org.zkoss.poi.ss.formula.ptg.AttrPtg;
+import org.zkoss.poi.ss.formula.ptg.FuncVarPtg;
+import org.zkoss.poi.ss.formula.ptg.MemAreaPtg;
+import org.zkoss.poi.ss.formula.ptg.MemFuncPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.function.FunctionMetadataRegistry;
 /**
  * Represents a syntactic element from a formula by encapsulating the corresponding <tt>Ptg</tt>
  * token.  Each <tt>ParseNode</tt> may have child <tt>ParseNode</tt>s in the case when the wrapped

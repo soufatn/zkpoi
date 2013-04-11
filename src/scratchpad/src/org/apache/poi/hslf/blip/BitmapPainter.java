@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.blip;
+package org.zkoss.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.hslf.model.Picture;
+import org.zkoss.poi.hslf.usermodel.PictureData;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
@@ -60,9 +60,9 @@ public final class BitmapPainter implements ImagePainter {
             logger.log(POILogger.WARN, "ImageIO failed to create image. image.type: " + pict.getType());
             return;
         }
-
-        Rectangle anchor = parent.getLogicalAnchor2D().getBounds();
-        graphics.drawImage(img, anchor.x, anchor.y, anchor.width, anchor.height, null);
+        Rectangle anchor = parent.getAnchor();
+        Image scaledImg = img.getScaledInstance(anchor.width, anchor.height, Image.SCALE_SMOOTH);
+        graphics.drawImage(scaledImg, anchor.x, anchor.y, null);
     }
 
 }

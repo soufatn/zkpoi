@@ -15,11 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndianOutput;
 
+import java.util.Arrays;
 
 /**
  * The UserSViewBegin record specifies settings for a custom view associated with the sheet.

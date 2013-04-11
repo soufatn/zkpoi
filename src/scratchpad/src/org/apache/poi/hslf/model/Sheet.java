@@ -15,15 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.record.*;
+import org.zkoss.poi.hslf.usermodel.SlideShow;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import java.awt.*;
 
 /**
@@ -121,7 +122,7 @@ public abstract class Sheet {
      * For a given PPDrawing, grab all the TextRuns
      */
     public static TextRun[] findTextRuns(PPDrawing ppdrawing) {
-        final List<TextRun> runsV = new ArrayList<TextRun>();
+        Vector runsV = new Vector();
         EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
         for (int i = 0; i < wrappers.length; i++) {
             int s1 = runsV.size();
@@ -131,11 +132,15 @@ public abstract class Sheet {
             findTextRuns(wrappers[i].getChildRecords(), runsV);
             int s2 = runsV.size();
             if (s2 != s1){
-                TextRun t = runsV.get(runsV.size()-1);
+                TextRun t = (TextRun) runsV.get(runsV.size()-1);
                 t.setShapeId(wrappers[i].getShapeId());
             }
         }
-        return runsV.toArray(new TextRun[runsV.size()]);
+        TextRun[] runs = new TextRun[runsV.size()];
+        for (int i = 0; i < runs.length; i++) {
+            runs[i] = (TextRun) runsV.get(i);
+        }
+        return runs;
     }
 
     /**
@@ -146,7 +151,7 @@ public abstract class Sheet {
      * @param records the records to build from
      * @param found   vector to add any found to
      */
-    protected static void findTextRuns(Record[] records, List<TextRun> found) {
+    protected static void findTextRuns(Record[] records, Vector found) {
         // Look for a TextHeaderAtom
         for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
             if (records[i] instanceof TextHeaderAtom) {
@@ -381,7 +386,7 @@ public abstract class Sheet {
     /**
      * Return placeholder by text type
      *
-     * @param type  type of text, See {@link org.apache.poi.hslf.record.TextHeaderAtom}
+     * @param type  type of text, See {@link org.zkoss.poi.hslf.record.TextHeaderAtom}
      * @return  <code>TextShape</code> or <code>null</code>
      */
     public TextShape getPlaceholderByTextType(int type){
@@ -401,7 +406,7 @@ public abstract class Sheet {
     /**
      * Search text placeholer by its type
      *
-     * @param type  type of placeholder to search. See {@link org.apache.poi.hslf.record.OEPlaceholderAtom}
+     * @param type  type of placeholder to search. See {@link org.zkoss.poi.hslf.record.OEPlaceholderAtom}
      * @return  <code>TextShape</code> or <code>null</code>
      */
     public TextShape getPlaceholder(int type){

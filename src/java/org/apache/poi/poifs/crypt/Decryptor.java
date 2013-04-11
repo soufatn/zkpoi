@@ -14,107 +14,144 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.poifs.crypt;
+package org.zkoss.poi.poifs.crypt;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.util.LittleEndian;
+import java.util.Arrays;
 
-public abstract class Decryptor {
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.LittleEndian;
+
+/**
+ *  @author Maxim Valyanskiy
+ */
+public class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
 
-    /**
-     * Return a stream with decrypted data.
-     * <p>
-     * Use {@link #getLength()} to get the size of that data that can be safely read from the stream.
-     * Just reading to the end of the input stream is not sufficient because there are
-     * normally padding bytes that must be discarded
-     * </p>
-     *
-     * @param dir the node to read from
-     * @return decrypted stream
-     */
-    public abstract InputStream getDataStream(DirectoryNode dir)
-        throws IOException, GeneralSecurityException;
+    private final EncryptionInfo info;
+    private byte[] passwordHash;
 
-    public abstract boolean verifyPassword(String password)
-        throws GeneralSecurityException;
-
-    /**
-     * Returns the length of the encytpted data that can be safely read with
-     * {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}.
-     * Just reading to the end of the input stream is not sufficient because there are
-     * normally padding bytes that must be discarded
-     *
-     * <p>
-     *    The length variable is initialized in {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)},
-     *    an attempt to call getLength() prior to getDataStream() will result in IllegalStateException.
-     * </p>
-     *
-     * @return length of the encrypted data
-     * @throws IllegalStateException if {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}
-     * was not called
-     */
-    public abstract long getLength();
-
-    public static Decryptor getInstance(EncryptionInfo info) {
-        int major = info.getVersionMajor();
-        int minor = info.getVersionMinor();
-
-        if (major == 4 && minor == 4)
-            return new AgileDecryptor(info);
-        else if (minor == 2 && (major == 3 || major == 4))
-            return new EcmaDecryptor(info);
-        else
-            throw new EncryptedDocumentException("Unsupported version");
+    public Decryptor(EncryptionInfo info) {
+        this.info = info;
     }
 
-    public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
-        return getDataStream(fs.getRoot());
-    }
-
-    public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
-        return getDataStream(fs.getRoot());
-    }
-
-    protected static int getBlockSize(int algorithm) {
-        switch (algorithm) {
-        case EncryptionHeader.ALGORITHM_AES_128: return 16;
-        case EncryptionHeader.ALGORITHM_AES_192: return 24;
-        case EncryptionHeader.ALGORITHM_AES_256: return 32;
-        }
-        throw new EncryptedDocumentException("Unknown block size");
-    }
-
-    protected byte[] hashPassword(EncryptionInfo info,
-                                  String password) throws NoSuchAlgorithmException {
+    private void generatePasswordHash(String password) throws NoSuchAlgorithmException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        byte[] bytes;
+        
+        byte[] passwordBytes;
         try {
-            bytes = password.getBytes("UTF-16LE");
-        } catch (UnsupportedEncodingException e) {
-            throw new EncryptedDocumentException("UTF16 not supported");
+           passwordBytes = password.getBytes("UTF-16LE");
+        } catch(UnsupportedEncodingException e) {
+           throw new RuntimeException("Your JVM is broken - UTF16 not found!");
         }
 
         sha1.update(info.getVerifier().getSalt());
-        byte[] hash = sha1.digest(bytes);
-        byte[] iterator = new byte[4];
+        byte[] hash = sha1.digest(passwordBytes);
 
-        for (int i = 0; i < info.getVerifier().getSpinCount(); i++) {
+        byte[] iterator = new byte[4];
+        for (int i = 0; i<50000; i++) {
             sha1.reset();
-            LittleEndian.putInt(iterator, 0, i);
+
+            LittleEndian.putInt(iterator, i);
             sha1.update(iterator);
             hash = sha1.digest(hash);
         }
 
-        return hash;
+        passwordHash = hash;
+    }
+
+    private byte[] generateKey(int block) throws NoSuchAlgorithmException {
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+
+        sha1.update(passwordHash);
+        byte[] blockValue = new byte[4];
+        LittleEndian.putInt(blockValue, block);
+        byte[] finalHash = sha1.digest(blockValue);
+
+        int requiredKeyLength = info.getHeader().getKeySize()/8;
+
+        byte[] buff = new byte[64];
+
+        Arrays.fill(buff, (byte) 0x36);
+
+        for (int i=0; i<finalHash.length; i++) {
+            buff[i] = (byte) (buff[i] ^ finalHash[i]);
+        }
+
+        sha1.reset();
+        byte[] x1 = sha1.digest(buff);
+
+        Arrays.fill(buff, (byte) 0x5c);
+        for (int i=0; i<finalHash.length; i++) {
+            buff[i] = (byte) (buff[i] ^ finalHash[i]);
+        }
+
+        sha1.reset();
+        byte[] x2 = sha1.digest(buff);
+
+        byte[] x3 = new byte[x1.length + x2.length];
+        System.arraycopy(x1, 0, x3, 0, x1.length);
+        System.arraycopy(x2, 0, x3, x1.length, x2.length);
+
+        return truncateOrPad(x3, requiredKeyLength);
+    }
+
+    public boolean verifyPassword(String password) throws GeneralSecurityException {
+        generatePasswordHash(password);
+
+        Cipher cipher = getCipher();
+
+        byte[] verifier = cipher.doFinal(info.getVerifier().getVerifier());
+
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        byte[] calcVerifierHash = sha1.digest(verifier);
+
+        byte[] verifierHash = truncateOrPad(cipher.doFinal(info.getVerifier().getVerifierHash()), calcVerifierHash.length);
+
+        return Arrays.equals(calcVerifierHash, verifierHash);
+    }
+    
+    /**
+     * Returns a byte array of the requested length,
+     *  truncated or zero padded as needed.
+     * Behaves like Arrays.copyOf in Java 1.6
+     */
+    private byte[] truncateOrPad(byte[] source, int length) {
+       byte[] result = new byte[length];
+       System.arraycopy(source, 0, result, 0, Math.min(length, source.length));
+       if(length > source.length) {
+          for(int i=source.length; i<length; i++) {
+             result[i] = 0;
+          }
+       }
+       return result;
+    }
+
+    private Cipher getCipher() throws GeneralSecurityException {
+        byte[] key = generateKey(0);
+        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+        SecretKey skey = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, skey);
+
+        return cipher;
+    }
+
+    public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
+        DocumentInputStream dis = fs.createDocumentInputStream("EncryptedPackage");
+
+        long size = dis.readLong();
+
+        return new CipherInputStream(dis, getCipher());
     }
 }

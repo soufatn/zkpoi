@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,28 +27,27 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 
 /**
  * @author Philipp Epp
  *
  */
 public class XWPFNumbering extends POIXMLDocumentPart {
-    protected List<XWPFAbstractNum> abstractNums = new ArrayList<XWPFAbstractNum>();
-    protected List<XWPFNum> nums = new ArrayList<XWPFNum>();
-
-    private CTNumbering ctNumbering;
-	boolean isNew;
+	private CTNumbering ctNumbering;
+	protected List<XWPFAbstractNum> abstractNums;
+	protected List<XWPFNum> nums;
+	protected boolean isNew;
 	
 	/**
 	 *create a new styles object with an existing document 
@@ -56,22 +55,16 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	public XWPFNumbering(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException{
 		super(part, rel);
 		isNew = true;
+		onDocumentRead();
 	}
-
-	/**
-	 * create a new XWPFNumbering object for use in a new document
-	 */
-	public XWPFNumbering(){
-		abstractNums = new ArrayList<XWPFAbstractNum>();
-		nums = new ArrayList<XWPFNum>();
-		isNew = true;
-	}
-
+	
 	/**
 	 * read numbering form an existing package
 	 */
 	@Override
 	protected void onDocumentRead() throws IOException{
+		abstractNums = new ArrayList<XWPFAbstractNum>();
+		nums = new ArrayList<XWPFNum>();
 		NumberingDocument numberingDoc = null;
 		InputStream is;
 		is = getPackagePart().getInputStream();
@@ -98,7 +91,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "numbering"));
-        Map<String,String> map = new HashMap<String,String>();
+        Map map = new HashMap();
         map.put("http://schemas.openxmlformats.org/markup-compatibility/2006", "ve");
         map.put("urn:schemas-microsoft-com:office:office", "o");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
@@ -115,14 +108,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
         out.close();
     }
 
-
-	/**
-	 * Sets the ctNumbering
-	 * @param numbering
-	 */
-	public void setNumbering(CTNumbering numbering){
-		ctNumbering = numbering;
-	}
 	
 	
 	/**
@@ -164,19 +149,6 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 		return ctNum.getNumId();
 	}
 	
-	/**
-	 * Add a new num with an abstractNumID and a numID
-	 * @param abstractNumID
-	 * @param numID
-	 */
-	public void addNum(BigInteger abstractNumID, BigInteger numID){
-		CTNum ctNum = this.ctNumbering.addNewNum();
-		ctNum.addNewAbstractNumId();
-		ctNum.getAbstractNumId().setVal(abstractNumID);
-		ctNum.setNumId(numID);
-		XWPFNum num = new XWPFNum(ctNum, this);
-		nums.add(num);
-	}
 	
 	/**
 	 * get Num by NumID
@@ -235,13 +207,9 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	 */
 	public BigInteger addAbstractNum(XWPFAbstractNum abstractNum){
 		int pos = abstractNums.size();
-		if(abstractNum.getAbstractNum() != null){ // Use the current CTAbstractNum if it exists
-			ctNumbering.addNewAbstractNum().set(abstractNum.getAbstractNum());
-		} else {
-			ctNumbering.addNewAbstractNum();
-			abstractNum.getAbstractNum().setAbstractNumId(BigInteger.valueOf(pos));
-			ctNumbering.setAbstractNumArray(pos, abstractNum.getAbstractNum());
-		}
+		ctNumbering.addNewAbstractNum();
+		abstractNum.getAbstractNum().setAbstractNumId(BigInteger.valueOf(pos));
+		ctNumbering.setAbstractNumArray(pos, abstractNum.getAbstractNum());
 		abstractNums.add(abstractNum);
 		return abstractNum.getCTAbstractNum().getAbstractNumId();
 	}

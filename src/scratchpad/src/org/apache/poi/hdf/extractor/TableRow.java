@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor;
+package org.zkoss.poi.hdf.extractor;
 
 import java.util.*;
 
@@ -24,7 +24,7 @@ import java.util.*;
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class TableRow
 {
   TAP _descriptor;

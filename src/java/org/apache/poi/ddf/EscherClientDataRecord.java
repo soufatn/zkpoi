@@ -16,10 +16,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 import java.io.ByteArrayOutputStream;
 
@@ -92,8 +92,7 @@ public class EscherClientDataRecord
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
+                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
                 "  Extra Data:" + nl +
                 extraData;
 

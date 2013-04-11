@@ -15,19 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.model.MapInfo;
-import org.apache.poi.xssf.model.SingleXmlCells;
-import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMap;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSchema;
 import org.w3c.dom.Node;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.xssf.model.MapInfo;
+import org.zkoss.poi.xssf.model.SingleXmlCells;
+import org.zkoss.poi.xssf.model.Table;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 
 /**
  * This class implements the Map element (Open Office XML Part 4:
@@ -100,16 +101,16 @@ public class XSSFMap {
     /**
      * @return the list of all Tables that provide a map rule to this mapping
      */
-    public List<XSSFTable> getRelatedTables() {
+    public List<Table> getRelatedTables() {
 
-        List<XSSFTable> tables = new Vector<XSSFTable>();
+        List<Table> tables = new Vector<Table>();
         int sheetNumber = mapInfo.getWorkbook().getNumberOfSheets();
 
         for (int i = 0; i < sheetNumber; i++) {
             XSSFSheet sheet = mapInfo.getWorkbook().getSheetAt(i);
             for (POIXMLDocumentPart p : sheet.getRelations()) {
                 if (p.getPackageRelationship().getRelationshipType().equals(XSSFRelation.TABLE.getRelation())) {
-                    XSSFTable table = (XSSFTable) p;
+                    Table table = (Table) p;
                     if (table.mapsTo(ctMap.getID())) {
                         tables.add(table);
                     }

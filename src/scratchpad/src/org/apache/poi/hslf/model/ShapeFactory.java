@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hslf.record.*;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hslf.record.*;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 import java.util.List;
 import java.util.Iterator;
@@ -72,7 +72,7 @@ public final class ShapeFactory {
         Shape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 
-        int type = spRecord.getShapeType();
+        int type = spRecord.getOptions() >> 4;
         switch (type){
             case ShapeTypes.TextBox:
                 shape = new TextBox(spContainer, parent);

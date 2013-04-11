@@ -15,13 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.util.Arrays;
 
-import org.apache.poi.util.Internal;
-
-@Internal
 public final class UPX
 {
   private byte[] _upx;
@@ -45,10 +42,4 @@ public final class UPX
     UPX upx = (UPX)o;
     return Arrays.equals(_upx, upx._upx);
   }
-
-    @Override
-    public String toString()
-    {
-        return "[UPX] " + Arrays.toString( _upx );
-    }
 }

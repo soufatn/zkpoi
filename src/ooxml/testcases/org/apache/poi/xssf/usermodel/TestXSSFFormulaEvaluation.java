@@ -17,8 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {

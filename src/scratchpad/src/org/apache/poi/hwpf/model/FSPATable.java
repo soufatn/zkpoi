@@ -15,102 +15,72 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.util.Internal;
-
 /**
  * This class holds all the FSPA (File Shape Address) structures.
- * 
+ *
  * @author Squeeself
  */
-@Internal
 public final class FSPATable
 {
+    private final List _shapes = new ArrayList();
+    private final Map _shapeIndexesByPropertyStart = new HashMap();
+    private final List _text;
 
-    private final Map<Integer, GenericPropertyNode> _byStart = new LinkedHashMap<Integer, GenericPropertyNode>();
-
-    public FSPATable( byte[] tableStream, FileInformationBlock fib,
-            FSPADocumentPart part )
+    public FSPATable(byte[] tableStream, int fcPlcspa, int lcbPlcspa, List tpt)
     {
-        int offset = fib.getFSPAPlcfOffset( part );
-        int length = fib.getFSPAPlcfLength( part );
-
-        PlexOfCps plex = new PlexOfCps( tableStream, offset, length,
-                FSPA.getSize() );
-        for ( int i = 0; i < plex.length(); i++ )
-        {
-            GenericPropertyNode property = plex.getProperty( i );
-            _byStart.put( Integer.valueOf( property.getStart() ), property );
-        }
-    }
-
-    @Deprecated
-    public FSPATable( byte[] tableStream, int fcPlcspa, int lcbPlcspa,
-            List<TextPiece> tpt )
-    {
+        _text = tpt;
         // Will be 0 if no drawing objects in document
-        if ( fcPlcspa == 0 )
+        if (fcPlcspa == 0)
             return;
 
-        PlexOfCps plex = new PlexOfCps( tableStream, fcPlcspa, lcbPlcspa,
-                FSPA.FSPA_SIZE );
-        for ( int i = 0; i < plex.length(); i++ )
+        PlexOfCps plex = new PlexOfCps(tableStream, fcPlcspa, lcbPlcspa, FSPA.FSPA_SIZE);
+        for (int i=0; i < plex.length(); i++)
         {
-            GenericPropertyNode property = plex.getProperty( i );
-            _byStart.put( Integer.valueOf( property.getStart() ), property );
+            GenericPropertyNode property = plex.getProperty(i);
+            FSPA fspa = new FSPA(property.getBytes(), 0);
+
+            _shapes.add(fspa);
+            _shapeIndexesByPropertyStart.put(Integer.valueOf(property.getStart()), Integer.valueOf(i));
         }
     }
 
-    public FSPA getFspaFromCp( int cp )
+    public FSPA getFspaFromCp(int cp)
     {
-        GenericPropertyNode propertyNode = _byStart.get( Integer.valueOf( cp ) );
-        if ( propertyNode == null )
-        {
+        Integer idx = (Integer)_shapeIndexesByPropertyStart.get(Integer.valueOf(cp));
+        if (idx == null) {
             return null;
         }
-        return new FSPA( propertyNode.getBytes(), 0 );
+        return (FSPA)_shapes.get(idx.intValue());
     }
 
     public FSPA[] getShapes()
     {
-        List<FSPA> result = new ArrayList<FSPA>( _byStart.size() );
-        for ( GenericPropertyNode propertyNode : _byStart.values() )
-        {
-            result.add( new FSPA( propertyNode.getBytes(), 0 ) );
-        }
-        return result.toArray( new FSPA[result.size()] );
+        FSPA[] result = new FSPA[_shapes.size()];
+        _shapes.toArray(result);
+        return result;
     }
 
     public String toString()
     {
         StringBuffer buf = new StringBuffer();
-        buf.append( "[FPSA PLC size=" ).append( _byStart.size() )
-                .append( "]\n" );
-
-        for ( Map.Entry<Integer, GenericPropertyNode> entry : _byStart
-                .entrySet() )
+        buf.append("[FPSA PLC size=").append(_shapes.size()).append("]\n");
+        for (Iterator it = _shapeIndexesByPropertyStart.keySet().iterator(); it.hasNext(); )
         {
-            Integer i = entry.getKey();
-            buf.append( "  " ).append( i.toString() ).append( " => \t" );
-
-            try
-            {
-                FSPA fspa = getFspaFromCp( i.intValue() );
-                buf.append( fspa.toString() );
-            }
-            catch ( Exception exc )
-            {
-                buf.append( exc.getMessage() );
-            }
-            buf.append( "\n" );
+            Integer i = (Integer) it.next();
+            FSPA fspa = (FSPA) _shapes.get(((Integer)_shapeIndexesByPropertyStart.get(i)).intValue());
+            buf.append("  [FC: ").append(i.toString()).append("] ");
+            buf.append(fspa.toString());
+            buf.append("\n");
         }
-        buf.append( "[/FSPA PLC]" );
+        buf.append("[/FSPA PLC]");
         return buf.toString();
     }
 }

@@ -15,15 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Represents a CHP fkp. The style properties for paragraph and character runs
@@ -41,7 +38,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-@Internal
 public final class CHPFormattedDiskPage extends FormattedDiskPage
 {
     private static final int FC_SIZE = 4;
@@ -57,54 +53,27 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
-     * 
-     * @deprecated Use
-     *             {@link #CHPFormattedDiskPage(byte[], int, CharIndexTranslator)}
-     *             instead
      */
-    @SuppressWarnings( "unused" )
-    public CHPFormattedDiskPage( byte[] documentStream, int offset, int fcMin,
-            TextPieceTable tpt )
+    public CHPFormattedDiskPage(byte[] documentStream, int offset, int fcMin, TextPieceTable tpt)
     {
-        this( documentStream, offset, tpt );
-    }
+      super(documentStream, offset);
 
-    /**
-     * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
-     * read from a Word file).
-     */
-    public CHPFormattedDiskPage( byte[] documentStream, int offset,
-            CharIndexTranslator translator )
-    {
-        super( documentStream, offset );
+      for (int x = 0; x < _crun; x++)
+      {
+    	int startAt = getStart(x);
+		int endAt = getEnd(x);
 
-        for ( int x = 0; x < _crun; x++ )
-        {
-            int bytesStartAt = getStart( x );
-            int bytesEndAt = getEnd( x );
-
-            // int charStartAt = translator.getCharIndex( bytesStartAt );
-            // int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt
-            // );
-
-            for ( int[] range : translator.getCharIndexRanges( bytesStartAt,
-                    bytesEndAt ) )
-            {
-                CHPX chpx = new CHPX( range[0], range[1], new SprmBuffer(
-                        getGrpprl( x ), 0 ) );
-                _chpxList.add( chpx );
-            }
+        if (!tpt.isIndexInTable(startAt) && !tpt.isIndexInTable(endAt)) {
+            _chpxList.add(null);
+        } else {
+		    _chpxList.add(new CHPX(startAt, endAt, tpt, getGrpprl(x)));
         }
+      }
     }
 
     public CHPX getCHPX(int index)
     {
       return _chpxList.get(index);
-    }
-
-    public List<CHPX> getCHPXs()
-    {
-        return Collections.unmodifiableList( _chpxList );
     }
 
     public void fill(List<CHPX> filler)
@@ -141,86 +110,72 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         return chpx;
     }
 
-    /**
-     * @deprecated Use {@link #toByteArray(CharIndexTranslator)} instead
-     */
-    @Deprecated
-    @SuppressWarnings( "unused" )
-    protected byte[] toByteArray(CharIndexTranslator translator, int fcMin)
+    protected byte[] toByteArray(int fcMin)
     {
-        return toByteArray( translator );
-    }
+      byte[] buf = new byte[512];
+      int size = _chpxList.size();
+      int grpprlOffset = 511;
+      int offsetOffset = 0;
+      int fcOffset = 0;
 
-    protected byte[] toByteArray( CharIndexTranslator translator )
-    {
-        byte[] buf = new byte[512];
-        int size = _chpxList.size();
-        int grpprlOffset = 511;
-        int offsetOffset = 0;
-        int fcOffset = 0;
+      // total size is currently the size of one FC
+      int totalSize = FC_SIZE + 2;
 
-        // total size is currently the size of one FC
-        int totalSize = FC_SIZE + 2;
+      int index = 0;
+      for (; index < size; index++)
+      {
+        int grpprlLength = (_chpxList.get(index)).getGrpprl().length;
 
-        int index = 0;
-        for ( ; index < size; index++ )
+        // check to see if we have enough room for an FC, the grpprl offset,
+        // the grpprl size byte and the grpprl.
+        totalSize += (FC_SIZE + 2 + grpprlLength);
+        // if size is uneven we will have to add one so the first grpprl falls
+        // on a word boundary
+        if (totalSize > 511 + (index % 2))
         {
-            int grpprlLength = ( _chpxList.get( index ) ).getGrpprl().length;
-
-            // check to see if we have enough room for an FC, the grpprl offset,
-            // the grpprl size byte and the grpprl.
-            totalSize += ( FC_SIZE + 2 + grpprlLength );
-            // if size is uneven we will have to add one so the first grpprl
-            // falls
-            // on a word boundary
-            if ( totalSize > 511 + ( index % 2 ) )
-            {
-                totalSize -= ( FC_SIZE + 2 + grpprlLength );
-                break;
-            }
-
-            // grpprls must fall on word boundaries
-            if ( ( 1 + grpprlLength ) % 2 > 0 )
-            {
-                totalSize += 1;
-            }
+          totalSize -= (FC_SIZE + 2 + grpprlLength);
+          break;
         }
 
-        // see if we couldn't fit some
-        if ( index != size )
+        // grpprls must fall on word boundaries
+        if ((1 + grpprlLength) % 2 > 0)
         {
-            _overFlow = new ArrayList<CHPX>();
-            _overFlow.addAll( _chpxList.subList( index, size ) );
+          totalSize += 1;
         }
+      }
 
-        // index should equal number of CHPXs that will be in this fkp now.
-        buf[511] = (byte) index;
+      // see if we couldn't fit some
+      if (index != size)
+      {
+        _overFlow = new ArrayList<CHPX>();
+        _overFlow.addAll(_chpxList.subList(index, size));
+      }
 
-        offsetOffset = ( FC_SIZE * index ) + FC_SIZE;
-        // grpprlOffset = offsetOffset + index + (grpprlOffset % 2);
+      // index should equal number of CHPXs that will be in this fkp now.
+      buf[511] = (byte)index;
 
-        CHPX chpx = null;
-        for ( int x = 0; x < index; x++ )
-        {
-            chpx = _chpxList.get( x );
-            byte[] grpprl = chpx.getGrpprl();
+      offsetOffset = (FC_SIZE * index) + FC_SIZE;
+      //grpprlOffset =  offsetOffset + index + (grpprlOffset % 2);
 
-            LittleEndian.putInt( buf, fcOffset,
-                    translator.getByteIndex( chpx.getStart() ) );
+      CHPX chpx = null;
+      for (int x = 0; x < index; x++)
+      {
+        chpx = (CHPX)_chpxList.get(x);
+        byte[] grpprl = chpx.getGrpprl();
 
-            grpprlOffset -= ( 1 + grpprl.length );
-            grpprlOffset -= ( grpprlOffset % 2 );
-            buf[offsetOffset] = (byte) ( grpprlOffset / 2 );
-            buf[grpprlOffset] = (byte) grpprl.length;
-            System.arraycopy( grpprl, 0, buf, grpprlOffset + 1, grpprl.length );
+        LittleEndian.putInt(buf, fcOffset, chpx.getStartBytes() + fcMin);
+        grpprlOffset -= (1 + grpprl.length);
+        grpprlOffset -= (grpprlOffset % 2);
+        buf[offsetOffset] = (byte)(grpprlOffset/2);
+        buf[grpprlOffset] = (byte)grpprl.length;
+        System.arraycopy(grpprl, 0, buf, grpprlOffset + 1, grpprl.length);
 
-            offsetOffset += 1;
-            fcOffset += FC_SIZE;
-        }
-        // put the last chpx's end in
-        LittleEndian.putInt( buf, fcOffset,
-                translator.getByteIndex( chpx.getEnd() ) );
-        return buf;
+        offsetOffset += 1;
+        fcOffset += FC_SIZE;
+      }
+      // put the last chpx's end in
+      LittleEndian.putInt(buf, fcOffset, chpx.getEndBytes() + fcMin);
+      return buf;
     }
 
 }

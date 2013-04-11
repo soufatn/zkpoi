@@ -17,8 +17,6 @@
 
 package org.apache.poi.xwpf;
 
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
@@ -39,7 +37,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * 
  */
 public final class TestPackageCorePropertiesGetKeywords extends TestCase {
-	public void testGetSetKeywords() throws IOException {
+	public void testGetSetKeywords() {
 		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx");
 		String keywords = doc.getProperties().getCoreProperties().getKeywords();
 		assertEquals("extractor, test, rdf", keywords);

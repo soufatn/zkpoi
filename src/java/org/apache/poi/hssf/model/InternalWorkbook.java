@@ -15,10 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.zkoss.poi.hssf.model;
 
 import java.security.AccessControlException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,72 +27,73 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRGBProperty;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.BookBoolRecord;
-import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.CodepageRecord;
-import org.apache.poi.hssf.record.CountryRecord;
-import org.apache.poi.hssf.record.DSFRecord;
-import org.apache.poi.hssf.record.DateWindow1904Record;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.ExtSSTRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.FileSharingRecord;
-import org.apache.poi.hssf.record.FnGroupCountRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.record.HideObjRecord;
-import org.apache.poi.hssf.record.HyperlinkRecord;
-import org.apache.poi.hssf.record.InterfaceEndRecord;
-import org.apache.poi.hssf.record.InterfaceHdrRecord;
-import org.apache.poi.hssf.record.MMSRecord;
-import org.apache.poi.hssf.record.NameCommentRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.PaletteRecord;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.hssf.record.PasswordRev4Record;
-import org.apache.poi.hssf.record.PrecisionRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
-import org.apache.poi.hssf.record.ProtectionRev4Record;
-import org.apache.poi.hssf.record.RecalcIdRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RefreshAllRecord;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.StyleRecord;
-import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.hssf.record.TabIdRecord;
-import org.apache.poi.hssf.record.UseSelFSRecord;
-import org.apache.poi.hssf.record.WindowOneRecord;
-import org.apache.poi.hssf.record.WindowProtectRecord;
-import org.apache.poi.hssf.record.WriteAccessRecord;
-import org.apache.poi.hssf.record.WriteProtectRecord;
-import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.ptg.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
-import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.ddf.EscherBoolProperty;
+import org.zkoss.poi.ddf.EscherContainerRecord;
+import org.zkoss.poi.ddf.EscherDgRecord;
+import org.zkoss.poi.ddf.EscherDggRecord;
+import org.zkoss.poi.ddf.EscherOptRecord;
+import org.zkoss.poi.ddf.EscherProperties;
+import org.zkoss.poi.ddf.EscherRGBProperty;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.ddf.EscherSpRecord;
+import org.zkoss.poi.ddf.EscherSplitMenuColorsRecord;
+import org.zkoss.poi.hssf.record.BOFRecord;
+import org.zkoss.poi.hssf.record.BackupRecord;
+import org.zkoss.poi.hssf.record.BookBoolRecord;
+import org.zkoss.poi.hssf.record.BoundSheetRecord;
+import org.zkoss.poi.hssf.record.CodepageRecord;
+import org.zkoss.poi.hssf.record.CountryRecord;
+import org.zkoss.poi.hssf.record.DSFRecord;
+import org.zkoss.poi.hssf.record.DateWindow1904Record;
+import org.zkoss.poi.hssf.record.DrawingGroupRecord;
+import org.zkoss.poi.hssf.record.EOFRecord;
+import org.zkoss.poi.hssf.record.EscherAggregate;
+import org.zkoss.poi.hssf.record.ExtSSTRecord;
+import org.zkoss.poi.hssf.record.ExtendedFormatRecord;
+import org.zkoss.poi.hssf.record.ExternSheetRecord;
+import org.zkoss.poi.hssf.record.FileSharingRecord;
+import org.zkoss.poi.hssf.record.FnGroupCountRecord;
+import org.zkoss.poi.hssf.record.FontRecord;
+import org.zkoss.poi.hssf.record.FormatRecord;
+import org.zkoss.poi.hssf.record.HideObjRecord;
+import org.zkoss.poi.hssf.record.HyperlinkRecord;
+import org.zkoss.poi.hssf.record.InterfaceEndRecord;
+import org.zkoss.poi.hssf.record.InterfaceHdrRecord;
+import org.zkoss.poi.hssf.record.MMSRecord;
+import org.zkoss.poi.hssf.record.NameCommentRecord;
+import org.zkoss.poi.hssf.record.NameRecord;
+import org.zkoss.poi.hssf.record.PaletteRecord;
+import org.zkoss.poi.hssf.record.PasswordRecord;
+import org.zkoss.poi.hssf.record.PasswordRev4Record;
+import org.zkoss.poi.hssf.record.PrecisionRecord;
+import org.zkoss.poi.hssf.record.ProtectRecord;
+import org.zkoss.poi.hssf.record.ProtectionRev4Record;
+import org.zkoss.poi.hssf.record.RecalcIdRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.RefreshAllRecord;
+import org.zkoss.poi.hssf.record.SSTRecord;
+import org.zkoss.poi.hssf.record.StyleRecord;
+import org.zkoss.poi.hssf.record.SupBookRecord;
+import org.zkoss.poi.hssf.record.TabIdRecord;
+import org.zkoss.poi.hssf.record.UseSelFSRecord;
+import org.zkoss.poi.hssf.record.WindowOneRecord;
+import org.zkoss.poi.hssf.record.WindowProtectRecord;
+import org.zkoss.poi.hssf.record.WriteAccessRecord;
+import org.zkoss.poi.hssf.record.WriteProtectRecord;
+import org.zkoss.poi.hssf.record.XFExtRecord;
+import org.zkoss.poi.hssf.record.common.UnicodeString;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalName;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Low level model implementation of a Workbook.  Provides creational methods
@@ -114,7 +116,8 @@ import org.apache.poi.util.POILogger;
  * @author  Brian Sanders (bsanders at risklabs dot com) - custom palette
  * @author  Dan Sherman (dsherman at isisph.com)
  * @author  Glen Stampoultzis (glens at apache.org)
- * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
+ * @author	Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
+ * @see org.zkoss.poi.hssf.usermodel.HSSFWorkbook
  */
 @Internal
 public final class InternalWorkbook {
@@ -155,7 +158,8 @@ public final class InternalWorkbook {
     private final List<BoundSheetRecord> boundsheets;
     private final List<FormatRecord> formats;
     private final List<HyperlinkRecord> hyperlinks;
-
+    
+    
     /** the number of extended format records */
 	private int numxfs;
     /** the number of font records */
@@ -182,6 +186,7 @@ public final class InternalWorkbook {
 		boundsheets = new ArrayList<BoundSheetRecord>();
 		formats = new ArrayList<FormatRecord>();
 		hyperlinks = new ArrayList<HyperlinkRecord>();
+
 		numxfs = 0;
 		numfonts = 0;
 		maxformatid = -1;
@@ -249,6 +254,14 @@ public final class InternalWorkbook {
                     retval.numxfs++;
                     break;
 
+                //20110118, henrichen@zkoss.org: handle XFExt record
+                case XFExtRecord.sid :
+                    if (log.check( POILogger.DEBUG ))
+                        log.log(DEBUG, "found XFExt record at " + k);
+                    retval.records.setXfextpos( k );
+                    retval.addXFExtRecord((XFExtRecord)rec);
+                    break;
+                    
                 case TabIdRecord.sid :
                     if (log.check( POILogger.DEBUG ))
                         log.log(DEBUG, "found tabid record at " + k);
@@ -405,6 +418,16 @@ public final class InternalWorkbook {
             retval.numxfs++;
         }
         retval.records.setXfpos( records.size() - 1 );
+        
+        //TODO 20110118, henrichen@zkoss: create default XFExt here?
+        /*
+        for (int k = 0; k < ?; k++) {
+            records.add(retval.createXFExt(k));
+            retval.numxfexts++;
+        }
+        retval.records.setXfextpos( records.size() - 1 );
+        */
+        
         for (int k = 0; k < 6; k++) {
             records.add(retval.createStyle(k));
         }
@@ -420,7 +443,7 @@ public final class InternalWorkbook {
         }
         records.add( retval.createCountry() );
         for ( int k = 0; k < nBoundSheets; k++ ) {
-            retval.getOrCreateLinkTable().checkExternSheet(k);
+            retval.getOrCreateLinkTable().checkExternSheet(k, k);
         }
         retval.sst = new SSTRecord();
         records.add(retval.sst);
@@ -579,10 +602,6 @@ public final class InternalWorkbook {
      */
     public void setSheetName(int sheetnum, String sheetname) {
         checkSheets(sheetnum);
-
-        // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
-        if(sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
-
         BoundSheetRecord sheet = boundsheets.get(sheetnum);
         sheet.setSheetname(sheetname);
     }
@@ -734,7 +753,7 @@ public final class InternalWorkbook {
             records.add(records.getBspos()+1, bsr);
             records.setBspos( records.getBspos() + 1 );
             boundsheets.add(bsr);
-            getOrCreateLinkTable().checkExternSheet(sheetnum);
+            getOrCreateLinkTable().checkExternSheet(sheetnum, sheetnum);
             fixTabIdRecord();
         } else {
            // Ensure we have enough tab IDs
@@ -778,6 +797,9 @@ public final class InternalWorkbook {
                 nr.setSheetNumber(nr.getSheetNumber()-1);
             }
         }
+        
+        //20101213, henrichen@zkoss.org: has to hanlde externSheetRecords
+        getOrCreateLinkTable().removeSheet(sheetIndex);
     }
 
     /**
@@ -957,7 +979,7 @@ public final class InternalWorkbook {
      * use this function to add a Shared String Table to an existing sheet (say
      * generated by a different java api) without an sst....
      * @see #createExtendedSST()
-     * @see org.apache.poi.hssf.record.SSTRecord
+     * @see org.zkoss.poi.hssf.record.SSTRecord
      */
 
     public void insertSST() {
@@ -1017,32 +1039,36 @@ public final class InternalWorkbook {
         {
 
             Record record = records.get( k );
-            int len = 0;
-            if (record instanceof SSTRecord)
+            // Let's skip RECALCID records, as they are only use for optimization
+            if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
             {
-                sst = (SSTRecord)record;
-                sstPos = pos;
-            }
-            if (record.getSid() == ExtSSTRecord.sid && sst != null)
-            {
-                record = sst.createExtSSTRecord(sstPos + offset);
-            }
-            if (record instanceof BoundSheetRecord) {
-                 if(!wroteBoundSheets) {
-                    for (int i = 0; i < boundsheets.size(); i++) {
-                        len+= getBoundSheetRec(i)
-                                         .serialize(pos+offset+len, data);
-                    }
-                    wroteBoundSheets = true;
-                 }
-            } else {
-               len = record.serialize( pos + offset, data );
-            }
-            /////  DEBUG BEGIN /////
+                int len = 0;
+                if (record instanceof SSTRecord)
+                {
+                    sst = (SSTRecord)record;
+                    sstPos = pos;
+                }
+                if (record.getSid() == ExtSSTRecord.sid && sst != null)
+                {
+                    record = sst.createExtSSTRecord(sstPos + offset);
+                }
+                if (record instanceof BoundSheetRecord) {
+                     if(!wroteBoundSheets) {
+                        for (int i = 0; i < boundsheets.size(); i++) {
+                            len+= getBoundSheetRec(i)
+                                             .serialize(pos+offset+len, data);
+                        }
+                        wroteBoundSheets = true;
+                     }
+                } else {
+                   len = record.serialize( pos + offset, data );
+                }
+                /////  DEBUG BEGIN /////
 //                if (len != record.getRecordSize())
 //                    throw new IllegalStateException("Record size does not match serialized bytes.  Serialized size = " + len + " but getRecordSize() returns " + record.getRecordSize());
-            /////  DEBUG END /////
-            pos += len;   // rec.length;
+                /////  DEBUG END /////
+                pos += len;   // rec.length;
+            }
         }
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "Exiting serialize workbook" );
@@ -1057,12 +1083,16 @@ public final class InternalWorkbook {
         for ( int k = 0; k < records.size(); k++ )
         {
             Record record = records.get( k );
-            if (record instanceof SSTRecord)
-                sst = (SSTRecord)record;
-            if (record.getSid() == ExtSSTRecord.sid && sst != null)
-                retval += sst.calcExtSSTRecordSize();
-            else
-                retval += record.getRecordSize();
+            // Let's skip RECALCID records, as they are only use for optimization
+            if ( record.getSid() != RecalcIdRecord.sid || ( (RecalcIdRecord) record ).isNeeded() )
+            {
+                if (record instanceof SSTRecord)
+                    sst = (SSTRecord)record;
+                if (record.getSid() == ExtSSTRecord.sid && sst != null)
+                    retval += sst.calcExtSSTRecordSize();
+                else
+                    retval += record.getRecordSize();
+            }
         }
         return retval;
     }
@@ -1714,8 +1744,8 @@ public final class InternalWorkbook {
      * Always sets the sheet's bof to 0.  You'll need to set that yourself.
      * @param id either sheet 0,1 or 2.
      * @return record containing a BoundSheetRecord
-     * @see org.apache.poi.hssf.record.BoundSheetRecord
-     * @see org.apache.poi.hssf.record.Record
+     * @see org.zkoss.poi.hssf.record.BoundSheetRecord
+     * @see org.zkoss.poi.hssf.record.Record
      */
     private static BoundSheetRecord createBoundSheet(int id) {
         return new BoundSheetRecord("Sheet" + (id+1));
@@ -1779,14 +1809,17 @@ public final class InternalWorkbook {
             // Not sure if this can ever happen (See bug 45798)
             return ""; // Seems to be what excel would do in this case
         }
-        return getSheetName(indexToSheet);
+        int indexToSheet2 = linkTable.getLastIndexToInternalSheet(externSheetIndex);
+        return indexToSheet == indexToSheet2 || indexToSheet2 < 0 || indexToSheet2 >= boundsheets.size() ?
+        		getSheetName(indexToSheet) : getSheetName(indexToSheet)+':'+getSheetName(indexToSheet2);  
     }
     public ExternalSheet getExternalSheet(int externSheetIndex) {
         String[] extNames = linkTable.getExternalBookAndSheetName(externSheetIndex);
         if (extNames == null) {
             return null;
         }
-        return new ExternalSheet(extNames[0], extNames[1]);
+        return new ExternalSheet(extNames[0], extNames[1], extNames[2]);
+        
     }
     public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
        String nameName = linkTable.resolveNameXText(externSheetIndex, externNameIndex);
@@ -1806,14 +1839,19 @@ public final class InternalWorkbook {
     {
         return linkTable.getSheetIndexFromExternSheetIndex(externSheetNumber);
     }
+    
+    public int getLastSheetIndexFromExternSheetIndex(int externSheetNumber)
+    {
+        return linkTable.getLastSheetIndexFromExternSheetIndex(externSheetNumber);
+    }
 
     /** returns the extern sheet number for specific sheet number ,
      *  if this sheet doesn't exist in extern sheet , add it
      * @param sheetNumber sheet number
      * @return index to extern sheet
      */
-    public short checkExternSheet(int sheetNumber){
-        return (short)getOrCreateLinkTable().checkExternSheet(sheetNumber);
+    public short checkExternSheet(int sheetNumber, int sheetNumber2){
+        return (short)getOrCreateLinkTable().checkExternSheet(sheetNumber, sheetNumber2);
     }
 
     public int getExternalSheetIndex(String workbookName, String sheetName) {
@@ -1947,8 +1985,8 @@ public final class InternalWorkbook {
      * Creates a FormatRecord, inserts it, and returns the index code.
      * @param formatString the format string
      * @return the index code of the format record.
-     * @see org.apache.poi.hssf.record.FormatRecord
-     * @see org.apache.poi.hssf.record.Record
+     * @see org.zkoss.poi.hssf.record.FormatRecord
+     * @see org.zkoss.poi.hssf.record.Record
      */
     public int createFormat(String formatString) {
 
@@ -2054,10 +2092,10 @@ public final class InternalWorkbook {
     /**
      * Finds the primary drawing group, if one already exists
      */
-    public DrawingManager2 findDrawingGroup() {
+    public void findDrawingGroup() {
         if(drawingManager != null) {
            // We already have it!
-           return drawingManager;
+           return;
         }
         
         // Need to find a DrawingGroupRecord that
@@ -2074,24 +2112,20 @@ public final class InternalWorkbook {
                 }
 
                 EscherDggRecord dgg = null;
-                EscherContainerRecord bStore = null;
                 for(Iterator<EscherRecord> it = cr.getChildIterator(); it.hasNext();) {
-                    EscherRecord er = it.next();
+                    Object er = it.next();
                     if(er instanceof EscherDggRecord) {
                         dgg = (EscherDggRecord)er;
-                    } else if (er.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
-                        bStore = (EscherContainerRecord) er;
+                    } 
+                    //20101015, henrichen@zkoss.org: populate blipstore (EscherBSERecord)
+                    else if (er instanceof EscherContainerRecord && ((EscherContainerRecord)er).getRecordId() == (short)0xF001) {
+   	                	populateBSERecords((EscherContainerRecord)er);
                     }
                 }
 
                 if(dgg != null) {
                     drawingManager = new DrawingManager2(dgg);
-                    if(bStore != null){
-                        for(EscherRecord bs : bStore.getChildRecords()){
-                            if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
-                        }
-                    }
-                    return drawingManager;
+                    return;
                 }
             }
         }
@@ -2103,25 +2137,16 @@ public final class InternalWorkbook {
         if(dgLoc != -1) {
             DrawingGroupRecord dg = (DrawingGroupRecord)records.get(dgLoc);
             EscherDggRecord dgg = null;
-            EscherContainerRecord bStore = null;
             for(EscherRecord er : dg.getEscherRecords()) {
-                if (er instanceof EscherDggRecord) {
-                    dgg = (EscherDggRecord) er;
-                } else if (er.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
-                    bStore = (EscherContainerRecord) er;
+                if(er instanceof EscherDggRecord) {
+                    dgg = (EscherDggRecord)er;
                 }
             }
 
             if(dgg != null) {
                 drawingManager = new DrawingManager2(dgg);
-                if(bStore != null){
-                    for(EscherRecord bs : bStore.getChildRecords()){
-                        if(bs instanceof EscherBSERecord) escherBSERecords.add((EscherBSERecord)bs);
-                    }
-                }
             }
         }
-        return drawingManager;
     }
 
     /**
@@ -2373,61 +2398,23 @@ public final class InternalWorkbook {
                     //update id of the drawing in the cloned sheet
                     dg.setOptions( (short) ( dgId << 4 ) );
                 } else if (er instanceof EscherContainerRecord){
-                    // iterate over shapes and re-generate shapeId
+                    //recursively find shape records and re-generate shapeId
+                    List<EscherRecord> spRecords = new ArrayList<EscherRecord>();
                     EscherContainerRecord cp = (EscherContainerRecord)er;
-                    for(Iterator<EscherRecord> spIt = cp.getChildRecords().iterator(); spIt.hasNext();) {
-                        EscherContainerRecord shapeContainer = (EscherContainerRecord)spIt.next();
-                        for(EscherRecord shapeChildRecord : shapeContainer.getChildRecords()) {
-                            int recordId = shapeChildRecord.getRecordId();
-                            if (recordId == EscherSpRecord.RECORD_ID){
-                                EscherSpRecord sp = (EscherSpRecord)shapeChildRecord;
-                                int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
-                                //allocateShapeId increments the number of shapes. roll back to the previous value
-                                dg.setNumShapes(dg.getNumShapes()-1);
-                                sp.setShapeId(shapeId);
-                            } else if (recordId == EscherOptRecord.RECORD_ID){
-                                EscherOptRecord opt = (EscherOptRecord)shapeChildRecord;
-                                EscherSimpleProperty prop = (EscherSimpleProperty)opt.lookup(
-                                        EscherProperties.BLIP__BLIPTODISPLAY );
-                                if (prop != null){
-                                    int pictureIndex = prop.getPropertyValue();
-                                    // increment reference count for pictures
-                                    EscherBSERecord bse = getBSERecord(pictureIndex);
-                                    bse.setRef(bse.getRef() + 1);
-                                }
-
-                            }
-                        }
+                    cp.getRecordsById(EscherSpRecord.RECORD_ID,  spRecords);
+                    for(Iterator<EscherRecord> spIt = spRecords.iterator(); spIt.hasNext();) {
+                        EscherSpRecord sp = (EscherSpRecord)spIt.next();
+                        int shapeId = drawingManager.allocateShapeId((short)dgId, dg);
+                        //allocateShapeId increments the number of shapes. roll back to the previous value
+                        dg.setNumShapes(dg.getNumShapes()-1);
+                        sp.setShapeId(shapeId);
                     }
                 }
             }
+
         }
     }
-    
-    public NameRecord cloneFilter(int filterDbNameIndex, int newSheetIndex){
-        NameRecord origNameRecord = getNameRecord(filterDbNameIndex);
-        // copy original formula but adjust 3D refs to the new external sheet index
-        int newExtSheetIx = checkExternSheet(newSheetIndex);
-        Ptg[] ptgs = origNameRecord.getNameDefinition();
-        for (int i=0; i< ptgs.length; i++) {
-            Ptg ptg = ptgs[i];
 
-            if (ptg instanceof Area3DPtg) {
-                Area3DPtg a3p = (Area3DPtg) ((OperandPtg) ptg).copy();
-                a3p.setExternSheetIndex(newExtSheetIx);
-                ptgs[i] = a3p;
-            } else if (ptg instanceof Ref3DPtg) {
-                Ref3DPtg r3p = (Ref3DPtg) ((OperandPtg) ptg).copy();
-                r3p.setExternSheetIndex(newExtSheetIx);
-                ptgs[i] = r3p;
-            }
-        }
-        NameRecord newNameRecord = createBuiltInName(NameRecord.BUILTIN_FILTER_DB, newSheetIndex+1);
-        newNameRecord.setNameDefinition(ptgs);
-        newNameRecord.setHidden(true);
-        return newNameRecord;
-
-    }
     /**
      * Updates named ranges due to moving of cells
      */
@@ -2441,33 +2428,83 @@ public final class InternalWorkbook {
         }
     }
 
+    //20101015, henrichen@zkoss.org
+	private void populateBSERecords(EscherContainerRecord er) {
+		for(final Iterator<EscherRecord> it = er.getChildIterator(); it.hasNext();) {
+			EscherRecord record = it.next(); 
+			if (record instanceof EscherBSERecord) {
+		        // maybe we don't need that as an instance variable anymore
+		        escherBSERecords.add( (EscherBSERecord) record );
+			}
+		}
+	}
+	
+	//20110118, henrichen@zkoss.org
     /**
-     * Get or create RecalcIdRecord
+     * get the number of XFExtRecords contained in this workbook.
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#setForceFormulaRecalculation(boolean)
+     * @return int count of XFExt records
      */
-    public RecalcIdRecord getRecalcId(){
-        RecalcIdRecord record = (RecalcIdRecord)findFirstRecordBySid(RecalcIdRecord.sid);
-        if(record == null){
-            record = new RecalcIdRecord();
-            // typically goes after the Country record
-            int pos = findFirstRecordLocBySid(CountryRecord.sid);
-            records.add(pos + 1, record);
-        }
-        return record;
+    public int getNumXfexts() {
+        if (log.check( POILogger.DEBUG ))
+            log.log(DEBUG, "getXFExt=", Integer.valueOf(_xfExtMap.size()));
+        return _xfExtMap.size();
     }
 
-        
-	/**
-	 * Changes an external referenced file to another file.
-	 * A formular in Excel which refers a cell in another file is saved in two parts: 
-	 * The referenced file is stored in an reference table. the row/cell information is saved separate.
-	 * This method invokation will only change the reference in the lookup-table itself.
-	 * @param oldUrl The old URL to search for and which is to be replaced
-	 * @param newUrl The URL replacement
-	 * @return true if the oldUrl was found and replaced with newUrl. Otherwise false
-	 */
-    public boolean changeExternalReference(String oldUrl, String newUrl) {
-    	return linkTable.changeExternalReference(oldUrl, newUrl);
+	//20110118, henrichen@zkoss.org
+    /**
+     * gets the XFExtRecord at the given 0-based index
+     *
+     * @param index of the XFExt record (0-based)
+     * @return XFExtRecord at the given index
+     */
+    public XFExtRecord getXFExtAt(int index) {
+    	return _xfExtMap.get(Integer.valueOf(index));
+    }
+
+	//20110118, henrichen@zkoss.org
+    /**
+     * Removes the given ExtendedFormatRecord record from the
+     *  file's list. This will make all
+     *  subsequent font indicies drop by one,
+     *  so you'll need to update those yourself!
+     */
+    public void removeXFExtRecord(XFExtRecord rec) {
+        records.remove(rec); // this updates XfextPos for us
+        _xfExtMap.remove(Integer.valueOf(rec.getIxfe()));
+    }
+
+	//20110118, henrichen@zkoss.org
+    /**
+     * creates a new Cell-type XFExtRecord and adds it to the end of
+     *  XFExtRecords collection
+     *
+     * @return XFExtRecord that was created
+     */
+
+    public XFExtRecord createCellXFExt(short index) {
+        XFExtRecord xf = createXFExt();
+        xf.setIxfe(index);
+        records.add(records.getXfextpos()+1, xf);
+        records.setXfextpos( records.getXfextpos() + 1 );
+        addXFExtRecord(xf);;
+        return xf;
+    }
+
+	//20110118, henrichen@zkoss.org
+    /**
+     * creates an default cell XFExtRecord object.
+     * @return XFExtRecord with intial defaults (cell-type)
+     */
+    private static XFExtRecord createXFExt() {
+        XFExtRecord retval = new XFExtRecord();
+
+        //TODO initial XFExtRecord?
+        return retval;
+    }
+	//20110119, henrichen@zkoss.org
+    private Map<Integer, XFExtRecord> _xfExtMap = new HashMap<Integer, XFExtRecord>();
+    private void addXFExtRecord(XFExtRecord rec) {
+    	_xfExtMap.put(Integer.valueOf(rec.getIxfe()), rec);
     }
 }

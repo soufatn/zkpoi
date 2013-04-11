@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.ss.usermodel.Color;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
@@ -79,27 +79,6 @@ public class XSSFColor implements Color {
 	public void setIndexed(int indexed) {
 		ctColor.setIndexed(indexed);
 	}
-	
-	/**
-    * For RGB colours, but not ARGB (we think...)
-    * Excel gets black and white the wrong way around, so switch them 
-	 */
-	private byte[] correctRGB(byte[] rgb) {
-	   if(rgb.length == 4) {
-	      // Excel doesn't appear to get these wrong
-	      // Nothing to change
-	      return rgb;
-	   } else {
-         // Excel gets black and white the wrong way around, so switch them 
-         if (rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0) {
-            rgb = new byte[] {-1, -1, -1};
-         }
-         else if (rgb[0] == -1 && rgb[1] == -1 && rgb[2] == -1) {
-            rgb = new byte[] {0, 0, 0};
-         }
-         return rgb;
-	   }
-	}
 
    /**
     * Standard Red Green Blue ctColor value (RGB).
@@ -159,8 +138,22 @@ public class XSSFColor implements Color {
          // Grab the colour
          rgb = ctColor.getRgb();
 
-         // Correct it as needed, and return
-         return correctRGB(rgb);
+         if(rgb.length == 4) {
+            // Good to go, return it as-is
+            return rgb;
+         }
+         
+         // For RGB colours, but not ARGB (we think...)
+         // Excel gets black and white the wrong way around, so switch them
+         
+         // 20110321, henrichen@zkoss.org: Theme 0 and 1 shall switch, Theme 2 and 3 shall switch. It is not correct to change here!
+         //if (rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0) {
+         //   rgb = new byte[] {-1, -1, -1};
+         //}
+         //else if (rgb[0] == -1 && rgb[1] == -1 && rgb[2] == -1) {
+         //   rgb = new byte[] {0, 0, 0};
+         //}
+         return rgb;
     }
 
     /**
@@ -220,10 +213,9 @@ public class XSSFColor implements Color {
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
 	public void setRgb(byte[] rgb) {
-	   // Correct it and save
-		ctColor.setRgb(correctRGB(rgb));
+		ctColor.setRgb(rgb);
 	}
-	
+
     /**
      * Index into the <clrScheme> collection, referencing a particular <sysClr> or
      *  <srgbClr> value expressed in the Theme part.
@@ -282,6 +274,10 @@ public class XSSFColor implements Color {
      * @return the tint value
      */
     public double getTint() {
+    	//20101211, henrichen@zkoss.org: Java's double precision is less than Excel's
+    	//e.g. value of 0.59999389629810485, 17 digits as stored in style.xml, Java interpret it
+    	//as 0.5999938962981048, 16 digits, the last digit is missing. This could cause 1
+    	//difference in RGB color.
 		return ctColor.getTint();
 	}
 	

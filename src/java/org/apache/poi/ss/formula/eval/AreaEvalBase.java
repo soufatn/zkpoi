@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval;
+package org.zkoss.poi.ss.formula.eval;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
+import org.zkoss.poi.ss.formula.ptg.AreaI;
 
 /**
  * @author Josh Micich
@@ -114,13 +114,4 @@ public abstract class AreaEvalBase implements AreaEval {
 	public int getWidth() {
 		return _lastColumn-_firstColumn+1;
 	}
-
-    /**
-     * @return  whether cell at rowIndex and columnIndex is a subtotal.
-     * By default return false which means 'don't care about subtotals'
-    */
-    public boolean isSubTotal(int rowIndex, int columnIndex) {
-        return false;
-    }
-
 }

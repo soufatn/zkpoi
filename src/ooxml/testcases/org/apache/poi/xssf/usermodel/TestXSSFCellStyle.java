@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -60,11 +59,11 @@ public class TestXSSFCellStyle extends TestCase {
 		ctStylesheet = stylesTable.getCTStylesheet();
 
 		ctBorderA = CTBorder.Factory.newInstance();
-		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
+		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA, null);
 		long borderId = stylesTable.putBorder(borderA);
 		assertEquals(1, borderId);
 
-		XSSFCellBorder borderB = new XSSFCellBorder();
+		XSSFCellBorder borderB = new XSSFCellBorder(null);
 		assertEquals(1, stylesTable.putBorder(borderB));
 
 		ctFill = CTFill.Factory.newInstance();
@@ -526,15 +525,15 @@ public class TestXSSFCellStyle extends TestCase {
 
 	public void testGetSetHidden() {
 		assertFalse(cellStyle.getHidden());
-		cellStyle.setHidden(true);
+		cellXf.getProtection().setHidden(true);
 		assertTrue(cellStyle.getHidden());
 		cellStyle.setHidden(false);
 		assertFalse(cellStyle.getHidden());
 	}
 
 	public void testGetSetLocked() {
-		assertTrue(cellStyle.getLocked());
-		cellStyle.setLocked(true);
+		assertFalse(cellStyle.getLocked());
+		cellXf.getProtection().setLocked(true);
 		assertTrue(cellStyle.getLocked());
 		cellStyle.setLocked(false);
 		assertFalse(cellStyle.getLocked());
@@ -657,7 +656,6 @@ public class TestXSSFCellStyle extends TestCase {
        XSSFWorkbook wbClone = new XSSFWorkbook();
        assertEquals(1, wbClone.getNumberOfFonts());
        assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
-       assertEquals(1, wbClone.getNumCellStyles());
        
        XSSFDataFormat fmtClone = wbClone.createDataFormat();
        XSSFCellStyle clone = wbClone.createCellStyle();
@@ -671,39 +669,11 @@ public class TestXSSFCellStyle extends TestCase {
        clone.cloneStyleFrom(orig);
        
        assertEquals(2, wbClone.getNumberOfFonts());
-       assertEquals(2, wbClone.getNumCellStyles());
        assertEquals(1, wbClone.getStylesSource().getNumberFormats().size());
        
        assertEquals(HSSFCellStyle.ALIGN_RIGHT, clone.getAlignment());
        assertEquals("TestingFont", clone.getFont().getFontName());
        assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
        assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
-       
-       // Save it and re-check
-       XSSFWorkbook wbReload = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
-       assertEquals(2, wbReload.getNumberOfFonts());
-       assertEquals(2, wbReload.getNumCellStyles());
-       assertEquals(1, wbReload.getStylesSource().getNumberFormats().size());
-       
-       XSSFCellStyle reload = wbReload.getCellStyleAt((short)1);
-       assertEquals(HSSFCellStyle.ALIGN_RIGHT, reload.getAlignment());
-       assertEquals("TestingFont", reload.getFont().getFontName());
-       assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
-       assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
    }
-
-    /**
-     * Avoid ArrayIndexOutOfBoundsException  when creating cell style
-     * in a workbook that has an empty xf table.
-     */
-    public void testBug52348() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("52348.xlsx");
-        StylesTable st = workbook.getStylesSource();
-        assertEquals(0, st._getStyleXfsSize());
-        
-        
-        XSSFCellStyle style = workbook.createCellStyle(); // no exception at this point
-        assertNull(style.getStyleXf());
-    }
-
 }

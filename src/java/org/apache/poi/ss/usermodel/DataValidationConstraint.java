@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 
 public interface DataValidationConstraint {
@@ -115,4 +115,23 @@ public interface DataValidationConstraint {
 			}
 		}
 	}
+	
+	//20110511, peterkuo@potix.com
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isExplicitList();
+	
+	//20110511, peterkuo@potix.com
+	/**
+	 * 
+	 */
+	public boolean isRefRange();
+	
+	//20110511, peterkuo@potix.com
+	/**
+	 * 
+	 */
+	public String getRefRange();
 }

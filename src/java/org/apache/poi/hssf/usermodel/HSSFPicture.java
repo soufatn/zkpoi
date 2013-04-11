@@ -15,16 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.util.ImageUtils;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
@@ -55,6 +59,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     private static final int PX_ROW = 15;
 
     private int _pictureIndex;
+    HSSFPatriarch _patriarch;  // TODO make private
 
     /**
      * Constructs a picture object.
@@ -220,15 +225,36 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
     }
-    
-    /**
-     * Return picture data for this shape
-     *
-     * @return picture data for this shape
-     */
-    public HSSFPictureData getPictureData(){
-        InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
-    	EscherBlipRecord blipRecord = iwb.getBSERecord(_pictureIndex).getBlipRecord();
-    	return new HSSFPictureData(blipRecord);
+
+    //20101014, henrichen@zkoss.org: picture name and alt
+    public PictureData getPictureData() {
+		final int pictureIndex = getPictureIndex();
+		final EscherBSERecord bseRecord = 
+			_patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(pictureIndex);
+        final EscherBlipRecord blip = bseRecord != null ? bseRecord.getBlipRecord() : null;
+        return blip != null ? new HSSFPictureData(blip) : null;
     }
+    
+	private String _name;
+    private String _alt;
+    
+    public String getName() {
+		return _name;
+	}
+
+	public void setName(String name) {
+		this._name = name;
+	}
+
+	public String getAlt() {
+		return _alt;
+	}
+
+	public void setAlt(String alt) {
+		this._alt = alt;
+	}
+	
+	public ClientAnchor getClientAnchor() {
+		return (ClientAnchor) getAnchor();
+	}
 }

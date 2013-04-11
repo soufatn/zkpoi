@@ -15,13 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.sprm;
-
-import org.apache.poi.util.Internal;
+package org.zkoss.poi.hwpf.sprm;
 
 
 
-@Internal
 public abstract class SprmUncompressor
 {
   protected SprmUncompressor()

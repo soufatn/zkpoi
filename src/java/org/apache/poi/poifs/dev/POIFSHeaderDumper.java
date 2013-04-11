@@ -15,24 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.dev;
+package org.zkoss.poi.poifs.dev;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
-import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.ListManagedBlock;
-import org.apache.poi.poifs.storage.RawDataBlockList;
-import org.apache.poi.poifs.storage.SmallBlockTableReader;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.IntList;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.property.PropertyTable;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableReader;
+import org.zkoss.poi.poifs.storage.BlockList;
+import org.zkoss.poi.poifs.storage.HeaderBlock;
+import org.zkoss.poi.poifs.storage.ListManagedBlock;
+import org.zkoss.poi.poifs.storage.RawDataBlockList;
+import org.zkoss.poi.poifs.storage.SmallBlockTableReader;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.IntList;
 
 /**
  * A very low level debugging tool, for printing out core 

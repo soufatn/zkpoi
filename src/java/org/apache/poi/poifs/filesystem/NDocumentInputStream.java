@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.poifs.property.DocumentProperty;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This class provides methods to read a DocumentEntry managed by a
@@ -61,7 +61,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 	 */
 	public NDocumentInputStream(DocumentEntry document) throws IOException {
 		if (!(document instanceof DocumentNode)) {
-			throw new IOException("Cannot open internal document storage, " + document + " not a Document Node");
+			throw new IOException("Cannot open internal document storage");
 		}
 		_current_offset = 0;
 		_current_block_count = 0;
@@ -111,7 +111,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
    @Override
 	public void mark(int ignoredReadlimit) {
 		_marked_offset = _current_offset;
-		_marked_offset_count = Math.max(0, _current_block_count - 1);
+		_marked_offset_count = _current_block_count;
 	}
 
    @Override
@@ -184,10 +184,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
          _current_block_count++;
          
    		// Skip to the right place in it
-         // (It should be positioned already at the start of the block,
-         //  we need to move further inside the block)
-         int skipBy = _marked_offset - _current_offset;
-   		_buffer.position(_buffer.position() + skipBy);
+   		_buffer.position(_marked_offset - _current_offset);
       }
 
       // All done
@@ -275,10 +272,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 
    @Override
    public short readShort() {
-      checkAvaliable(SIZE_SHORT);
-      byte[] data = new byte[SIZE_SHORT];
-      readFully(data, 0, SIZE_SHORT);
-      return LittleEndian.getShort(data);
+      return (short) readUShort();
    }
 
    @Override
@@ -294,7 +288,7 @@ public final class NDocumentInputStream extends DocumentInputStream {
 		checkAvaliable(SIZE_SHORT);
       byte[] data = new byte[SIZE_SHORT];
       readFully(data, 0, SIZE_SHORT);
-      return LittleEndian.getUShort(data);
+      return LittleEndian.getShort(data);
 	}
 
    @Override

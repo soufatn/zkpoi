@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
@@ -268,5 +268,25 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
+	}
+	
+	//20110324, henrichen@zkoss.org: override hashCode
+	public int hashCode() {
+		return field_1_first_row ^ field_2_last_row ^ field_3_first_column ^ field_4_last_column;
+	}
+
+	//20110324, henrichen@zkoss.org: override equals
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof AreaPtgBase)) {
+			return false;
+		}
+		final AreaPtgBase other = (AreaPtgBase) o;
+		return other.field_1_first_row == this.field_1_first_row 
+			&& other.field_2_last_row == this.field_2_last_row
+			&& other.field_3_first_column == this.field_3_first_column
+			&& other.field_4_last_column == this.field_4_last_column;
 	}
 }

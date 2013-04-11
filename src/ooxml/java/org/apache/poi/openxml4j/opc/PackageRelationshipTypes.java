@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc;
+package org.zkoss.poi.openxml4j.opc;
 
 /**
  * Relationship types.
@@ -27,23 +27,8 @@ public interface PackageRelationshipTypes {
 
 	/**
 	 * Core properties relationship type.
-     *
-     *  <p>
-     *  The standard specifies a source relations ship for the Core File Properties part as follows:
-     *  <code>http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties.</code>
-     *  </p>
-     *  <p>
-     *   Office uses the following source relationship for the Core File Properties part:
-     *   <code>http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties.</code>
-     * </p>
-     * See 2.1.33 Part 1 Section 15.2.11.1, Core File Properties Part in [MS-OE376].pdf
 	 */
 	String CORE_PROPERTIES = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties";
-
-    /**
-     * Core properties relationship type as defiend in ECMA 376.
-      */
-    String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties";
 
 	/**
 	 * Digital signature relationship type.
@@ -99,4 +84,14 @@ public interface PackageRelationshipTypes {
 	 * Style type.
 	 */
 	String STYLE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
+	
+	/**
+	 * External Links
+	 */
+	String EXTERNALLINK_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink";
+	
+	/**
+	 * External Link Path
+	 */
+	String EXTERNALLINK_PATH = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
 }

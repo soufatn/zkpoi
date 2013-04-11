@@ -15,83 +15,107 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
 
-@Internal
+import java.util.Arrays;
+
 public final class ListFormatOverride
 {
-    private LFO _lfo;
+  int _lsid;
+  int _reserved1;
+  int _reserved2;
+  byte _clfolvl;
+  byte[] _reserved3 = new byte[3];
+  ListFormatOverrideLevel[] _levelOverrides;
 
-    private LFOData _lfoData;
+  public ListFormatOverride(int lsid)
+  {
+    _lsid = lsid;
+    _levelOverrides = new ListFormatOverrideLevel[0];
+  }
 
-    public ListFormatOverride( byte[] buf, int offset )
+  public ListFormatOverride(byte[] buf, int offset)
+  {
+    _lsid = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _reserved1 = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _reserved2 = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _clfolvl = buf[offset++];
+    System.arraycopy(buf, offset, _reserved3, 0, _reserved3.length);
+    _levelOverrides = new ListFormatOverrideLevel[_clfolvl];
+  }
+
+  public int numOverrides()
+  {
+    return _clfolvl;
+  }
+
+  public int getLsid()
+  {
+    return _lsid;
+  }
+
+  void setLsid(int lsid)
+  {
+    _lsid = lsid;
+  }
+
+  public ListFormatOverrideLevel[] getLevelOverrides()
+  {
+    return _levelOverrides;
+  }
+
+  public void setOverride(int index, ListFormatOverrideLevel lfolvl)
+  {
+    _levelOverrides[index] = lfolvl;
+  }
+
+  public ListFormatOverrideLevel getOverrideLevel(int level)
+  {
+
+    ListFormatOverrideLevel retLevel = null;
+
+    for(int x = 0; x < _levelOverrides.length; x++)
     {
-        _lfo = new LFO( buf, offset );
+      if (_levelOverrides[x].getLevelNum() == level)
+      {
+        retLevel = _levelOverrides[x];
+      }
+    }
+    return retLevel;
+  }
+
+  public boolean equals(Object obj)
+  {
+    if (obj == null)
+    {
+      return false;
     }
 
-    public ListFormatOverride( int lsid )
-    {
-        _lfo = new LFO();
-        _lfo.setLsid( lsid );
-    }
+    ListFormatOverride lfo = (ListFormatOverride)obj;
+    return lfo._clfolvl == _clfolvl && lfo._lsid == _lsid &&
+      lfo._reserved1 == _reserved1 && lfo._reserved2 == _reserved2 &&
+      Arrays.equals(lfo._reserved3, _reserved3) &&
+      Arrays.equals(lfo._levelOverrides, _levelOverrides);
+  }
 
-    public ListFormatOverrideLevel[] getLevelOverrides()
-    {
-        return _lfoData.getRgLfoLvl();
-    }
+  public byte[] toByteArray()
+  {
+    byte[] buf = new byte[16];
+    int offset = 0;
+    LittleEndian.putInt(buf, offset, _lsid);
+    offset += LittleEndian.INT_SIZE;
+    LittleEndian.putInt(buf, offset, _reserved1);
+    offset += LittleEndian.INT_SIZE;
+    LittleEndian.putInt(buf, offset, _reserved2);
+    offset += LittleEndian.INT_SIZE;
+    buf[offset++] = _clfolvl;
+    System.arraycopy(_reserved3, 0, buf, offset, 3);
 
-    LFO getLfo()
-    {
-        return _lfo;
-    }
-
-    LFOData getLfoData()
-    {
-        return _lfoData;
-    }
-
-    public int getLsid()
-    {
-        return _lfo.getLsid();
-    }
-
-    public ListFormatOverrideLevel getOverrideLevel( int level )
-    {
-        ListFormatOverrideLevel retLevel = null;
-        for ( int x = 0; x < getLevelOverrides().length; x++ )
-        {
-            if ( getLevelOverrides()[x].getLevelNum() == level )
-            {
-                retLevel = getLevelOverrides()[x];
-            }
-        }
-        return retLevel;
-    }
-
-    public int numOverrides()
-    {
-        return _lfo.getClfolvl();
-    }
-
-    void setLfoData( LFOData _lfoData )
-    {
-        this._lfoData = _lfoData;
-    }
-
-    public void setLsid( int lsid )
-    {
-        _lfo.setLsid( lsid );
-    }
-
-    public void setOverride( int index, ListFormatOverrideLevel lfolvl )
-    {
-        getLevelOverrides()[index] = lfolvl;
-    }
-
-    public byte[] toByteArray()
-    {
-        return _lfo.serialize();
-    }
+    return buf;
+  }
 }

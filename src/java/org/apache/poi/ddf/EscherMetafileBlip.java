@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -247,8 +247,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         String extraData = "";//HexDump.toHex(field_pictureData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
                 "  UID: 0x" + HexDump.toHex( field_1_UID ) + '\n' +
                 (field_2_UID == null ? "" : ("  UID2: 0x" + HexDump.toHex( field_2_UID ) + '\n')) +
                 "  Uncompressed Size: " + HexDump.toHex( field_2_cb ) + '\n' +

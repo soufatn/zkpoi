@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.*;
+import org.zkoss.poi.ss.formula.eval.*;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -331,8 +331,7 @@ public abstract class NumericFunction implements Function {
 				double d0 = singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
 				double d1 = singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
 				double multi = Math.pow(10d,d1);
-				if(d0 < 0) result = -Math.floor(-d0 * multi) / multi;
-                else result = Math.floor(d0 * multi) / multi;
+				result = Math.floor(d0 * multi) / multi;
 				checkValue(result);
 			}catch (EvaluationException e) {
 				return e.getErrorEval();

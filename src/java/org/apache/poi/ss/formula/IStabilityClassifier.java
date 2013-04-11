@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 /**
  * Used to help optimise cell evaluation result caching by allowing applications to specify which

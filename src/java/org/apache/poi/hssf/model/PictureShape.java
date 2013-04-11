@@ -16,11 +16,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.zkoss.poi.hssf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.*;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hssf.record.*;
+import org.zkoss.poi.hssf.usermodel.*;
 
 /**
  * Represents a picture shape and creates all specific low level records.
@@ -99,15 +99,21 @@ public class PictureShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType((short) ((HSSFSimpleShape)shape).getShapeType());
-        c.setObjectId( getCmoObjectId(shapeId) );
+//        c.setObjectId((short) ( 1 ));
+        c.setObjectId(shapeId);
         c.setLocked(true);
         c.setPrintable(true);
         c.setAutofill(true);
         c.setAutoline(true);
+//        c.setReserved2( 0x012C0A84 );
         c.setReserved2( 0x0 );
+//        UnknownRecord sub1 = new UnknownRecord( (short)0x7, (short)0x2, new byte[] { 0x09, 0x00 } );
+//        UnknownRecord sub2 = new UnknownRecord( (short)0x8, (short)0x2, new byte[] { 0x01, 0x00 } );
         EndSubRecord e = new EndSubRecord();
 
         obj.addSubRecord(c);
+//        obj.addSubRecord( sub1 );
+//        obj.addSubRecord( sub2 );
         obj.addSubRecord(e);
 
         return obj;

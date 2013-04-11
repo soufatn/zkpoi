@@ -15,16 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.sprm;
+package org.zkoss.poi.hwpf.sprm;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hwpf.usermodel.CharacterProperties;
+import org.zkoss.poi.util.LittleEndian;
 
-@Internal
 public final class CharacterSprmCompressor
 {
   public CharacterSprmCompressor()
@@ -32,7 +29,7 @@ public final class CharacterSprmCompressor
   }
   public static byte[] compressCharacterProperty(CharacterProperties newCHP, CharacterProperties oldCHP)
   {
-    List<byte[]> sprmList = new ArrayList<byte[]>();
+    ArrayList sprmList = new ArrayList();
     int size = 0;
 
     if (newCHP.isFRMarkDel() != oldCHP.isFRMarkDel())
@@ -211,9 +208,9 @@ public final class CharacterSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x484b, newCHP.getHpsKern(), null, sprmList);
     }
-    if (newCHP.getHresi().equals( oldCHP.getHresi() ))
+    if (newCHP.getYsr() != oldCHP.getYsr())
     {
-      size += SprmUtils.addSprm((short)0x484e, newCHP.getHresi().getValue(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x484e, newCHP.getYsr(), null, sprmList);
     }
     if (newCHP.getFtcAscii() != oldCHP.getFtcAscii())
     {
@@ -277,13 +274,11 @@ public final class CharacterSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x2859, newCHP.getSfxtText(), null, sprmList);
     }
-        if ( !newCHP.getCv().equals( oldCHP.getCv() ) )
-        {
-            // don't add a sprm if we're looking at an ico = Auto
-            if ( !newCHP.getCv().isEmpty() )
-                size += SprmUtils.addSprm( CharacterProperties.SPRM_CCV, newCHP
-                        .getCv().getValue(), null, sprmList );
-        }
+    if (newCHP.getIco24() != oldCHP.getIco24())
+    {
+      if(newCHP.getIco24() != -1) // don't add a sprm if we're looking at an ico = Auto
+        size += SprmUtils.addSprm((short)0x6870, newCHP.getIco24(), null, sprmList);
+    }
 
     return SprmUtils.getGrpprl(sprmList, size);
   }

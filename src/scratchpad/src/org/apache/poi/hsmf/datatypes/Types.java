@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.datatypes;
+package org.zkoss.poi.hsmf.datatypes;
 
 /**
  * The types list and details are available from

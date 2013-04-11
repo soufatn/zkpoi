@@ -16,11 +16,11 @@
 ==================================================================== */
 
 
-package org.apache.poi.hssf.model;
+package org.zkoss.poi.hssf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.*;
+import org.zkoss.poi.ddf.*;
+import org.zkoss.poi.hssf.record.*;
+import org.zkoss.poi.hssf.usermodel.*;
 
 /**
  * Represents a combobox shape.
@@ -50,20 +50,17 @@ public class ComboboxShape
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType(HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX);
-        c.setObjectId(  getCmoObjectId(shapeId) );
+        c.setObjectId(shapeId);
         c.setLocked(true);
         c.setPrintable(false);
         c.setAutofill(true);
         c.setAutoline(false);
-
-        FtCblsSubRecord f = new FtCblsSubRecord();
 
         LbsDataSubRecord l = LbsDataSubRecord.newAutoFilterInstance();
 
         EndSubRecord e = new EndSubRecord();
 
         obj.addSubRecord(c);
-        obj.addSubRecord(f);
         obj.addSubRecord(l);
         obj.addSubRecord(e);
 

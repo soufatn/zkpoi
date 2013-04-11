@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.eval.AreaEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
 
 /**
- * Common interface of {@link AreaEval} and {@link org.apache.poi.ss.formula.eval.AreaEvalBase}
+ * Common interface of {@link AreaEval} and {@link org.zkoss.poi.hssf.record.formula.eval.AreaEvalBase}
  *
  * @author Josh Micich
  */
@@ -59,11 +59,4 @@ public interface TwoDEval extends ValueEval {
 	 * @return a single column {@link TwoDEval}
 	 */
 	TwoDEval getColumn(int columnIndex);
-
-
-    /**
-     * @return true if the  cell at row and col is a subtotal
-     */
-    boolean isSubTotal(int rowIndex, int columnIndex);
-
 }

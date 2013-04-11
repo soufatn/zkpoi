@@ -15,12 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import java.util.Collections;
-
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This class holds all of the section formatting 
@@ -30,23 +27,14 @@ import org.apache.poi.util.LittleEndian;
  * In common with the rest of the old support, it 
  *  is read only
  */
-@Internal
 public final class OldSectionTable extends SectionTable
 {
-    /**
-     * @deprecated Use {@link #OldSectionTable(byte[],int,int)} instead
-     */
-    @Deprecated
-    @SuppressWarnings( "unused" )
-    public OldSectionTable( byte[] documentStream, int offset, int size,
-            int fcMin, TextPieceTable tpt )
-    {
-        this( documentStream, offset, size );
-    }
-
-    public OldSectionTable( byte[] documentStream, int offset, int size )
-    {
-    PlexOfCps sedPlex = new PlexOfCps( documentStream, offset, size, 12 );
+  public OldSectionTable(byte[] documentStream, int offset,
+                      int size, int fcMin,
+                      TextPieceTable tpt)
+  {
+    PlexOfCps sedPlex = new PlexOfCps(documentStream, offset, size, 12);
+    CharIsBytes charConv = new CharIsBytes(tpt);
 
     int length = sedPlex.length();
 
@@ -59,11 +47,10 @@ public final class OldSectionTable extends SectionTable
       int startAt = node.getStart();
       int endAt = node.getEnd();
 
-      SEPX sepx;
       // check for the optimization
       if (fileOffset == 0xffffffff)
       {
-        sepx = new SEPX(sed, startAt, endAt, new byte[0]);
+        _sections.add(new SEPX(sed, startAt, endAt, charConv, new byte[0]));
       }
       else
       {
@@ -76,11 +63,32 @@ public final class OldSectionTable extends SectionTable
         byte[] buf = new byte[sepxSize+2];
         fileOffset += LittleEndian.SHORT_SIZE;
         System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
-        sepx = new SEPX(sed, startAt, endAt, buf);
+        _sections.add(new SEPX(sed, startAt, endAt, charConv, buf));
       }
-
-            _sections.add( sepx );
     }
-    Collections.sort( _sections, PropertyNode.StartComparator.instance );
+  }
+  
+  private static class CharIsBytes implements CharIndexTranslator {
+     private TextPieceTable tpt;
+     private CharIsBytes(TextPieceTable tpt) {
+        this.tpt = tpt;
+     }
+
+     public int getCharIndex(int bytePos, int startCP) {
+        return bytePos;
+     }
+     public int getCharIndex(int bytePos) {
+        return bytePos;
+     }
+
+     public boolean isIndexInTable(int bytePos) {
+        return tpt.isIndexInTable(bytePos);
+     }
+     public int lookIndexBackward(int bytePos) {
+        return tpt.lookIndexBackward(bytePos);
+     }
+     public int lookIndexForward(int bytePos) {
+        return tpt.lookIndexForward(bytePos);
+     }
   }
 }

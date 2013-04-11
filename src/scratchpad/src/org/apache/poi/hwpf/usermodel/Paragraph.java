@@ -15,19 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.HWPFDocumentCore;
-
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.TableSprmCompressor;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.PAPX;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.sprm.TableSprmCompressor;
 
 public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_JC = 0x2403;
@@ -63,8 +55,7 @@ public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_FNOAUTOHYPH = 0x242A;
   public final static short SPRM_WHEIGHTABS = 0x442B;
   public final static short SPRM_DCS = 0x442C;
-  public final static short SPRM_SHD80 = 0x442D;
-  public final static short SPRM_SHD = (short)0xC64D;
+  public final static short SPRM_SHD = 0x442D;
   public final static short SPRM_DYAFROMTEXT = (short)0x842E;
   public final static short SPRM_DXAFROMTEXT = (short)0x842F;
   public final static short SPRM_FLOCKED = 0x2430;
@@ -88,110 +79,41 @@ public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_USEPGSUSETTINGS = 0x2447;
   public final static short SPRM_FADJUSTRIGHT = 0x2448;
 
-    @Internal
-    static Paragraph newParagraph( Range parent, PAPX papx )
-    {
-        HWPFDocumentCore doc = parent._doc;
-        ListTables listTables = doc.getListTables();
-        StyleSheet styleSheet = doc.getStyleSheet();
-
-        ParagraphProperties properties = new ParagraphProperties();
-        properties.setIstd( papx.getIstd() );
-
-        properties = newParagraph_applyStyleProperties( styleSheet, papx,
-                properties );
-        properties = ParagraphSprmUncompressor.uncompressPAP( properties,
-                papx.getGrpprl(), 2 );
-
-        if ( properties.getIlfo() != 0 && listTables != null )
-        {
-            final ListFormatOverride listFormatOverride = listTables
-                    .getOverride( properties.getIlfo() );
-            final ListLevel listLevel = listTables.getLevel(
-                    listFormatOverride.getLsid(), properties.getIlvl() );
-
-            if ( listLevel!=null && listLevel.getGrpprlPapx() != null )
-            {
-                properties = ParagraphSprmUncompressor.uncompressPAP(
-                        properties, listLevel.getGrpprlPapx(), 0 );
-                // reapply style and local PAPX properties
-                properties = newParagraph_applyStyleProperties( styleSheet,
-                        papx, properties );
-                properties = ParagraphSprmUncompressor.uncompressPAP(
-                        properties, papx.getGrpprl(), 2 );
-            }
-        }
-
-        if ( properties.getIlfo() > 0 )
-            return new ListEntry( papx, properties, parent );
-
-        return new Paragraph( papx, properties, parent );
-    }
-
-    protected static ParagraphProperties newParagraph_applyStyleProperties(
-            StyleSheet styleSheet, PAPX papx, ParagraphProperties properties )
-    {
-        if ( styleSheet == null )
-            return properties;
-
-        int style = papx.getIstd();
-        byte[] grpprl = styleSheet.getPAPX( style );
-        return ParagraphSprmUncompressor.uncompressPAP( properties, grpprl, 2 );
-    }
 
   protected short _istd;
   protected ParagraphProperties _props;
   protected SprmBuffer _papx;
 
-    @Deprecated
-    protected Paragraph( int startIdxInclusive, int endIdxExclusive,
-            Table parent )
-    {
-        super( startIdxInclusive, endIdxExclusive, parent );
+  protected Paragraph(int startIdx, int endIdx, Table parent)
+  {
+    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
+    PAPX papx = (PAPX)_paragraphs.get(_parEnd - 1);
+    _props = papx.getParagraphProperties(_doc.getStyleSheet());
+    _papx = papx.getSprmBuf();
+    _istd = papx.getIstd();
+  }
 
-        initAll();
-        PAPX papx = _paragraphs.get( _parEnd - 1 );
-        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
+  protected Paragraph(PAPX papx, Range parent)
+  {
+    super(Math.max(parent._start, papx.getStart()), Math.min(parent._end, papx.getEnd()), parent);
+    _props = papx.getParagraphProperties(_doc.getStyleSheet());
+    _papx = papx.getSprmBuf();
+    _istd = papx.getIstd();
+  }
 
-    @Deprecated
-    protected Paragraph( PAPX papx, Range parent )
-    {
-        super( Math.max( parent._start, papx.getStart() ), Math.min(
-                parent._end, papx.getEnd() ), parent );
-        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
+  protected Paragraph(PAPX papx, Range parent, int start)
+  {
+    super(Math.max(parent._start, start), Math.min(parent._end, papx.getEnd()), parent);
+    _props = papx.getParagraphProperties(_doc.getStyleSheet());
+    _papx = papx.getSprmBuf();
+    _istd = papx.getIstd();
+  }
 
-    @Deprecated
-    protected Paragraph( PAPX papx, Range parent, int start )
-    {
-        super( Math.max( parent._start, start ), Math.min( parent._end,
-                papx.getEnd() ), parent );
-        _props = papx.getParagraphProperties( _doc.getStyleSheet() );
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
-
-    @Internal
-    Paragraph( PAPX papx, ParagraphProperties properties, Range parent )
-    {
-        super( Math.max( parent._start, papx.getStart() ), Math.min(
-                parent._end, papx.getEnd() ), parent );
-        _props = properties;
-        _papx = papx.getSprmBuf();
-        _istd = papx.getIstd();
-    }
-
-public short getStyleIndex()
+  public short getStyleIndex()
   {
     return _istd;
   }
 
-  @Deprecated
   public int type()
   {
     return TYPE_PARAGRAPH;
@@ -199,31 +121,23 @@ public short getStyleIndex()
 
   public boolean isInTable()
   {
-    return _props.getFInTable();
+    return _props.getFInTable() != 0;
   }
 
-  /**
-   * @return <tt>true</tt>, if table trailer paragraph (last in table row),
-   *         <tt>false</tt> otherwise
-   */
   public boolean isTableRowEnd()
   {
-    return _props.getFTtp() || _props.getFTtpEmbedded();
+    return _props.getFTtp() != 0 || _props.getFTtpEmbedded() != 0;
   }
 
   public int getTableLevel()
   {
-    return _props.getItap();
+    return _props.getTableLevel();
   }
 
-    /**
-     * @return <tt>true</tt>, if the end of paragraph mark is really an end of
-     *         cell mark for a nested table cell, <tt>false</tt> otherwise
-     */
-    public boolean isEmbeddedCellMark()
-    {
-        return _props.getFInnerTableCell();
-    }
+  public boolean isEmbeddedCellMark()
+  {
+    return _props.getEmbeddedCellMark() != 0;
+  }
 
   public int getJustification()
   {
@@ -238,79 +152,86 @@ public short getStyleIndex()
 
   public boolean keepOnPage()
   {
-    return _props.getFKeep();
+    return _props.getFKeep() != 0;
   }
 
   public void setKeepOnPage(boolean fKeep)
   {
-    _props.setFKeep(fKeep);
-    _papx.updateSprm(SPRM_FKEEP, fKeep);
+    byte keep = (byte)(fKeep ? 1 : 0);
+    _props.setFKeep(keep);
+    _papx.updateSprm(SPRM_FKEEP, keep);
   }
 
   public boolean keepWithNext()
   {
-    return _props.getFKeepFollow();
+    return _props.getFKeepFollow() != 0;
   }
 
   public void setKeepWithNext(boolean fKeepFollow)
   {
-    _props.setFKeepFollow(fKeepFollow);
-    _papx.updateSprm(SPRM_FKEEPFOLLOW, fKeepFollow);
+    byte keepFollow = (byte)(fKeepFollow ? 1 : 0);
+    _props.setFKeepFollow(keepFollow);
+    _papx.updateSprm(SPRM_FKEEPFOLLOW, keepFollow);
   }
 
   public boolean pageBreakBefore()
   {
-    return _props.getFPageBreakBefore();
+    return _props.getFPageBreakBefore() != 0;
   }
 
   public void setPageBreakBefore(boolean fPageBreak)
   {
-    _props.setFPageBreakBefore(fPageBreak);
-    _papx.updateSprm(SPRM_FPAGEBREAKBEFORE, fPageBreak);
+    byte pageBreak = (byte)(fPageBreak ? 1 : 0);
+    _props.setFPageBreakBefore(pageBreak);
+    _papx.updateSprm(SPRM_FPAGEBREAKBEFORE, pageBreak);
   }
 
   public boolean isLineNotNumbered()
   {
-    return _props.getFNoLnn();
+    return _props.getFNoLnn() != 0;
   }
 
   public void setLineNotNumbered(boolean fNoLnn)
   {
-    _props.setFNoLnn(fNoLnn);
-    _papx.updateSprm(SPRM_FNOLINENUMB, fNoLnn);
+    byte noLnn = (byte)(fNoLnn ? 1 : 0);
+    _props.setFNoLnn(noLnn);
+    _papx.updateSprm(SPRM_FNOLINENUMB, noLnn);
   }
 
   public boolean isSideBySide()
   {
-    return _props.getFSideBySide();
+    return _props.getFSideBySide() != 0;
   }
 
   public void setSideBySide(boolean fSideBySide)
   {
-    _props.setFSideBySide(fSideBySide);
-    _papx.updateSprm(SPRM_FSIDEBYSIDE, fSideBySide);
+    byte sideBySide = (byte)(fSideBySide ? 1 : 0);
+    _props.setFSideBySide(sideBySide);
+    _papx.updateSprm(SPRM_FSIDEBYSIDE, sideBySide);
   }
 
   public boolean isAutoHyphenated()
   {
-    return !_props.getFNoAutoHyph();
+    return _props.getFNoAutoHyph() == 0;
   }
 
   public void setAutoHyphenated(boolean autoHyph)
   {
-    _props.setFNoAutoHyph(!autoHyph);
-    _papx.updateSprm(SPRM_FNOAUTOHYPH, !autoHyph);
+    byte auto = (byte)(!autoHyph ? 1 : 0);
+    _props.setFNoAutoHyph(auto);
+    _papx.updateSprm(SPRM_FNOAUTOHYPH, auto);
   }
 
   public boolean isWidowControlled()
   {
-    return _props.getFWidowControl();
+    return _props.getFWidowControl() != 0;
   }
 
   public void setWidowControl(boolean widowControl)
   {
-    _props.setFWidowControl(widowControl);
-    _papx.updateSprm(SPRM_FWIDOWCONTROL, widowControl);
+    byte widow = (byte)(widowControl ? 1 : 0);
+    _props.setFWidowControl(widow);
+    _papx.updateSprm(SPRM_FWIDOWCONTROL, widow);
   }
 
   public int getIndentFromRight()
@@ -381,24 +302,26 @@ public short getStyleIndex()
 
   public boolean isKinsoku()
   {
-    return _props.getFKinsoku();
+    return _props.getFKinsoku() != 0;
   }
 
   public void setKinsoku(boolean kinsoku)
   {
-    _props.setFKinsoku(kinsoku);
-    _papx.updateSprm(SPRM_FKINSOKU, kinsoku);
+    byte kin = (byte)(kinsoku ? 1 : 0);
+    _props.setFKinsoku(kin);
+    _papx.updateSprm(SPRM_FKINSOKU, kin);
   }
 
   public boolean isWordWrapped()
   {
-    return _props.getFWordWrap();
+    return _props.getFWordWrap() != 0;
   }
 
   public void setWordWrapped(boolean wrap)
   {
-    _props.setFWordWrap(wrap);
-    _papx.updateSprm(SPRM_FWORDWRAP, wrap);
+    byte wordWrap = (byte)(wrap ? 1 : 0);
+    _props.setFWordWrap(wordWrap);
+    _papx.updateSprm(SPRM_FWORDWRAP, wordWrap);
   }
 
   public int getFontAlignment()
@@ -497,8 +420,7 @@ public short getStyleIndex()
   public void setShading(ShadingDescriptor shd)
   {
     _props.setShd(shd);
-    //TODO: remove old one
-    _papx.addSprm( SPRM_SHD, shd.serialize() );
+    _papx.updateSprm(SPRM_SHD, shd.toShort());
   }
 
   public DropCapSpecifier getDropCap()
@@ -543,38 +465,16 @@ public short getStyleIndex()
 
   void setTableRowEnd(TableProperties props)
   {
-    setTableRowEnd(true);
+    setTableRowEnd((byte)1);
     byte[] grpprl = TableSprmCompressor.compressTableProperty(props);
     _papx.append(grpprl);
   }
 
-  private void setTableRowEnd(boolean val)
+  private void setTableRowEnd(byte val)
   {
     _props.setFTtp(val);
     _papx.updateSprm(SPRM_FTTP, val);
   }
-
-    /**
-     * Returns number of tabs stops defined for paragraph. Must be >= 0 and <=
-     * 64.
-     * 
-     * @return number of tabs stops defined for paragraph. Must be >= 0 and <=
-     *         64
-     */
-    public int getTabStopsNumber()
-    {
-        return _props.getItbdMac();
-    }
-
-    /**
-     * Returns array of positions of itbdMac tab stops
-     * 
-     * @return array of positions of itbdMac tab stops
-     */
-    public int[] getTabStopsPositions()
-    {
-        return _props.getRgdxaTab();
-    }
 
   /**
    * clone the ParagraphProperties object associated with this Paragraph so
@@ -595,7 +495,7 @@ public short getStyleIndex()
     Paragraph p = (Paragraph)super.clone();
     p._props = (ParagraphProperties)_props.clone();
     //p._baseStyle = _baseStyle;
-    p._papx = new SprmBuffer(0);
+    p._papx = new SprmBuffer();
     return p;
   }
 
@@ -617,9 +517,4 @@ public short getStyleIndex()
     return retVal;
   }
 
-    @Override
-    public String toString()
-    {
-        return "Paragraph [" + getStartOffset() + "; " + getEndOffset() + ")";
-    }
 }

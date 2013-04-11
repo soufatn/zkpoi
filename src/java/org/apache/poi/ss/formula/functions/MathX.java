@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
 
 /**
@@ -53,7 +53,13 @@ final class MathX {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.HALF_UP).doubleValue();
+            if (p != 0) {
+                double temp = Math.pow(10, p);
+                retval = Math.round(n*temp)/temp;
+            }
+            else {
+                retval = Math.round(n);
+            }
         }
 
         return retval;
@@ -81,7 +87,22 @@ final class MathX {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.UP).doubleValue();
+            if (p != 0) {
+                double temp = Math.pow(10, p);
+                double nat = Math.abs(n*temp);
+
+                retval = sign(n) *
+                    ((nat == (long) nat)
+                            ? nat / temp
+                            : Math.round(nat + 0.5) / temp);
+            }
+            else {
+                double na = Math.abs(n);
+                retval = sign(n) *
+                    ((na == (long) na)
+                        ? na
+                        : (long) na + 1);
+            }
         }
 
         return retval;
@@ -109,7 +130,13 @@ final class MathX {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.DOWN).doubleValue();
+            if (p != 0) {
+                double temp = Math.pow(10, p);
+                retval = sign(n) * Math.round((Math.abs(n)*temp) - 0.5)/temp;
+            }
+            else {
+                retval = (long) n;
+            }
         }
 
         return retval;

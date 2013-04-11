@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.DVRecord;
-import org.apache.poi.hssf.usermodel.DVConstraint.FormulaPair;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
-import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
-import org.apache.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.hssf.record.DVRecord;
+import org.zkoss.poi.hssf.usermodel.DVConstraint.FormulaPair;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
 
 /**
  *Utility class for creating data validation cells
@@ -204,5 +204,31 @@ public final class HSSFDataValidation implements DataValidation {
 				_showErrorBox, _error_title, _error_text,
 				fp.getFormula1(), fp.getFormula2(),
 				_regions);
+	}
+
+	//20110511, peterkuo@potix.com
+	//TODO: not yet implemented
+	@Override
+	public boolean getShowErrorMessage() {
+		return false;
+	}
+
+	//20110511, peterkuo@potix.com
+	//TODO: not yet implemented
+	@Override
+	public boolean getShowInputMessage() {
+		return false;
+	}
+
+	//20110511, peterkuo@potix.com
+	//TODO: not yet implemented
+	@Override
+	public void setShowErrorMessage(boolean showErrorMessage) {
+	}
+
+	//20110511, peterkuo@potix.com
+	//TODO: not yet implemented
+	@Override
+	public void setShowInputMessage(boolean showInputMessage) {
 	}
 }

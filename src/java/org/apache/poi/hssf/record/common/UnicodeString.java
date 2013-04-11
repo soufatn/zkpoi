@@ -15,17 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.common;
+package org.zkoss.poi.hssf.record.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
-import org.apache.poi.util.*;
+import org.zkoss.poi.hssf.record.cont.ContinuableRecordInput;
+import org.zkoss.poi.hssf.record.RecordInputStream;
+import org.zkoss.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * Title: Unicode String<p/>
@@ -36,8 +40,6 @@ import org.apache.poi.util.*;
  * REFERENCE:  PG 951 Excel Binary File Format (.xls) Structure Specification v20091214 
  */
 public class UnicodeString implements Comparable<UnicodeString> { // TODO - make this final when the compatibility version is removed
-    private static POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
-
     private short             field_1_charCount;
     private byte              field_2_optionflags;
     private String            field_3_string;
@@ -136,7 +138,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
           
           // Spot corrupt records
           if(reserved != 1) {
-             _logger.log(POILogger.WARN, "Warning - ExtRst has wrong magic marker, expecting 1 but found " + reserved + " - ignoring");
+             System.err.println("Warning - ExtRst was has wrong magic marker, expecting 1 but found " + reserved + " - ignoring");
              // Grab all the remaining data, and ignore it
              for(int i=0; i<expectedLength-2; i++) {
                 in.readByte();
@@ -145,7 +147,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
              populateEmpty();
              return;
           }
-
+          
           // Carry on reading in as normal
           short stringDataSize = in.readShort();
           
@@ -436,7 +438,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
         if (isExtendedText() && (extensionLength > 0)) {
           field_5_ext_rst = new ExtRst(new ContinuableRecordInput(in), extensionLength);
           if(field_5_ext_rst.getDataSize()+4 != extensionLength) {
-             _logger.log(POILogger.WARN, "ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize() + 4));
+             System.err.println("ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize()+4));
           }
         }
     }

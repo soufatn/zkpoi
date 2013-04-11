@@ -15,33 +15,34 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.SharedFormula;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaRenderer;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.SharedFormula;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaRenderer;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Comment;
+import org.zkoss.poi.ss.usermodel.DataFormatter;
+import org.zkoss.poi.ss.usermodel.DateUtil;
+import org.zkoss.poi.ss.usermodel.FormulaError;
+import org.zkoss.poi.ss.usermodel.Hyperlink;
+import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.xssf.model.SharedStringsTable;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -408,7 +409,7 @@ public final class XSSFCell implements Cell {
      *
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
      *  If the argument is <code>null</code> then the current formula is removed.
-     * @throws org.apache.poi.ss.formula.FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     * @throws org.zkoss.poi.ss.formula.FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      * @throws IllegalStateException if the operation is not allowed, for example,
      *  when the cell is a part of a multi-cell array formula
      */
@@ -917,7 +918,7 @@ public final class XSSFCell implements Cell {
         link.setCellReference( new CellReference(_row.getRowNum(), _cellNum).formatAsString() );
 
         // Add to the lists
-        getSheet().addHyperlink(link);
+        getSheet().setCellHyperlink(link);
     }
 
     /**
@@ -1044,10 +1045,10 @@ public final class XSSFCell implements Cell {
      *
      * @see #setCellType(int)
      * @see #setCellFormula(String)
-     * @see XSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#shiftRows(int, int, int)
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)
+     * @see XSSFRow#removeCell(org.zkoss.poi.ss.usermodel.Cell)
+     * @see org.zkoss.poi.xssf.usermodel.XSSFSheet#removeRow(org.zkoss.poi.ss.usermodel.Row)
+     * @see org.zkoss.poi.xssf.usermodel.XSSFSheet#shiftRows(int, int, int)
+     * @see org.zkoss.poi.xssf.usermodel.XSSFSheet#addMergedRegion(org.zkoss.poi.ss.util.CellRangeAddress)
      * @throws IllegalStateException if modification is not allowed
      */
     void notifyArrayFormulaChanging(){
@@ -1055,5 +1056,33 @@ public final class XSSFCell implements Cell {
         String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. " +
                 "You cannot change part of an array.";
         notifyArrayFormulaChanging(msg);
+    }
+    
+    //20100719, henrichen@zkoss.org: cache evaluated hyperlink for HYPERLINK function
+    private Hyperlink _hyperlink;
+    public void setEvalHyperlink(Hyperlink hyperlink) {
+    	_hyperlink = hyperlink;
+    }
+    public Hyperlink getEvalHyperlink() {
+    	return _hyperlink;
+    }
+    //20110107, henrichen@zkoss.org: handle extern reference rename
+    public void whenRenameSheet(String oldname, String newname) {
+    	final int cellType = getCellType();
+    	if (cellType != CELL_TYPE_FORMULA) {
+    		return;
+    	}
+    	final CTCellFormula cf = _cell.getF();
+    	if (cf != null) {
+    		final String fml = cf.getStringValue();
+    		if (fml != null) {
+				final String o = SheetNameFormatter.format(oldname);
+				final String n = SheetNameFormatter.format(newname);
+				final String newfml = fml.replaceAll(o+"!", n+"!");
+				if (!newfml.equals(fml)) {
+					cf.setStringValue(newfml);
+				}
+    		}
+    	}
     }
 }

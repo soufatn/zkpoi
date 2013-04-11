@@ -16,10 +16,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This record simply holds the number of shapes in the drawing group and the
@@ -88,8 +88,7 @@ public class EscherDgRecord
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
+                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
                 "  NumShapes: " + field_1_numShapes + '\n' +
                 "  LastMSOSPID: " + field_2_lastMSOSPID + '\n';
 

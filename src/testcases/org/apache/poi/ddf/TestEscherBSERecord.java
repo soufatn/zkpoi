@@ -78,8 +78,7 @@ public final class TestEscherBSERecord extends TestCase {
         EscherBSERecord record = createRecord();
         String expected = "org.apache.poi.ddf.EscherBSERecord:" + '\n' +
                 "  RecordId: 0xF007" + '\n' +
-                "  Version: 0x0001" + '\n' +
-                "  Instance: 0x0000" + '\n' +
+                "  Options: 0x0001" + '\n' +
                 "  BlipTypeWin32: 5" + '\n' +
                 "  BlipTypeMacOS: 5" + '\n' +
                 "  SUID: [01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00]" + '\n' +

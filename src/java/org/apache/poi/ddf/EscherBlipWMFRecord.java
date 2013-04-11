@@ -16,11 +16,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.RecordFormatException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -334,8 +334,7 @@ public class EscherBlipWMFRecord
         }
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + nl +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + nl +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
                 "  Secondary UID: " + HexDump.toHex( field_1_secondaryUID ) + nl +
                 "  CacheOfSize: " + field_2_cacheOfSize + nl +
                 "  BoundaryTop: " + field_3_boundaryTop + nl +

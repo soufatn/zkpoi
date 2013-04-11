@@ -20,10 +20,10 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
+import junit.framework.*;
 
-import org.apache.poi.hwpf.HWPFDocFixture;
-import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.*;
+import org.apache.poi.hwpf.model.io.*;
 
 public final class TestCHPBinTable
   extends TestCase
@@ -44,20 +44,20 @@ public final class TestCHPBinTable
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFibBase().getFcMin();
+    int fcMin = fib.getFcMin();
 
-    _cHPBinTable = new CHPBinTable(mainStream, tableStream, fib.getFcPlcfbteChpx(), fib.getLcbPlcfbteChpx(), fakeTPT);
+    _cHPBinTable = new CHPBinTable(mainStream, tableStream, fib.getFcPlcfbteChpx(), fib.getLcbPlcfbteChpx(), fcMin, fakeTPT);
 
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
-    _cHPBinTable.writeTo(fileSys, 0, fakeTPT);
+    _cHPBinTable.writeTo(fileSys, 0);
     ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
     ByteArrayOutputStream mainOut =  fileSys.getStream("WordDocument");
 
     byte[] newTableStream = tableOut.toByteArray();
     byte[] newMainStream = mainOut.toByteArray();
 
-    CHPBinTable newBinTable = new CHPBinTable(newMainStream, newTableStream, 0, newTableStream.length, fakeTPT);
+    CHPBinTable newBinTable = new CHPBinTable(newMainStream, newTableStream, 0, newTableStream.length, 0, fakeTPT);
 
     ArrayList oldTextRuns = _cHPBinTable._textRuns;
     ArrayList newTextRuns = newBinTable._textRuns;

@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdgf.streams;
+package org.zkoss.poi.hdgf.streams;
 
 import java.util.ArrayList;
 
-import org.apache.poi.hdgf.chunks.Chunk;
-import org.apache.poi.hdgf.chunks.ChunkFactory;
-import org.apache.poi.hdgf.chunks.ChunkHeader;
-import org.apache.poi.hdgf.pointers.Pointer;
+import org.zkoss.poi.hdgf.chunks.Chunk;
+import org.zkoss.poi.hdgf.chunks.ChunkFactory;
+import org.zkoss.poi.hdgf.chunks.ChunkHeader;
+import org.zkoss.poi.hdgf.pointers.Pointer;
 
 public final class ChunkStream extends Stream {
 	private ChunkFactory chunkFactory;
@@ -43,7 +43,7 @@ public final class ChunkStream extends Stream {
 	 * Process the contents of the stream out into chunks
 	 */
 	public void findChunks() {
-		ArrayList<Chunk> chunksA = new ArrayList<Chunk>();
+		ArrayList chunksA = new ArrayList();
 
 		if(getPointer().getOffset() == 0x64b3) {
 			int i = 0;
@@ -66,6 +66,6 @@ public final class ChunkStream extends Stream {
 			}
 		}
 
-		chunks = chunksA.toArray(new Chunk[chunksA.size()]);
+		chunks = (Chunk[])chunksA.toArray(new Chunk[chunksA.size()]);
 	}
 }

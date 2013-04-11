@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf;
+package org.zkoss.poi.hslf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,27 +30,26 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.poi.POIDocument;
-import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
-import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.CurrentUserAtom;
-import org.apache.poi.hslf.record.ExOleObjStg;
-import org.apache.poi.hslf.record.PersistPtrHolder;
-import org.apache.poi.hslf.record.PersistRecord;
-import org.apache.poi.hslf.record.PositionDependentRecord;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.UserEditAtom;
-import org.apache.poi.hslf.usermodel.ObjectData;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.POIDocument;
+import org.zkoss.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.zkoss.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.zkoss.poi.hslf.exceptions.HSLFException;
+import org.zkoss.poi.hslf.record.CurrentUserAtom;
+import org.zkoss.poi.hslf.record.ExOleObjStg;
+import org.zkoss.poi.hslf.record.PersistPtrHolder;
+import org.zkoss.poi.hslf.record.PersistRecord;
+import org.zkoss.poi.hslf.record.PositionDependentRecord;
+import org.zkoss.poi.hslf.record.Record;
+import org.zkoss.poi.hslf.record.UserEditAtom;
+import org.zkoss.poi.hslf.usermodel.ObjectData;
+import org.zkoss.poi.hslf.usermodel.PictureData;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.DocumentEntry;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This class contains the main functionality for the Powerpoint file
@@ -130,28 +129,14 @@ public final class HSLFSlideShow extends POIDocument {
 	}
 
    /**
-    * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
-    * document and places all the important stuff into data structures.
-    *
-    * @param filesystem the POIFS FileSystem to read from
-    * @throws IOException if there is a problem while parsing the document.
-    */
-   public HSLFSlideShow(NPOIFSFileSystem filesystem) throws IOException
-   {
-      this(filesystem.getRoot());
-   }
-
-   /**
     * Constructs a Powerpoint document from a specific point in a
     *  POIFS Filesystem. Parses the document and places all the
     *  important stuff into data structures.
     *
-    * @deprecated Use {@link #HSLFSlideShow(DirectoryNode)} instead
     * @param dir the POIFS directory to read from
     * @param filesystem the POIFS FileSystem to read from
     * @throws IOException if there is a problem while parsing the document.
     */
-	@Deprecated
    public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
    {
       this(dir);
@@ -354,11 +339,6 @@ public final class HSLFSlideShow extends POIDocument {
             // Image size (excluding the 8 byte header)
             int imgsize = LittleEndian.getInt(pictstream, pos);
             pos += LittleEndian.INT_SIZE;
-
-            // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
-            //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
-            if (!((type == 0xf007) || (type >= 0xf018 && type <= 0xf117)))
-                break;
 
 			// The image size must be 0 or greater
 			// (0 is allowed, but odd, since we do wind on by the header each

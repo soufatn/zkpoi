@@ -17,19 +17,19 @@
 ==================================================================== */
 
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.property.RootProperty;
-import org.apache.poi.poifs.storage.BATBlock;
-import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.property.RootProperty;
+import org.zkoss.poi.poifs.storage.BATBlock;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableWriter;
+import org.zkoss.poi.poifs.storage.HeaderBlock;
+import org.zkoss.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 
 /**
  * This class handles the MiniStream (small block store)
@@ -69,16 +69,16 @@ public class NPOIFSMiniStore extends BlockStore
           it.next();
        }
        ByteBuffer dataBlock = it.next();
-       if(dataBlock == null) {
-          throw new IndexOutOfBoundsException("Big block " + bigBlockNumber + " outside stream");
-       }
-
-       // Position ourselves, and take a slice 
+       
+       // Our blocks are small, so duplicating it is fine 
+       byte[] data = new byte[POIFSConstants.SMALL_BLOCK_SIZE];
        dataBlock.position(
              dataBlock.position() + bigBlockOffset
        );
-       ByteBuffer miniBuffer = dataBlock.slice();
-       miniBuffer.limit(POIFSConstants.SMALL_BLOCK_SIZE);
+       dataBlock.get(data, 0, data.length);
+       
+       // Return a ByteBuffer on this
+       ByteBuffer miniBuffer = ByteBuffer.wrap(data);
        return miniBuffer;
     }
     
@@ -86,35 +86,9 @@ public class NPOIFSMiniStore extends BlockStore
      * Load the block, extending the underlying stream if needed
      */
     protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
-       // Try to get it without extending the stream
-       try {
-          return getBlockAt(offset);
-       } catch(IndexOutOfBoundsException e) {
-          // Need to extend the stream
-          // TODO Replace this with proper append support
-          // For now, do the extending by hand...
-          
-          // Ask for another block
-          int newBigBlock = _filesystem.getFreeBlock();
-          _filesystem.createBlockIfNeeded(newBigBlock);
-          
-          // Tack it onto the end of our chain
-          ChainLoopDetector loopDetector = _filesystem.getChainLoopDetector();
-          int block = _mini_stream.getStartBlock();
-          while(true) {
-             loopDetector.claim(block);
-             int next = _filesystem.getNextBlock(block);
-             if(next == POIFSConstants.END_OF_CHAIN) {
-                break;
-             }
-             block = next;
-          }
-          _filesystem.setNextBlock(block, newBigBlock);
-          _filesystem.setNextBlock(newBigBlock, POIFSConstants.END_OF_CHAIN);
-
-          // Now try again to get it
-          return createBlockIfNeeded(offset);
-       }
+       // TODO Extend the stream if needed
+       // TODO Needs append support on the underlying stream
+       return getBlockAt(offset);
     }
     
     /**

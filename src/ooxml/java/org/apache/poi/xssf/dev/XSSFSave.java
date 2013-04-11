@@ -15,10 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.dev;
+package org.zkoss.poi.xssf.dev;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 
@@ -31,16 +30,13 @@ import java.io.FileOutputStream;
 public final class XSSFSave {
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {
-            OPCPackage pkg = OPCPackage.open(args[i]);
-            XSSFWorkbook wb = new XSSFWorkbook(pkg);
+            XSSFWorkbook wb = new XSSFWorkbook(args[i]);
 
             int sep = args[i].lastIndexOf('.');
             String outfile = args[i].substring(0, sep) + "-save.xls" + (wb.isMacroEnabled() ? "m" : "x");
             FileOutputStream out = new FileOutputStream(outfile);
             wb.write(out);
             out.close();
-
-            pkg.close();
         }
     }
 

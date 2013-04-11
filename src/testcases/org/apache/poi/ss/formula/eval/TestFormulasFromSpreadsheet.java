@@ -18,7 +18,6 @@
 package org.apache.poi.ss.formula.eval;
 
 import java.io.PrintStream;
-import java.util.Collection;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -32,8 +31,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p/>
@@ -46,7 +43,6 @@ import org.apache.poi.util.POILogger;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
 public final class TestFormulasFromSpreadsheet extends TestCase {
-    private static final POILogger logger = POILogFactory.getLogger(TestFormulasFromSpreadsheet.class);
 
 	private static final class Result {
 		public static final int SOME_EVALUATIONS_FAILED = -1;
@@ -171,7 +167,9 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 			+ _evaluationFailureCount + " evaluation(s).  " + successMsg;
 			throw new AssertionFailedError(msg);
 		}
-        logger.log(POILogger.INFO, getClass().getName() + ": " + successMsg);
+		if(false) { // normally no output for successful tests
+			System.out.println(getClass().getName() + ": " + successMsg);
+		}
 	}
 
 	/**
@@ -181,7 +179,6 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 	 */
 	private void processFunctionGroup(int startRowIndex, String testFocusFunctionName) {
 		HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(workbook);
-        Collection<String> funcs = FunctionEval.getSupportedFunctionNames();
 
 		int rowIndex = startRowIndex;
 		while (true) {
@@ -211,12 +208,6 @@ public final class TestFormulasFromSpreadsheet extends TestCase {
 					default:
 						throw new RuntimeException("unexpected result");
 					case Result.NO_EVALUATIONS_FOUND: // do nothing
-                        String uname = targetFunctionName.toUpperCase();
-                        if(startRowIndex >= SS.START_FUNCTIONS_ROW_INDEX &&
-                                funcs.contains(uname)) {
-                            logger.log(POILogger.WARN, uname + ": function is supported but missing test data");
-                        }
-                        break;
 				}
 			}
 			rowIndex += SS.NUMBER_OF_ROWS_PER_FUNCTION;

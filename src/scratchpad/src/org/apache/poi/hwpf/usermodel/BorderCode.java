@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Mapping class for BRC80 structure (Border Code for Word 97)
@@ -65,7 +65,7 @@ public final class BorderCode implements Cloneable {
 
   public boolean isEmpty()
   {
-    return _info == 0 && _info2 == 0 || _info == -1;
+    return _info == 0 && _info2 == 0;
   }
 
   public boolean equals(Object o)
@@ -193,36 +193,5 @@ public final class BorderCode implements Cloneable {
   public void setFrame(boolean frame) {
     _fFrame.setValue(_info2, frame ? 1 : 0);
   }
-
-    @Override
-    public String toString()
-    {
-        if ( isEmpty() )
-            return "[BRC] EMPTY";
-
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append( "[BRC]\n" );
-
-        buffer.append( "        .dptLineWidth         = " );
-        buffer.append( " (" ).append( getLineWidth() ).append( " )\n" );
-
-        buffer.append( "        .brcType              = " );
-        buffer.append( " (" ).append( getBorderType() ).append( " )\n" );
-
-        buffer.append( "        .ico                  = " );
-        buffer.append( " (" ).append( getColor() ).append( " )\n" );
-
-        buffer.append( "        .dptSpace             = " );
-        buffer.append( " (" ).append( getSpace() ).append( " )\n" );
-
-        buffer.append( "        .fShadow              = " );
-        buffer.append( " (" ).append( isShadow() ).append( " )\n" );
-
-        buffer.append( "        .fFrame               = " );
-        buffer.append( " (" ).append( isFrame() ).append( " )\n" );
-
-        return buffer.toString();
-    }
 
 }

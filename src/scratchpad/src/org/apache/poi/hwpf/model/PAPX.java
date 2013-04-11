@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 
-import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.SprmOperation;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+
+import org.zkoss.poi.hwpf.sprm.ParagraphSprmUncompressor;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.sprm.SprmOperation;
+import org.zkoss.poi.hwpf.usermodel.ParagraphProperties;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * DANGER - works in bytes!
@@ -34,32 +34,21 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-@Internal
-@SuppressWarnings( "deprecation" )
-public final class PAPX extends BytePropertyNode<PAPX> {
+
+public final class PAPX extends BytePropertyNode {
 
   private ParagraphHeight _phe;
+  private int _hugeGrpprlOffset = -1;
 
   public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, byte[] papx, ParagraphHeight phe, byte[] dataStream)
   {
-    super(fcStart, fcEnd, translator, new SprmBuffer(papx, 2));
+    super(fcStart, fcEnd, translator, new SprmBuffer(papx));
     _phe = phe;
-    SprmBuffer buf = findHuge(new SprmBuffer(papx, 2), dataStream);
+    SprmBuffer buf = findHuge(new SprmBuffer(papx), dataStream);
     if(buf != null)
       _buf = buf;
   }
 
-    public PAPX( int charStart, int charEnd, byte[] papx, ParagraphHeight phe,
-            byte[] dataStream )
-    {
-        super( charStart, charEnd, new SprmBuffer( papx, 2 ) );
-        _phe = phe;
-        SprmBuffer buf = findHuge( new SprmBuffer( papx, 2 ), dataStream );
-        if ( buf != null )
-            _buf = buf;
-    }
-
-    @Deprecated
   public PAPX(int fcStart, int fcEnd, CharIndexTranslator translator, SprmBuffer buf, byte[] dataStream)
   {
     super(fcStart, fcEnd, translator, buf);
@@ -68,12 +57,6 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     if(buf != null)
       _buf = buf;
   }
-
-    public PAPX( int charStart, int charEnd, SprmBuffer buf )
-    {
-        super( charStart, charEnd, buf );
-        _phe = new ParagraphHeight();
-    }
 
   private SprmBuffer findHuge(SprmBuffer buf, byte[] datastream)
   {
@@ -96,7 +79,9 @@ public final class PAPX extends BytePropertyNode<PAPX> {
             // copy Grpprl from dataStream
             System.arraycopy(datastream, hugeGrpprlOffset + 2, hugeGrpprl, 2,
                              grpprlSize);
-            return new SprmBuffer(hugeGrpprl, 2);
+            // save a pointer to where we got the huge Grpprl from
+            _hugeGrpprlOffset = hugeGrpprlOffset;
+            return new SprmBuffer(hugeGrpprl);
           }
         }
       }
@@ -112,17 +97,16 @@ public final class PAPX extends BytePropertyNode<PAPX> {
 
   public byte[] getGrpprl()
   {
-      if (_buf == null)
-          return new byte[0];
-
     return ((SprmBuffer)_buf).toByteArray();
   }
 
-    public short getIstd()
-    {
-        if ( _buf == null )
-            return 0;
+  public int getHugeGrpprlOffset()
+  {
+    return _hugeGrpprlOffset;
+  }
 
+  public short getIstd()
+  {
     byte[] buf = getGrpprl();
     if (buf.length == 0)
     {
@@ -140,8 +124,6 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     return (SprmBuffer)_buf;
   }
 
-  @Deprecated
-  @Internal
   public ParagraphProperties getParagraphProperties(StyleSheet ss)
   {
     if(ss == null) {
@@ -163,10 +145,4 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     }
     return false;
   }
-
-    public String toString()
-    {
-        return "PAPX from " + getStart() + " to " + getEnd() + " (in bytes "
-                + getStartBytes() + " to " + getEndBytes() + ")";
-    }
 }

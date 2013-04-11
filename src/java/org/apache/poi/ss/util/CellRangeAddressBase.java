@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.util;
+package org.zkoss.poi.ss.util;
 
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 
 
 /**
@@ -155,4 +155,13 @@ public abstract class CellRangeAddressBase {
 		CellReference crB = new CellReference(_lastRow, _lastCol);
 		return getClass().getName() + " [" + crA.formatAsString() + ":" + crB.formatAsString() +"]";
 	}
+	
+	//20110512, peterkuo@potix.com
+	public boolean isInRange(int rngRow, int rngCol, int rngLastRow,
+			int rngLastCol) {
+		return _firstRow <= rngRow  &&  rngRow <= _lastRow &&
+		_firstRow <= rngLastRow  &&  rngLastRow <= _lastRow &&
+		_firstCol <= rngCol && rngCol <= _lastCol &&
+		_firstCol <= rngLastCol && rngLastCol <= _lastCol;
+	}	
 }

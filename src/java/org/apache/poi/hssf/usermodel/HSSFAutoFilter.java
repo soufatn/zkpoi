@@ -15,18 +15,96 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
-import org.apache.poi.ss.usermodel.AutoFilter;
+package org.zkoss.poi.hssf.usermodel;
+import java.util.List;
+import java.util.Set;
+
+import org.zkoss.poi.hssf.record.aggregates.AutoFilterInfoRecordAggregate;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.FilterColumn;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * Represents autofiltering for the specified worksheet.
  *
- * @author Yegor Kozlov
+ * @author Peterkuo
  */
 public final class HSSFAutoFilter implements AutoFilter {
     private HSSFSheet _sheet;
 
-    HSSFAutoFilter(HSSFSheet sheet){
+    private AutoFilterInfoRecordAggregate _record;
+    
+    HSSFAutoFilter(HSSFSheet sheet, AutoFilterInfoRecordAggregate record){
         _sheet = sheet;
+        _record = record;
     }
+
+	public List<String> getValuesOfFilter(int column) {
+		
+		return _record.getValuesOfFilter(column);
+	}
+
+	@Override
+	public CellRangeAddress getRangeAddress() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<FilterColumn> getFilterColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public FilterColumn getFilterColumn(int colId) {
+		return null;
+	}
+	
+	public FilterColumn getOrCreateFilterColumn(int colId) {
+		return null;
+	}
+	
+	public class HSSFFilterColumn implements FilterColumn {
+
+		@Override
+		public int getColId() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public List<String> getFilters() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Set getCriteria1() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Set getCriteria2() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isOn() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public int getOperator() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+		
+		public void setProperties(Object criteria1, int filterOp, Object criteria2, boolean visibleDropDown) {
+			// TODO 
+		}
+	}
 }

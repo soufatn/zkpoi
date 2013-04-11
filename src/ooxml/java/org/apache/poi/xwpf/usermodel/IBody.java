@@ -15,11 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
@@ -43,7 +42,7 @@ public interface IBody {
 	 * belongs.
 	 * @return the Part, to which the body belongs
 	 */
-	POIXMLDocumentPart getPart();
+	IBody getPart();
 	
 	/**
 	 * get the PartType of the body, for example

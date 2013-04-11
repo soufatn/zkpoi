@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.util;
+package org.zkoss.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.Workbook;
 
 
 /**
@@ -28,14 +28,14 @@ public class WorkbookUtil {
 	/**
 	 * Creates a valid sheet name, which is conform to the rules.
 	 * In any case, the result safely can be used for 
-	 * {@link org.apache.poi.ss.usermodel.Workbook#setSheetName(int, String)}.
+	 * {@link org.zkoss.poi.hssf.usermodel.HSSFWorkbook#setSheetName(int, String)}.
 	 * <br>
 	 * Rules:
 	 * <ul>
 	 * <li>never null</li>
 	 * <li>minimum length is 1</li>
 	 * <li>maximum length is 31</li>
-	 * <li>doesn't contain special chars: : 0x0000, 0x0003, / \ ? * ] [ </li>
+	 * <li>doesn't contain special chars: / \ ? * ] [ </li>
 	 * <li>Sheet names must not begin or end with ' (apostrophe)</li>
 	 * </ul>
 	 * Invalid characters are replaced by one space character ' '.
@@ -45,63 +45,37 @@ public class WorkbookUtil {
 	 * @return a valid string, "empty" if to short, "null" if null         
 	 */
 	public final static String createSafeSheetName(final String nameProposal) {
-		return createSafeSheetName(nameProposal, ' ');
+		if (nameProposal == null) {
+			return "null";
+		}
+		if (nameProposal.length() < 1) {
+			return "empty";
+		}
+		final int length = Math.min(31, nameProposal.length());
+		final String shortenname = nameProposal.substring(0, length);
+		final StringBuilder result = new StringBuilder(shortenname);
+		for (int i=0; i<length; i++) {
+			char ch = result.charAt(i);
+			switch (ch) {
+				case '/':
+				case '\\':
+				case '?':
+				case '*':
+				case ']':
+				case '[':
+					result.setCharAt(i, ' ');
+					break;
+				case '\'':
+					if (i==0 || i==length-1) {
+						result.setCharAt(i, ' ');
+					}
+					break;
+				default:
+					// all other chars OK
+			}
+		}
+		return result.toString();
 	}
-
-    /**
-     * Creates a valid sheet name, which is conform to the rules.
-     * In any case, the result safely can be used for
-     * {@link org.apache.poi.ss.usermodel.Workbook#setSheetName(int, String)}.
-     * <br>
-     * Rules:
-     * <ul>
-     * <li>never null</li>
-     * <li>minimum length is 1</li>
-     * <li>maximum length is 31</li>
-     * <li>doesn't contain special chars: : 0x0000, 0x0003, / \ ? * ] [ </li>
-     * <li>Sheet names must not begin or end with ' (apostrophe)</li>
-     * </ul>
-     *
-     * @param nameProposal can be any string, will be truncated if necessary,
-     *        allowed to be null
-     * @param replaceChar the char to replace invalid characters.
-     * @return a valid string, "empty" if to short, "null" if null
-     */
-    public final static String createSafeSheetName(final String nameProposal, char replaceChar) {
-        if (nameProposal == null) {
-            return "null";
-        }
-        if (nameProposal.length() < 1) {
-            return "empty";
-        }
-        final int length = Math.min(31, nameProposal.length());
-        final String shortenname = nameProposal.substring(0, length);
-        final StringBuilder result = new StringBuilder(shortenname);
-        for (int i=0; i<length; i++) {
-            char ch = result.charAt(i);
-            switch (ch) {
-                case '\u0000':
-                case '\u0003':
-                case ':':
-                case '/':
-                case '\\':
-                case '?':
-                case '*':
-                case ']':
-                case '[':
-                    result.setCharAt(i, replaceChar);
-                    break;
-                case '\'':
-                    if (i==0 || i==length-1) {
-                        result.setCharAt(i, replaceChar);
-                    }
-                    break;
-                default:
-                    // all other chars OK
-            }
-        }
-        return result.toString();
-    }
 
     /**
      * Validates sheet name.
@@ -130,11 +104,9 @@ public class WorkbookUtil {
             throw new IllegalArgumentException("sheetName must not be null");
         }
         int len = sheetName.length();
-        if (len < 1 || len > 31) {
-            throw new IllegalArgumentException("sheetName '" + sheetName
-                    + "' is invalid - character count MUST be greater than or equal to 1 and less than or equal to 31");
+        if (len < 1) {
+            throw new IllegalArgumentException("sheetName must not be empty string");
         }
-
         for (int i=0; i<len; i++) {
             char ch = sheetName.charAt(i);
             switch (ch) {

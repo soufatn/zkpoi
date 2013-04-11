@@ -15,21 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.HexRead;
+import org.zkoss.poi.util.LittleEndianByteArrayInputStream;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * The <code>HyperlinkRecord</code> (0x01B8) wraps an HLINK-record
@@ -41,7 +39,6 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public final static short sid = 0x01B8;
-    private POILogger logger = POILogFactory.getLogger(getClass());
 
     static final class GUID {
 		/*
@@ -501,9 +498,10 @@ public final class HyperlinkRecord extends StandardRecord {
                     int charDataSize = in.readInt();
 
                     //From the spec: An optional unsigned integer that MUST be 3 if present
-                    // but some files has 4
-                    int usKeyValue = in.readUShort();
-
+                    int optFlags = in.readUShort();
+                    if (optFlags != 0x0003) {
+                        throw new RecordFormatException("Expected 0x3 but found " + optFlags);
+                    }
                     _address = StringUtil.readUnicodeLE(in, charDataSize/2);
                 } else {
                     _address = null;
@@ -527,10 +525,7 @@ public final class HyperlinkRecord extends StandardRecord {
         }
 
         if (in.remaining() > 0) {
-           logger.log(POILogger.WARN, 
-                 "Hyperlink data remains: " + in.remaining() +
-                 " : " +HexDump.toHex(in.readRemainder())
-           );
+            System.out.println(HexDump.toHex(in.readRemainder()));
         }
     }
 

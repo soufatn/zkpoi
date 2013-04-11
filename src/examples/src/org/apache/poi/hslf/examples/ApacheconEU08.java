@@ -23,6 +23,7 @@ import org.apache.poi.hslf.record.TextHeaderAtom;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.File;
 import java.awt.*;
 
 /**

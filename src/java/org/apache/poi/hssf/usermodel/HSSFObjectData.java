@@ -16,17 +16,18 @@
 ==================================================================== */
 
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.SubRecord;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.util.HexDump;
+import org.zkoss.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.zkoss.poi.hssf.record.ObjRecord;
+import org.zkoss.poi.hssf.record.SubRecord;
+import org.zkoss.poi.poifs.filesystem.DirectoryEntry;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.HexDump;
 
 /**
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
@@ -40,20 +41,20 @@ public final class HSSFObjectData {
     private final ObjRecord _record;
 
     /**
-     * Reference to the filesystem root, required for retrieving the object data.
+     * Reference to the filesystem, required for retrieving the object data.
      */
-    private final DirectoryEntry _root;
+    private final POIFSFileSystem _poifs;
 
     /**
      * Constructs object data by wrapping a lower level object record.
      *
      * @param record the low-level object record.
-     * @param root the root of the filesystem, required for retrieving the object data.
+     * @param poifs the filesystem, required for retrieving the object data.
      */
-    public HSSFObjectData(ObjRecord record, DirectoryEntry root)
+    public HSSFObjectData(ObjRecord record, POIFSFileSystem poifs)
     {
         _record = record;
-        _root = root;
+        _poifs = poifs;
     }
 
     /**
@@ -76,7 +77,7 @@ public final class HSSFObjectData {
         int streamId = subRecord.getStreamId().intValue();
         String streamName = "MBD" + HexDump.toHex(streamId);
 
-        Entry entry = _root.getEntry(streamName);
+        Entry entry = _poifs.getRoot().getEntry(streamName);
         if (entry instanceof DirectoryEntry) {
             return (DirectoryEntry) entry;
         }

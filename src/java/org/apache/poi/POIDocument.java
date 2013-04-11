@@ -15,29 +15,29 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi;
+package org.zkoss.poi;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.EntryUtils;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hpsf.DocumentSummaryInformation;
+import org.zkoss.poi.hpsf.MutablePropertySet;
+import org.zkoss.poi.hpsf.PropertySet;
+import org.zkoss.poi.hpsf.PropertySetFactory;
+import org.zkoss.poi.hpsf.SummaryInformation;
+import org.zkoss.poi.poifs.filesystem.DirectoryEntry;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.DocumentEntry;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This holds the common functionality for all POI
@@ -64,18 +64,12 @@ public abstract class POIDocument {
     protected POIDocument(DirectoryNode dir) {
     	this.directory = dir;
     }
-    /**
-     * @deprecated use {@link POIDocument#POIDocument(DirectoryNode)} instead 
-     */
     @Deprecated
     protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
        this.directory = dir;
-    }
+     }
     protected POIDocument(POIFSFileSystem fs) {
-       this(fs.getRoot());
-    }
-    protected POIDocument(NPOIFSFileSystem fs) {
-       this(fs.getRoot());
+    	this(fs.getRoot());
     }
 
 	/**
@@ -167,7 +161,7 @@ public abstract class POIDocument {
 	   } catch(IOException ie) {
 	      // Must be corrupt or something like that
 	      logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + ie);
-	   } catch(org.apache.poi.hpsf.HPSFException he) {
+	   } catch(org.zkoss.poi.hpsf.HPSFException he) {
 	      // Oh well, doesn't exist
 	      logger.log(POILogger.WARN, "Error creating property set with name " + setName + "\n" + he);
 	   }
@@ -186,7 +180,7 @@ public abstract class POIDocument {
 	 * @param outFS the POIFSFileSystem to write the properties into
 	 * @param writtenEntries a list of POIFS entries to add the property names too
 	 */
-	protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+	protected void writeProperties(POIFSFileSystem outFS, List writtenEntries) throws IOException {
         SummaryInformation si = getSummaryInformation();
         if(si != null) {
 			writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, outFS);
@@ -220,7 +214,7 @@ public abstract class POIDocument {
 			outFS.createDocument(bIn,name);
 
 			logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
-		} catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
+		} catch(org.zkoss.poi.hpsf.WritingNotSupportedException wnse) {
 			System.err.println("Couldn't write property set with name " + name + " as not supported by HPSF yet");
 		}
 	}
@@ -236,34 +230,56 @@ public abstract class POIDocument {
 	 * @param target is the target POIFS to copy to
 	 * @param excepts is a list of Strings specifying what nodes NOT to copy
 	 */
-	@Deprecated
-    protected void copyNodes( POIFSFileSystem source, POIFSFileSystem target,
-            List<String> excepts ) throws IOException
-    {
-        EntryUtils.copyNodes( source, target, excepts );
-    }
+	protected void copyNodes(POIFSFileSystem source, POIFSFileSystem target,
+	                          List excepts) throws IOException {
+		//System.err.println("CopyNodes called");
 
-   /**
-    * Copies nodes from one POIFS to the other minus the excepts
-    * @param sourceRoot is the source POIFS to copy from
-    * @param targetRoot is the target POIFS to copy to
-    * @param excepts is a list of Strings specifying what nodes NOT to copy
-    */
-    @Deprecated
-    protected void copyNodes( DirectoryNode sourceRoot,
-            DirectoryNode targetRoot, List<String> excepts ) throws IOException
-    {
-        EntryUtils.copyNodes( sourceRoot, targetRoot, excepts );
-    }
+		DirectoryEntry root = source.getRoot();
+		DirectoryEntry newRoot = target.getRoot();
+
+		Iterator entries = root.getEntries();
+
+		while (entries.hasNext()) {
+			Entry entry = (Entry)entries.next();
+			if (!isInList(entry.getName(), excepts)) {
+				copyNodeRecursively(entry,newRoot);
+			}
+		}
+	}
+		
+	/**
+	 * Checks to see if the String is in the list, used when copying
+	 *  nodes between one POIFS and another
+	 */
+	private boolean isInList(String entry, List list) {
+		for (int k = 0; k < list.size(); k++) {
+			if (list.get(k).equals(entry)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Copies an Entry into a target POIFS directory, recursively
 	 */
-    @Internal
-    @Deprecated
-    protected void copyNodeRecursively( Entry entry, DirectoryEntry target )
-            throws IOException
-    {
-        EntryUtils.copyNodeRecursively( entry, target );
-    }
+	private void copyNodeRecursively(Entry entry, DirectoryEntry target)
+	throws IOException {
+		//System.err.println("copyNodeRecursively called with "+entry.getName()+
+		//                   ","+target.getName());
+		DirectoryEntry newTarget = null;
+		if (entry.isDirectoryEntry()) {
+			newTarget = target.createDirectory(entry.getName());
+			Iterator entries = ((DirectoryEntry)entry).getEntries();
+
+			while (entries.hasNext()) {
+				copyNodeRecursively((Entry)entries.next(),newTarget);
+			}
+		} else {
+			DocumentEntry dentry = (DocumentEntry)entry;
+			DocumentInputStream dstream = new DocumentInputStream(dentry);
+			target.createDocument(dentry.getName(),dstream);
+			dstream.close();
+		}
+	}
 }

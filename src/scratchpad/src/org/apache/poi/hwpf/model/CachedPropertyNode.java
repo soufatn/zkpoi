@@ -15,18 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
+
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
 
 import java.lang.ref.SoftReference;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.util.Internal;
-
-@Internal
 public final class CachedPropertyNode
-  extends PropertyNode<CachedPropertyNode>
+  extends PropertyNode
 {
-  protected SoftReference<Object> _propCache;
+  protected SoftReference _propCache;
 
   public CachedPropertyNode(int start, int end, SprmBuffer buf)
   {
@@ -35,7 +33,7 @@ public final class CachedPropertyNode
 
   protected void fillCache(Object ref)
   {
-    _propCache = new SoftReference<Object>(ref);
+    _propCache = new SoftReference(ref);
   }
 
   protected Object getCacheContents()

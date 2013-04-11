@@ -15,18 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * EXTERNSHEET (0x0017)<br/>
  * A List of Indexes to  EXTERNALBOOK (supplemental book) Records <p/>
  * 
  * @author Libin Roman (Vista Portal LDT. Developer)
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public class ExternSheetRecord extends StandardRecord {
 
@@ -64,6 +65,13 @@ public class ExternSheetRecord extends StandardRecord {
 		}
 		public int getLastSheetIndex(){
 			return _lastSheetIndex;
+		}
+		//20101213,henrichen@zkoss.org: handle sheet index update
+		public void setFirstSheetIndex(int sheetIdx) {
+			_firstSheetIndex = sheetIdx;
+		}
+		public void setLastSheetIndex(int sheetIdx){
+			_lastSheetIndex = sheetIdx;
 		}
 		
 		public String toString() {
@@ -184,6 +192,10 @@ public class ExternSheetRecord extends StandardRecord {
 		return getRef(extRefIndex).getFirstSheetIndex();
 	}
 
+	public int getLastSheetIndexFromRefIndex(int extRefIndex) {
+		return getRef(extRefIndex).getLastSheetIndex();
+	}
+	
 	/**
      * Add a zero-based reference to a {@link org.apache.poi.hssf.record.SupBookRecord}.
      * <p>
@@ -219,14 +231,14 @@ public class ExternSheetRecord extends StandardRecord {
 		return _list.size() - 1;
 	}
 
-	public int getRefIxForSheet(int externalBookIndex, int sheetIndex) {
+	public int getRefIxForSheet(int externalBookIndex, int sheetIndex, int sheetIndex2) {
 		int nItems = _list.size();
 		for (int i = 0; i < nItems; i++) {
 			RefSubRecord ref = getRef(i);
 			if (ref.getExtBookIndex() != externalBookIndex) {
 				continue;
 			}
-			if (ref.getFirstSheetIndex() == sheetIndex && ref.getLastSheetIndex() == sheetIndex) {
+			if (ref.getFirstSheetIndex() == sheetIndex && ref.getLastSheetIndex() == sheetIndex2) {
 				return i;
 			}
 		}
@@ -243,5 +255,26 @@ public class ExternSheetRecord extends StandardRecord {
 			}
 		}
 		return result;
+	}
+	
+	//20101213, henrichen@zkoss.org: update externSheet record when remove a sheet
+	public void removeSheet(int sheetIndex, int internalBookIndex) {
+		for (RefSubRecord ref : _list) {
+			if (ref.getExtBookIndex() != internalBookIndex) {
+				continue;
+			}
+			final int diff = ref.getFirstSheetIndex() - sheetIndex;
+			if (diff > 0) {
+				ref.setFirstSheetIndex(ref.getFirstSheetIndex() - 1);
+			} else if (diff == 0) {
+				ref.setFirstSheetIndex(-1);
+			}
+			final int diff2 = ref.getLastSheetIndex() - sheetIndex; 
+			if (diff > 0) {
+				ref.setLastSheetIndex(ref.getLastSheetIndex() - 1);
+			} else if (diff == 0) {
+				ref.setLastSheetIndex(-1);
+			}
+		}
 	}
 }

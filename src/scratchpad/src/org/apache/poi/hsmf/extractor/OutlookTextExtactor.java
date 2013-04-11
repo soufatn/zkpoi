@@ -14,21 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hsmf.extractor;
+package org.zkoss.poi.hsmf.extractor;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.hsmf.datatypes.AttachmentChunks;
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.StringUtil.StringsIterator;
+import org.zkoss.poi.POIOLE2TextExtractor;
+import org.zkoss.poi.hsmf.MAPIMessage;
+import org.zkoss.poi.hsmf.datatypes.AttachmentChunks;
+import org.zkoss.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.StringUtil.StringsIterator;
 
 /**
  * A text extractor for HSMF (Outlook) .msg files.
@@ -38,33 +36,14 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    public OutlookTextExtactor(MAPIMessage msg) {
       super(msg);
    }
-   /**
-    * Use {@link #OutlookTextExtactor(DirectoryNode)} instead
-    */
-   @Deprecated
    public OutlookTextExtactor(DirectoryNode poifsDir, POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(poifsDir, fs));
-   }
-   public OutlookTextExtactor(DirectoryNode poifsDir) throws IOException {
-      this(new MAPIMessage(poifsDir));
    }
    public OutlookTextExtactor(POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(fs));
    }
-   public OutlookTextExtactor(NPOIFSFileSystem fs) throws IOException {
-      this(new MAPIMessage(fs));
-   }
    public OutlookTextExtactor(InputStream inp) throws IOException {
       this(new MAPIMessage(inp));
-   }
-   
-   public static void main(String[] args) throws Exception {
-      for(String filename : args) {
-         OutlookTextExtactor extractor = new OutlookTextExtactor(
-               new NPOIFSFileSystem(new File(filename))
-         );
-         System.out.println( extractor.getText() );
-      }
    }
 
    /**
@@ -81,11 +60,6 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       MAPIMessage msg = (MAPIMessage)document;
       StringBuffer s = new StringBuffer();
       
-      // See if we can get a suitable encoding for any
-      //  non unicode text in the file
-      msg.guess7BitEncoding();
-      
-      // Off we go
       StringsIterator emails;
       try {
          emails = new StringsIterator(

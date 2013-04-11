@@ -17,11 +17,10 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
+import junit.framework.*;
+import org.apache.poi.hwpf.*;
 
-import junit.framework.TestCase;
-import org.apache.poi.hwpf.HWPFDocFixture;
+import java.lang.reflect.*;
 
 public final class TestFileInformationBlock
   extends TestCase
@@ -35,7 +34,7 @@ public final class TestFileInformationBlock
     int size = _fileInformationBlock.getSize();
     byte[] buf = new byte[size];
 
-    _fileInformationBlock.getFibBase().serialize(buf, 0);
+    _fileInformationBlock.serialize(buf, 0);
 
     FileInformationBlock newFileInformationBlock =
       new FileInformationBlock(buf);

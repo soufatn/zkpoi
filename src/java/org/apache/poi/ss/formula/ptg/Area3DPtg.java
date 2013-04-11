@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.formula.ExternSheetReferenceToken;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.formula.ExternSheetReferenceToken;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.WorkbookDependentFormula;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Area 3D Ptg - 3D reference (Sheet + Area)<P>
@@ -101,5 +101,22 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 	}
 	public String toFormulaString() {
 		throw new RuntimeException("3D references need a workbook to determine formula text");
+	}
+
+	//20110324, henrichen@zkoss.org: override hashCode
+	public int hashCode() {
+		return super.hashCode() ^ field_1_index_extern_sheet;
+	}
+
+	//20110324, henrichen@zkoss.org: override equals
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Area3DPtg)) {
+			return false;
+		}
+		final Area3DPtg other = (Area3DPtg) o;
+		return super.equals(o) && other.field_1_index_extern_sheet == this.field_1_index_extern_sheet;
 	}
 }
