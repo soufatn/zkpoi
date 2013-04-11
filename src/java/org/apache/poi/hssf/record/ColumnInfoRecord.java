@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title: COLINFO Record (0x007D)<p/>
@@ -46,7 +46,7 @@ public final class ColumnInfoRecord extends StandardRecord {
      * Creates a column info record with default width and format
      */
     public ColumnInfoRecord() {
-        setColumnWidth(2275);
+        setColumnWidth(2275); //20100816, henrichen@zkoss.org: why 2275? DefaultColWidthRecord.getColWidth() return 8, shouldn't it be 8 * 256 = 2048?
         _options = 2;
         _xfIndex = 0x0f;
         field_6_reserved = 2; // seems to be the most common value
@@ -105,7 +105,7 @@ public final class ColumnInfoRecord extends StandardRecord {
     /**
      * set the columns' default format info
      * @param xfi - the extended format index
-     * @see org.apache.poi.hssf.record.ExtendedFormatRecord
+     * @see org.zkoss.poi.hssf.record.ExtendedFormatRecord
      */
     public void setXFIndex(int xfi) {
         _xfIndex = xfi;
@@ -161,7 +161,7 @@ public final class ColumnInfoRecord extends StandardRecord {
     /**
      * get the columns' default format info
      * @return the extended format index
-     * @see org.apache.poi.hssf.record.ExtendedFormatRecord
+     * @see org.zkoss.poi.hssf.record.ExtendedFormatRecord
      */
     public int getXFIndex() {
         return _xfIndex;

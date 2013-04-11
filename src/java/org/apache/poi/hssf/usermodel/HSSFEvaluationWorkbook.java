@@ -15,30 +15,31 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationName;
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.formula.FormulaParsingWorkbook;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.hssf.record.NameRecord;
+import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.zkoss.poi.hssf.record.formula.NamePtg;
+import org.zkoss.poi.hssf.record.formula.NameXPtg;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationName;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.formula.FormulaParseException;
+import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalName;
 
 /**
  * Internal POI use only
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
 
@@ -58,15 +59,19 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 
 	public int getExternalSheetIndex(String sheetName) {
-		int sheetIndex = _uBook.getSheetIndex(sheetName);
-		return _iBook.checkExternSheet(sheetIndex);
+		final int j = sheetName.indexOf(':');
+		final String sheetName1 = j < 0 ? sheetName : sheetName.substring(0, j);
+		final String sheetName2 = j < 0 ? sheetName : sheetName.substring(j+1);
+		int sheetIndex1 = _uBook.getSheetIndex(sheetName1);
+		int sheetIndex2 = _uBook.getSheetIndex(sheetName2);
+		return _iBook.checkExternSheet(sheetIndex1, sheetIndex2);
 	}
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
 		return _iBook.getExternalSheetIndex(workbookName, sheetName);
 	}
 
 	public NameXPtg getNameXPtg(String name) {
-        return _iBook.getNameXPtg(name, _uBook.getUDFFinder());
+		return _iBook.getNameXPtg(name);
 	}
 
 	/**
@@ -103,6 +108,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
+	}
+	public int convertLastIndexFromExternSheetIndex(int externSheetIndex) {
+		return _iBook.getLastSheetIndexFromExternSheetIndex(externSheetIndex);
 	}
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
@@ -145,9 +153,6 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
 		return fra.getFormulaTokens();
 	}
-    public UDFFinder getUDFFinder(){
-        return _uBook.getUDFFinder();
-    }
 
 	private static final class Name implements EvaluationName {
 
@@ -180,5 +185,35 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
 	public SpreadsheetVersion getSpreadsheetVersion(){
 		return SpreadsheetVersion.EXCEL97;
+	}
+
+	@Override
+	public String getBookNameFromExternalLinkIndex(String externalLinkIndex) {
+		//TODO Excel 97-2003, external link index?
+		return externalLinkIndex;
+	}
+	
+	//20101112, henrichen@zkoss.org: handle parsing user defined function name
+	/**
+	 * Lookup a named range by its name.
+	 *
+	 * @param name the name to search
+	 * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+	 * The sheet index is required to resolve sheet-level names. <code>-1</code> means workbook-global names
+	 */
+	@Override
+	public EvaluationName getOrCreateName(String name, int sheetIndex) {
+		for(int i=0; i < _iBook.getNumNames(); i++) {
+			NameRecord nr = _iBook.getNameRecord(i);
+			if (nr.getSheetNumber() == sheetIndex+1 && name.equalsIgnoreCase(nr.getNameText())) {
+				return new Name(nr, i);
+			}
+		}
+		if (sheetIndex == -1) {
+			NameRecord nr = _iBook.createName();
+			nr.setNameText(name);
+			return new Name(nr, _iBook.getNumNames() - 1);
+		}
+		return getOrCreateName(name, -1); //recursive
 	}
 }

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor.util;
+package org.zkoss.poi.hdf.extractor.util;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ import java.util.*;
  * @author Ryan Ackley
  *
 */
-@Deprecated
+
 public final class BTreeSet extends AbstractSet implements Set {
 
     /*

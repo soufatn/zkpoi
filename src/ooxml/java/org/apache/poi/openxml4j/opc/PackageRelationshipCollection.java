@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.openxml4j.opc;
+package org.zkoss.poi.openxml4j.opc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,10 +26,10 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.InvalidOperationException;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Represents a collection of PackageRelationship elements that are owned by a
@@ -351,8 +351,16 @@ public final class PackageRelationshipCollection implements
 							PackageRelationship.TARGET_ATTRIBUTE_NAME)
 							.getValue();
 
-                    target = PackagingURIHelper.toURI(value);
+					if (value.indexOf("\\") != -1) {
+						logger
+								.log(POILogger.INFO, "target contains \\ therefore not a valid URI"
+										+ value + " replaced by /");
+						value = value.replaceAll("\\\\", "/");
+						// word can save external relationship with a \ instead
+						// of /
+					}
 
+					target = new URI(value);
 				} catch (URISyntaxException e) {
 					logger.log(POILogger.ERROR, "Cannot convert " + value
 							+ " in a valid relationship URI-> ignored", e);

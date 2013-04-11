@@ -133,15 +133,13 @@ public final class TestEscherOptRecord extends TestCase {
     public void testToString() {
         String nl = System.getProperty("line.separator");
         EscherOptRecord r = new EscherOptRecord();
-        // don't try to shoot in foot, please -- vlsergey
-        // r.setOptions((short)0x000F);
+        r.setOptions((short)0x000F);
         r.setRecordId(EscherOptRecord.RECORD_ID);
         EscherProperty prop1 = new EscherBoolProperty((short)1, 1);
         r.addEscherProperty(prop1);
         String expected = "org.apache.poi.ddf.EscherOptRecord:" + nl +
-                "  isContainer: false" + nl +
-                "  version: 0x0003" + nl +
-                "  instance: 0x0001" + nl +
+                "  isContainer: true" + nl +
+                "  options: 0x0013" + nl +
                 "  recordId: 0x" + HexDump.toHex(EscherOptRecord.RECORD_ID) + nl +
                 "  numchildren: 0" + nl +
                 "  properties:" + nl +

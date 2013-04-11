@@ -15,31 +15,30 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import java.lang.ref.WeakReference;
+
+
+
+import org.zkoss.poi.hwpf.HWPFDocument;
+import org.zkoss.poi.hwpf.HWPFDocumentCore;
+import org.zkoss.poi.hwpf.model.CHPX;
+import org.zkoss.poi.hwpf.model.CPSplitCalculator;
+import org.zkoss.poi.hwpf.model.FileInformationBlock;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.model.PAPX;
+import org.zkoss.poi.hwpf.model.PropertyNode;
+import org.zkoss.poi.hwpf.model.SEPX;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.model.TextPiece;
+import org.zkoss.poi.hwpf.sprm.CharacterSprmCompressor;
+import org.zkoss.poi.hwpf.sprm.ParagraphSprmCompressor;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.util.LittleEndian;
+
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import org.apache.poi.util.Internal;
-
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFDocumentCore;
-import org.apache.poi.hwpf.model.CHPX;
-import org.apache.poi.hwpf.model.FileInformationBlock;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.PropertyNode;
-import org.apache.poi.hwpf.model.SEPX;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.hwpf.model.TextPieceTable;
-import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
-import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import java.lang.ref.WeakReference;
 
 /**
  * This class is the central class of the HWPF object model. All properties that
@@ -56,25 +55,16 @@ import org.apache.poi.util.POILogger;
  */
 public class Range { // TODO -instantiable superclass
 
-    private POILogger logger = POILogFactory.getLogger( Range.class );
-    
-    @Deprecated
 	public static final int TYPE_PARAGRAPH = 0;
-    @Deprecated
 	public static final int TYPE_CHARACTER = 1;
-    @Deprecated
 	public static final int TYPE_SECTION = 2;
-    @Deprecated
 	public static final int TYPE_TEXT = 3;
-    @Deprecated
 	public static final int TYPE_LISTENTRY = 4;
-    @Deprecated
 	public static final int TYPE_TABLE = 5;
-    @Deprecated
 	public static final int TYPE_UNDEFINED = 6;
 
 	/** Needed so inserts and deletes will ripple up through containing Ranges */
-	private WeakReference<Range> _parent;
+	private WeakReference _parent;
 
 	/** The starting character offset of this range. */
 	protected int _start;
@@ -103,10 +93,10 @@ public class Range { // TODO -instantiable superclass
 	/** All paragraphs that belong to the document this Range belongs to. */
 	protected List<PAPX> _paragraphs;
 
-	/** The start index in the paragraphs list for this Range, inclusive */
+	/** The start index in the paragraphs list for this Range */
 	protected int _parStart;
 
-	/** The end index in the paragraphs list for this Range, exclusive */
+	/** The end index in the paragraphs list for this Range. */
 	protected int _parEnd;
 
 	/** Have we loaded the characterRun indexes yet. */
@@ -121,8 +111,18 @@ public class Range { // TODO -instantiable superclass
 	/** The end index in the characterRuns list for this Range. */
 	protected int _charEnd;
 
-	protected StringBuilder _text;
-	
+	/** Have we loaded the Text indexes yet */
+	protected boolean _textRangeFound;
+
+	/** All text pieces that belong to the document this Range belongs to. */
+	protected List<TextPiece> _text;
+
+	/** The start index in the text list for this Range. */
+	protected int _textStart;
+
+	/** The end index in the text list for this Range. */
+	protected int _textEnd;
+
 	// protected Range()
 	// {
 	//
@@ -147,8 +147,8 @@ public class Range { // TODO -instantiable superclass
 		_sections = _doc.getSectionTable().getSections();
 		_paragraphs = _doc.getParagraphTable().getParagraphs();
 		_characters = _doc.getCharacterTable().getTextRuns();
-		_text = _doc.getText();
-		_parent = new WeakReference<Range>(null);
+		_text = _doc.getTextTable().getTextPieces();
+		_parent = new WeakReference(null);
 
 		sanityCheckStartEnd();
 	}
@@ -171,10 +171,9 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = parent._paragraphs;
 		_characters = parent._characters;
 		_text = parent._text;
-		_parent = new WeakReference<Range>(parent);
+		_parent = new WeakReference(parent);
 
 		sanityCheckStartEnd();
-		assert sanityCheck();
 	}
 
 	/**
@@ -182,22 +181,52 @@ public class Range { // TODO -instantiable superclass
 	 * lists.
 	 *
 	 * @param startIdx
-	 *            The starting index in the list, inclusive
+	 *            The starting index in the list.
 	 * @param endIdx
-	 *            The ending index in the list, exclusive
+	 *            The ending index in the list.
 	 * @param idxType
 	 *            The list type.
 	 * @param parent
 	 *            The parent Range this range belongs to.
 	 */
-	@Deprecated
 	protected Range(int startIdx, int endIdx, int idxType, Range parent) {
 		_doc = parent._doc;
 		_sections = parent._sections;
 		_paragraphs = parent._paragraphs;
 		_characters = parent._characters;
 		_text = parent._text;
-		_parent = new WeakReference<Range>(parent);
+		_parent = new WeakReference(parent);
+
+		switch (idxType) {
+			case TYPE_PARAGRAPH:
+				_parStart = parent._parStart + startIdx;
+				_parEnd = parent._parStart + endIdx;
+				_start = _paragraphs.get(_parStart).getStart();
+				_end = _paragraphs.get(_parEnd).getEnd();
+				_parRangeFound = true;
+				break;
+			case TYPE_CHARACTER:
+				_charStart = parent._charStart + startIdx;
+				_charEnd = parent._charStart + endIdx;
+				_start = _characters.get(_charStart).getStart();
+				_end = _characters.get(_charEnd).getEnd();
+				_charRangeFound = true;
+				break;
+			case TYPE_SECTION:
+				_sectionStart = parent._sectionStart + startIdx;
+				_sectionEnd = parent._sectionStart + endIdx;
+				_start = _sections.get(_sectionStart).getStart();
+				_end = _sections.get(_sectionEnd).getEnd();
+				_sectionRangeFound = true;
+				break;
+			case TYPE_TEXT:
+				_textStart = parent._textStart + startIdx;
+				_textEnd = parent._textStart + endIdx;
+				_start = _text.get(_textStart).getStart();
+				_end = _text.get(_textEnd).getEnd();
+				_textRangeFound = true;
+				break;
+		}
 
 		sanityCheckStartEnd();
 	}
@@ -216,17 +245,23 @@ public class Range { // TODO -instantiable superclass
 		}
 	}
 
-    /**
-     * @return always return true
-     * @deprecated Range is not linked to any text piece anymore, so to check if
-     *             unicode is used please access {@link TextPieceTable} during
-     *             document load time
-     */
-    @Deprecated
-    public boolean usesUnicode()
-    {
-        return true;
-    }
+	/**
+	 * Does any <code>TextPiece</code> in this Range use unicode?
+	 *
+	 * @return true if it does and false if it doesn't
+	 */
+	public boolean usesUnicode() {
+
+		initText();
+
+		for (int i = _textStart; i < _textEnd; i++) {
+			TextPiece piece = _text.get(i);
+			if (piece.isUnicode())
+				return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Gets the text that this Range contains.
@@ -234,7 +269,29 @@ public class Range { // TODO -instantiable superclass
 	 * @return The text for this range.
 	 */
 	public String text() {
-	    return _text.substring( _start, _end );
+		initText();
+
+		StringBuffer sb = new StringBuffer();
+
+		for (int x = _textStart; x < _textEnd; x++) {
+			TextPiece piece = _text.get(x);
+
+			// Figure out where in this piece the text
+			// we're after lives
+			int rStart = 0;
+			int rEnd = piece.characterLength();
+			if (_start > piece.getStart()) {
+				rStart = _start - piece.getStart();
+			}
+			if (_end < piece.getEnd()) {
+				rEnd -= (piece.getEnd() - _end);
+			}
+
+			// Luckily TextPieces work in characters, so we don't
+			// need to worry about unicode here
+			sb.append(piece.substring(rStart, rEnd));
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -322,62 +379,67 @@ public class Range { // TODO -instantiable superclass
 		return _charEnd - _charStart;
 	}
 
-    /**
-     * Inserts text into the front of this range.
-     * 
-     * @param text
-     *            The text to insert
-     * @return The character run that text was inserted into.
-     */
-    public CharacterRun insertBefore( String text )
-    {
-        initAll();
+	/**
+	 * Inserts text into the front of this range.
+	 *
+	 * @param text
+	 *            The text to insert
+	 * @return The character run that text was inserted into.
+	 */
+	public CharacterRun insertBefore(String text)
+	// throws UnsupportedEncodingException
+	{
+		initAll();
 
-        _text.insert( _start, text );
-        _doc.getCharacterTable().adjustForInsert( _charStart, text.length() );
-        _doc.getParagraphTable().adjustForInsert( _parStart, text.length() );
-        _doc.getSectionTable().adjustForInsert( _sectionStart, text.length() );
-        if ( _doc instanceof HWPFDocument )
-        {
-            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
-                    .afterInsert( _start, text.length() );
-        }
-        adjustForInsert( text.length() );
+		TextPiece tp = _text.get(_textStart);
+		StringBuffer sb = tp.getStringBuffer();
 
-        // update the FIB.CCPText + friends fields
-        adjustFIB( text.length() );
+		// Since this is the first item in our list, it is safe to assume that
+		// _start >= tp.getStart()
+		int insertIndex = _start - tp.getStart();
+		sb.insert(insertIndex, text);
 
-        assert sanityCheck();
+		int adjustedLength = _doc.getTextTable().adjustForInsert(_textStart, text.length());
+		_doc.getCharacterTable().adjustForInsert(_charStart, adjustedLength);
+		_doc.getParagraphTable().adjustForInsert(_parStart, adjustedLength);
+		_doc.getSectionTable().adjustForInsert(_sectionStart, adjustedLength);
+		adjustForInsert(adjustedLength);
 
-        return getCharacterRun( 0 );
-    }
+		// update the FIB.CCPText + friends fields
+		adjustFIB(text.length());
 
-    /**
-     * Inserts text onto the end of this range
-     * 
-     * @param text
-     *            The text to insert
-     * @return The character run the text was inserted into.
-     */
-    public CharacterRun insertAfter( String text )
-    {
-        initAll();
+		return getCharacterRun(0);
+	}
 
-        _text.insert( _end, text );
+	/**
+	 * Inserts text onto the end of this range
+	 *
+	 * @param text
+	 *            The text to insert
+	 * @return The character run the text was inserted into.
+	 */
+	public CharacterRun insertAfter(String text) {
+		initAll();
 
-        _doc.getCharacterTable().adjustForInsert( _charEnd - 1, text.length() );
-        _doc.getParagraphTable().adjustForInsert( _parEnd - 1, text.length() );
-        _doc.getSectionTable().adjustForInsert( _sectionEnd - 1, text.length() );
-        if ( _doc instanceof HWPFDocument )
-        {
-            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
-                    .afterInsert( _end, text.length() );
-        }
-        adjustForInsert( text.length() );
+		int listIndex = _textEnd - 1;
+		TextPiece tp = _text.get(listIndex);
+		StringBuffer sb = tp.getStringBuffer();
 
-        assert sanityCheck();
-        return getCharacterRun( numCharacterRuns() - 1 );
-    }
+		int insertIndex = _end - tp.getStart();
+
+		if (tp.getStringBuffer().charAt(_end - 1) == '\r' && text.charAt(0) != '\u0007') {
+			insertIndex--;
+		}
+		sb.insert(insertIndex, text);
+		int adjustedLength = _doc.getTextTable().adjustForInsert(listIndex, text.length());
+		_doc.getCharacterTable().adjustForInsert(_charEnd - 1, adjustedLength);
+		_doc.getParagraphTable().adjustForInsert(_parEnd - 1, adjustedLength);
+		_doc.getSectionTable().adjustForInsert(_sectionEnd - 1, adjustedLength);
+		adjustForInsert(text.length());
+
+		return getCharacterRun(numCharacterRuns() - 1);
+
+	}
 
 	/**
 	 * Inserts text into the front of this range and it gives that text the
@@ -389,9 +451,7 @@ public class Range { // TODO -instantiable superclass
 	 *            The CharacterProperties to give the text.
 	 * @return A new CharacterRun that has the given text and properties and is
 	 *         n ow a part of the document.
-     * @deprecated User code should not work with {@link CharacterProperties}
 	 */
-    @Deprecated
 	public CharacterRun insertBefore(String text, CharacterProperties props)
 	// throws UnsupportedEncodingException
 	{
@@ -402,7 +462,7 @@ public class Range { // TODO -instantiable superclass
 		StyleSheet ss = _doc.getStyleSheet();
 		CharacterProperties baseStyle = ss.getCharacterStyle(istd);
 		byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(props, baseStyle);
-		SprmBuffer buf = new SprmBuffer(grpprl, 0);
+		SprmBuffer buf = new SprmBuffer(grpprl);
 		_doc.getCharacterTable().insert(_charStart, _start, buf);
 
 		return insertBefore(text);
@@ -418,9 +478,7 @@ public class Range { // TODO -instantiable superclass
 	 *            The CharacterProperties to give the text.
 	 * @return A new CharacterRun that has the given text and properties and is
 	 *         n ow a part of the document.
-	 * @deprecated User code should not work with {@link CharacterProperties}
 	 */
-    @Deprecated
 	public CharacterRun insertAfter(String text, CharacterProperties props)
 	// throws UnsupportedEncodingException
 	{
@@ -431,7 +489,7 @@ public class Range { // TODO -instantiable superclass
 		StyleSheet ss = _doc.getStyleSheet();
 		CharacterProperties baseStyle = ss.getCharacterStyle(istd);
 		byte[] grpprl = CharacterSprmCompressor.compressCharacterProperty(props, baseStyle);
-		SprmBuffer buf = new SprmBuffer(grpprl, 0);
+		SprmBuffer buf = new SprmBuffer(grpprl);
 		_doc.getCharacterTable().insert(_charEnd, _end, buf);
 		_charEnd++;
 		return insertAfter(text);
@@ -445,9 +503,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The index into the stylesheet for the new paragraph.
 	 * @return The newly inserted paragraph.
-	 * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-	@Deprecated
 	public Paragraph insertBefore(ParagraphProperties props, int styleIndex)
 	// throws UnsupportedEncodingException
 	{
@@ -468,9 +524,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param text
 	 *            The text to insert.
 	 * @return A newly inserted paragraph.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-    @Deprecated
 	protected Paragraph insertBefore(ParagraphProperties props, int styleIndex, String text)
 	// throws UnsupportedEncodingException
 	{
@@ -483,7 +537,7 @@ public class Range { // TODO -instantiable superclass
 		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, (short) styleIndex);
 		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
-		SprmBuffer buf = new SprmBuffer(withIndex, 2);
+		SprmBuffer buf = new SprmBuffer(withIndex);
 
 		_doc.getParagraphTable().insert(_parStart, _start, buf);
 		insertBefore(text, baseChp);
@@ -498,9 +552,8 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The index into the stylesheet for the new paragraph.
 	 * @return The newly inserted paragraph.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-    @Deprecated
+
 	public Paragraph insertAfter(ParagraphProperties props, int styleIndex)
 	// throws UnsupportedEncodingException
 	{
@@ -521,9 +574,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param text
 	 *            The text to insert.
 	 * @return A newly inserted paragraph.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-    @Deprecated
 	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
 	// throws UnsupportedEncodingException
 	{
@@ -536,7 +587,7 @@ public class Range { // TODO -instantiable superclass
 		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, (short) styleIndex);
 		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
-		SprmBuffer buf = new SprmBuffer(withIndex, 2);
+		SprmBuffer buf = new SprmBuffer(withIndex);
 
 		_doc.getParagraphTable().insert(_parEnd, _end, buf);
 		_parEnd++;
@@ -551,6 +602,7 @@ public class Range { // TODO -instantiable superclass
 		int numSections = _sections.size();
 		int numRuns = _characters.size();
 		int numParagraphs = _paragraphs.size();
+		int numTextPieces = _text.size();
 
 		for (int x = _charStart; x < numRuns; x++) {
 			CHPX chpx = _characters.get(x);
@@ -575,100 +627,44 @@ public class Range { // TODO -instantiable superclass
 			// + " -> " + sepx.getEnd());
 		}
 
-        if ( _doc instanceof HWPFDocument )
-        {
-            ( (BookmarksImpl) ( (HWPFDocument) _doc ).getBookmarks() )
-                    .afterDelete( _start, ( _end - _start ) );
-        }
-
-        _text.delete( _start, _end );
-        Range parent = _parent.get();
-        if ( parent != null )
-        {
-            parent.adjustForInsert( -( _end - _start ) );
-        }
+		for (int x = _textStart; x < numTextPieces; x++) {
+			TextPiece piece = _text.get(x);
+			piece.adjustForDelete(_start, _end - _start);
+		}
 
 		// update the FIB.CCPText + friends field
 		adjustFIB(-(_end - _start));
 	}
 
-    /**
-     * Inserts a simple table into the beginning of this range. The number of
-     * columns is determined by the TableProperties passed into this function.
-     * 
-     * @param props
-     *            The table properties for the table.
-     * @param rows
-     *            The number of rows.
-     * @return The empty Table that is now part of the document.
-     * @deprecated Use code shall not work with {@link TableProperties}. Use
-     *             {@link #insertTableBefore(short, int)} instead
-     */
-	@Deprecated
+	/**
+	 * Inserts a simple table into the beginning of this range. The number of
+	 * columns is determined by the TableProperties passed into this function.
+	 *
+	 * @param props
+	 *            The table properties for the table.
+	 * @param rows
+	 *            The number of rows.
+	 * @return The empty Table that is now part of the document.
+	 */
 	public Table insertBefore(TableProperties props, int rows) {
 		ParagraphProperties parProps = new ParagraphProperties();
-		parProps.setFInTable(true);
-		parProps.setItap( 1 );
+		parProps.setFInTable((byte) 1);
+		parProps.setTableLevel((byte) 1);
 
-		final int oldEnd = this._end;
-		
 		int columns = props.getItcMac();
-        for ( int x = 0; x < rows; x++ )
-        {
-            Paragraph cell = this.insertBefore( parProps, StyleSheet.NIL_STYLE );
-            cell.insertAfter( String.valueOf( '\u0007' ) );
-            for ( int y = 1; y < columns; y++ )
-            {
-                cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE );
-                cell.insertAfter( String.valueOf( '\u0007' ) );
-            }
-            cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE,
-                    String.valueOf( '\u0007' ) );
-            cell.setTableRowEnd( props );
-        }
-
-        final int newEnd = this._end;
-        final int diff = newEnd - oldEnd;
-
-        return new Table( _start, _start + diff, this, 1 );
-    }
-
-    /**
-     * Inserts a simple table into the beginning of this range.
-     * 
-     * @param columns
-     *            The number of columns
-     * @param rows
-     *            The number of rows.
-     * @return The empty Table that is now part of the document.
-     */
-	public Table insertTableBefore(short columns, int rows) {
-        ParagraphProperties parProps = new ParagraphProperties();
-        parProps.setFInTable(true);
-        parProps.setItap( 1 );
-
-        final int oldEnd = this._end;
-        
-        for ( int x = 0; x < rows; x++ )
-        {
-            Paragraph cell = this.insertBefore( parProps, StyleSheet.NIL_STYLE );
-            cell.insertAfter( String.valueOf( '\u0007' ) );
-            for ( int y = 1; y < columns; y++ )
-            {
-                cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE );
-                cell.insertAfter( String.valueOf( '\u0007' ) );
-            }
-            cell = cell.insertAfter( parProps, StyleSheet.NIL_STYLE,
-                    String.valueOf( '\u0007' ) );
-            cell.setTableRowEnd( new TableProperties( columns ) );
-        }
-
-        final int newEnd = this._end;
-        final int diff = newEnd - oldEnd;
-
-        return new Table( _start, _start + diff, this, 1 );
+		for (int x = 0; x < rows; x++) {
+			Paragraph cell = this.insertBefore(parProps, StyleSheet.NIL_STYLE);
+			cell.insertAfter(String.valueOf('\u0007'));
+			for (int y = 1; y < columns; y++) {
+				cell = cell.insertAfter(parProps, StyleSheet.NIL_STYLE);
+				cell.insertAfter(String.valueOf('\u0007'));
+			}
+			cell = cell.insertAfter(parProps, StyleSheet.NIL_STYLE, String.valueOf('\u0007'));
+			cell.setTableRowEnd(props);
+		}
+		return new Table(_start, _start + (rows * (columns + 1)), this, 1);
 	}
-	
+
 	/**
 	 * Inserts a list into the beginning of this range.
 	 *
@@ -682,9 +678,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The base style's index in the stylesheet.
 	 * @return The empty ListEntry that is now part of the document.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-	@Deprecated
 	public ListEntry insertBefore(ParagraphProperties props, int listID, int level, int styleIndex) {
 		ListTables lt = _doc.getListTables();
 		if (lt.getLevel(listID, level) == null) {
@@ -711,9 +705,7 @@ public class Range { // TODO -instantiable superclass
 	 * @param styleIndex
 	 *            The base style's index in the stylesheet.
 	 * @return The empty ListEntry that is now part of the document.
-     * @deprecated Use code shall not work with {@link ParagraphProperties}
 	 */
-	@Deprecated
 	public ListEntry insertAfter(ParagraphProperties props, int listID, int level, int styleIndex) {
 		ListTables lt = _doc.getListTables();
 		if (lt.getLevel(listID, level) == null) {
@@ -726,35 +718,6 @@ public class Range { // TODO -instantiable superclass
 		return (ListEntry) insertAfter(props, styleIndex);
 	}
 
-    /**
-     * Replace range text with new one, adding it to the range and deleting
-     * original text from document
-     * 
-     * @param newText
-     *            The text to be replaced with
-     * @param addAfter
-     *            if <tt>true</tt> the text will be added at the end of current
-     *            range, otherwise to the beginning
-     */
-    public void replaceText( String newText, boolean addAfter )
-    {
-        if ( addAfter )
-        {
-            int originalEnd = getEndOffset();
-            insertAfter( newText );
-            new Range( getStartOffset(), originalEnd, this ).delete();
-        }
-        else
-        {
-            int originalStart = getStartOffset();
-            int originalEnd = getEndOffset();
-
-            insertBefore( newText );
-            new Range( originalStart + newText.length(), originalEnd
-                    + newText.length(), this ).delete();
-        }
-    }
-
 	/**
 	 * Replace (one instance of) a piece of text with another...
 	 *
@@ -766,17 +729,25 @@ public class Range { // TODO -instantiable superclass
 	 *            The offset or index where the text to be replaced begins
 	 *            (relative to/within this <code>Range</code>)
 	 */
-	@Internal
 	public void replaceText(String pPlaceHolder, String pValue, int pOffset) {
 		int absPlaceHolderIndex = getStartOffset() + pOffset;
-
 		Range subRange = new Range(absPlaceHolderIndex, (absPlaceHolderIndex + pPlaceHolder
-				.length()), this);
+				.length()), getDocument());
+
+		// this Range isn't a proper parent of the subRange() so we'll have to
+		// keep
+		// track of an updated endOffset on our own
+		int previousEndOffset = subRange.getEndOffset();
+
 		subRange.insertBefore(pValue);
+
+		if (subRange.getEndOffset() != previousEndOffset) {
+			adjustForInsert(subRange.getEndOffset() - previousEndOffset);
+		}
 
 		// re-create the sub-range so we can delete it
 		subRange = new Range((absPlaceHolderIndex + pValue.length()), (absPlaceHolderIndex
-				+ pPlaceHolder.length() + pValue.length()), this);
+				+ pPlaceHolder.length() + pValue.length()), getDocument());
 
 		// deletes are automagically propagated
 		subRange.delete();
@@ -810,49 +781,23 @@ public class Range { // TODO -instantiable superclass
 	 *            The index of the character run to get.
 	 * @return The character run at the specified index in this range.
 	 */
-    public CharacterRun getCharacterRun( int index )
-    {
-        initCharacterRuns();
-
-        if ( index + _charStart >= _charEnd )
-            throw new IndexOutOfBoundsException( "CHPX #" + index + " ("
-                    + ( index + _charStart ) + ") not in range [" + _charStart
-                    + "; " + _charEnd + ")" );
-
-        CHPX chpx = _characters.get( index + _charStart );
-        if ( chpx == null )
-        {
+	public CharacterRun getCharacterRun(int index) {
+		initCharacterRuns();
+		CHPX chpx = _characters.get(index + _charStart);
+        
+        if (chpx == null) {
             return null;
         }
 
-        short istd;
-        if ( this instanceof Paragraph )
-        {
-            istd = ((Paragraph) this)._istd;
-        }
-        else
-        {
-            int[] point = findRange( _paragraphs,
-                    Math.max( chpx.getStart(), _start ),
-                    Math.min( chpx.getEnd(), _end ) );
+		int[] point = findRange(_paragraphs, _parStart, Math.max(chpx.getStart(), _start), chpx
+				.getEnd());
+		PAPX papx = _paragraphs.get(point[0]);
+		short istd = papx.getIstd();
 
-            initParagraphs();
-            int parStart = Math.max( point[0], _parStart );
+		CharacterRun chp = new CharacterRun(chpx, _doc.getStyleSheet(), istd, this);
 
-            if ( parStart >= _paragraphs.size() )
-            {
-                return null;
-            }
-
-            PAPX papx = _paragraphs.get( point[0] );
-            istd = papx.getIstd();
-        }
-
-        CharacterRun chp = new CharacterRun( chpx, _doc.getStyleSheet(), istd,
-                this );
-
-        return chp;
-    }
+		return chp;
+	}
 
 	/**
 	 * Gets the section at index. The index is relative to this range.
@@ -877,15 +822,22 @@ public class Range { // TODO -instantiable superclass
 	 */
 
 	public Paragraph getParagraph(int index) {
-        initParagraphs();
-
-        if ( index + _parStart >= _parEnd )
-            throw new IndexOutOfBoundsException( "Paragraph #" + index + " ("
-                    + (index + _parStart) + ") not in range [" + _parStart
-                    + "; " + _parEnd + ")" );
-
+		initParagraphs();
 		PAPX papx = _paragraphs.get(index + _parStart);
-		return Paragraph.newParagraph( this, papx );
+
+		ParagraphProperties props = papx.getParagraphProperties(_doc.getStyleSheet());
+		Paragraph pap = null;
+		if (props.getIlfo() > 0) {
+			pap = new ListEntry(papx, this, _doc.getListTables());
+		} else {
+            if (((index + _parStart)==0) && papx.getStart()>0) {
+                pap = new Paragraph(papx, this, 0);
+            } else {
+    			pap = new Paragraph(papx, this);
+            }
+		}
+
+		return pap;
 	}
 
 	/**
@@ -894,7 +846,6 @@ public class Range { // TODO -instantiable superclass
 	 *
 	 * @return A TYPE constant.
 	 */
-	@Deprecated
 	public int type() {
 		return TYPE_UNDEFINED;
 	}
@@ -914,61 +865,41 @@ public class Range { // TODO -instantiable superclass
 
 		Range r = paragraph;
 		if (r._parent.get() != this) {
-			throw new IllegalArgumentException("This paragraph is not a child of this range instance");
+			throw new IllegalArgumentException("This paragraph is not a child of this range");
 		}
 
-        r.initAll();
-        int tableLevel = paragraph.getTableLevel();
-        int tableEndInclusive = r._parStart;
+		r.initAll();
+		int tableEnd = r._parEnd;
 
-        if ( r._parStart != 0 )
-        {
-            Paragraph previous = Paragraph.newParagraph( this,
-                    _paragraphs.get( r._parStart - 1 ) );
-            if ( previous.isInTable() && //
-                    previous.getTableLevel() == tableLevel //
-                    && previous._sectionEnd >= r._sectionStart )
-            {
-                throw new IllegalArgumentException(
-                        "This paragraph is not the first one in the table" );
-            }
-        }
+		if (r._parStart != 0 && getParagraph(r._parStart - 1).isInTable()
+				&& getParagraph(r._parStart - 1)._sectionEnd >= r._sectionStart) {
+			throw new IllegalArgumentException("This paragraph is not the first one in the table");
+		}
 
-        Range overallRange = _doc.getOverallRange();
-        int limit = _paragraphs.size();
-        for ( ; tableEndInclusive < limit - 1; tableEndInclusive++ )
-        {
-            Paragraph next = Paragraph.newParagraph( overallRange,
-                    _paragraphs.get( tableEndInclusive + 1 ) );
-            if ( !next.isInTable() || next.getTableLevel() < tableLevel )
-                break;
-        }
+		int limit = _paragraphs.size();
+		for (; tableEnd < limit; tableEnd++) {
+			if (!getParagraph(tableEnd).isInTable()) {
+				break;
+			}
+		}
 
-        initAll();
-        if ( tableEndInclusive >= this._parEnd )
-        {
-            logger.log( POILogger.WARN, "The table's bounds ", "["
-                    + this._parStart + "; " + tableEndInclusive + ")",
-                    " fall outside of this Range paragraphs numbers ", "["
-                            + this._parStart + "; " + this._parEnd + ")" );
-        }
-
-        if ( tableEndInclusive < 0 )
-        {
-            throw new ArrayIndexOutOfBoundsException(
-                    "The table's end is negative, which isn't allowed!" );
-        }
-
-        int endOffsetExclusive = _paragraphs.get( tableEndInclusive ).getEnd();
-
-        return new Table( paragraph.getStartOffset(), endOffsetExclusive,
-                this, paragraph.getTableLevel() );
-    }
+		initAll();
+		if (tableEnd > _parEnd) {
+			throw new ArrayIndexOutOfBoundsException(
+					"The table's bounds fall outside of this Range");
+		}
+		if (tableEnd < 0) {
+			throw new ArrayIndexOutOfBoundsException(
+					"The table's end is negative, which isn't allowed!");
+		}
+		return new Table(r._parStart, tableEnd, r._doc.getRange(), paragraph.getTableLevel());
+	}
 
 	/**
 	 * loads all of the list indexes.
 	 */
 	protected void initAll() {
+		initText();
 		initCharacterRuns();
 		initParagraphs();
 		initSections();
@@ -979,7 +910,7 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private void initParagraphs() {
 		if (!_parRangeFound) {
-			int[] point = findRange(_paragraphs, _start, _end);
+			int[] point = findRange(_paragraphs, _parStart, _start, _end);
 			_parStart = point[0];
 			_parEnd = point[1];
 			_parRangeFound = true;
@@ -991,10 +922,22 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private void initCharacterRuns() {
 		if (!_charRangeFound) {
-			int[] point = findRange(_characters, _start, _end);
+			int[] point = findRange(_characters, _charStart, _start, _end);
 			_charStart = point[0];
 			_charEnd = point[1];
 			_charRangeFound = true;
+		}
+	}
+
+	/**
+	 * inits the text piece list indexes.
+	 */
+	private void initText() {
+		if (!_textRangeFound) {
+			int[] point = findRange(_text, _textStart, _start, _end);
+			_textStart = point[0];
+			_textEnd = point[1];
+			_textRangeFound = true;
 		}
 	}
 
@@ -1010,105 +953,6 @@ public class Range { // TODO -instantiable superclass
 		}
 	}
 
-    private static int binarySearchStart( List<? extends PropertyNode<?>> rpl,
-            int start )
-    {
-        if ( rpl.get( 0 ).getStart() >= start )
-            return 0;
-
-        int low = 0;
-        int high = rpl.size() - 1;
-
-        while ( low <= high )
-        {
-            int mid = ( low + high ) >>> 1;
-            PropertyNode<?> node = rpl.get( mid );
-
-            if ( node.getStart() < start )
-            {
-                low = mid + 1;
-            }
-            else if ( node.getStart() > start )
-            {
-                high = mid - 1;
-            }
-            else
-            {
-                assert node.getStart() == start;
-                return mid;
-            }
-        }
-        assert low != 0;
-        return low - 1;
-    }
-
-    private static int binarySearchEnd( List<? extends PropertyNode<?>> rpl,
-            int foundStart, int end )
-    {
-        if ( rpl.get( rpl.size() - 1 ).getEnd() <= end )
-            return rpl.size() - 1;
-
-        int low = foundStart;
-        int high = rpl.size() - 1;
-
-        while ( low <= high )
-        {
-            int mid = ( low + high ) >>> 1;
-            PropertyNode<?> node = rpl.get( mid );
-
-            if ( node.getEnd() < end )
-            {
-                low = mid + 1;
-            }
-            else if ( node.getEnd() > end )
-            {
-                high = mid - 1;
-            }
-            else
-            {
-                assert node.getEnd() == end;
-                return mid;
-            }
-        }
-        assert 0 <= low && low < rpl.size();
-
-        return low;
-    }
-
-    /**
-     * Used to find the list indexes of a particular property.
-     * 
-     * @param rpl
-     *            A list of property nodes.
-     * @param min
-     *            A hint on where to start looking.
-     * @param start
-     *            The starting character offset.
-     * @param end
-     *            The ending character offset.
-     * @return An int array of length 2. The first int is the start index and
-     *         the second int is the end index.
-     */
-    private int[] findRange( List<? extends PropertyNode<?>> rpl, int start,
-            int end )
-    {
-        int startIndex = binarySearchStart( rpl, start );
-        while ( startIndex > 0 && rpl.get( startIndex - 1 ).getStart() >= start )
-            startIndex--;
-
-        int endIndex = binarySearchEnd( rpl, startIndex, end );
-        while ( endIndex < rpl.size() - 1
-                && rpl.get( endIndex + 1 ).getEnd() <= end )
-            endIndex++;
-
-        if ( startIndex < 0 || startIndex >= rpl.size()
-                || startIndex > endIndex || endIndex < 0
-                || endIndex >= rpl.size() )
-            throw new AssertionError();
-
-        return new int[] { startIndex, endIndex + 1 };
-    }
-
 	/**
 	 * Used to find the list indexes of a particular property.
 	 *
@@ -1123,124 +967,88 @@ public class Range { // TODO -instantiable superclass
 	 * @return An int array of length 2. The first int is the start index and
 	 *         the second int is the end index.
 	 */
-	private int[] findRange(List<? extends PropertyNode<?>> rpl, int min, int start, int end) {
+	private int[] findRange(List<? extends PropertyNode> rpl, int min, int start, int end) {
 		int x = min;
-		
-        if ( rpl.size() == min )
-            return new int[] { min, min };
-
-        PropertyNode<?> node = rpl.get( x );
+		PropertyNode node = rpl.get(x);
 
 		while (node==null || (node.getEnd() <= start && x < rpl.size() - 1)) {
 			x++;
-
-            if (x>=rpl.size()) {
-                return new int[] {0, 0};
-            }
-
 			node = rpl.get(x);
 		}
 
-        if ( node.getStart() > end )
-        {
-            return new int[] { 0, 0 };
+        if (node.getStart()>end) {
+            return new int[] {0, 0};
         }
 
-        if ( node.getEnd() <= start )
-        {
-            return new int[] { rpl.size(), rpl.size() };
-        }
+		if (node.getEnd() <= start) {
+			return new int[] { rpl.size(), rpl.size() };
+		}
 
-        for ( int y = x; y < rpl.size(); y++ )
-        {
-            node = rpl.get( y );
-            if ( node == null )
-                continue;
-
-            if ( node.getStart() < end && node.getEnd() <= end )
-                continue;
-
-            if ( node.getStart() < end )
-                return new int[] { x, y +1 };
-
-            return new int[] { x, y };
-        }
-        return new int[] { x, rpl.size() };
-    }
+		int y = x;
+		node = rpl.get(y);
+		while (node==null || (node.getEnd() < end && y < rpl.size() - 1)) {
+			y++;
+			node = rpl.get(y);
+		}
+		return new int[] { x, y + 1 };
+	}
 
 	/**
 	 * resets the list indexes.
 	 */
-	protected void reset() {
+	private void reset() {
+		_textRangeFound = false;
 		_charRangeFound = false;
 		_parRangeFound = false;
 		_sectionRangeFound = false;
 	}
 
-    /**
-     * Adjust the value of the various FIB character count fields, eg
-     * <code>FIB.CCPText</code> after an insert or a delete...
-     * 
-     * Works on all CCP fields from this range onwards
-     * 
-     * @param adjustment
-     *            The (signed) value that should be added to the FIB CCP fields
-     */
-    protected void adjustFIB( int adjustment )
-    {
-        assert ( _doc instanceof HWPFDocument );
+	/**
+	 * Adjust the value of the various FIB character count fields, eg
+	 * <code>FIB.CCPText</code> after an insert or a delete...
+	 *
+	 * Works on all CCP fields from this range onwards
+	 *
+	 * @param adjustment
+	 *            The (signed) value that should be added to the FIB CCP fields
+	 */
+	protected void adjustFIB(int adjustment) {
+	    assert (_doc instanceof HWPFDocument);
+	    
+		// update the FIB.CCPText field (this should happen once per adjustment,
+		// so we don't want it in
+		// adjustForInsert() or it would get updated multiple times if the range
+		// has a parent)
+		// without this, OpenOffice.org (v. 2.2.x) does not see all the text in
+		// the document
 
-        // update the FIB.CCPText field (this should happen once per adjustment,
-        // so we don't want it in
-        // adjustForInsert() or it would get updated multiple times if the range
-        // has a parent)
-        // without this, OpenOffice.org (v. 2.2.x) does not see all the text in
-        // the document
+		CPSplitCalculator cpS = ((HWPFDocument)_doc).getCPSplitCalculator();
+		FileInformationBlock fib = _doc.getFileInformationBlock();
 
-        FileInformationBlock fib = _doc.getFileInformationBlock();
+		// Do for each affected part
+		if (_start < cpS.getMainDocumentEnd()) {
+			fib.setCcpText(fib.getCcpText() + adjustment);
+		}
 
-        // // Do for each affected part
-        // if (_start < cpS.getMainDocumentEnd()) {
-        // fib.setCcpText(fib.getCcpText() + adjustment);
-        // }
-        //
-        // if (_start < cpS.getCommentsEnd()) {
-        // fib.setCcpAtn(fib.getCcpAtn() + adjustment);
-        // }
-        // if (_start < cpS.getEndNoteEnd()) {
-        // fib.setCcpEdn(fib.getCcpEdn() + adjustment);
-        // }
-        // if (_start < cpS.getFootnoteEnd()) {
-        // fib.setCcpFtn(fib.getCcpFtn() + adjustment);
-        // }
-        // if (_start < cpS.getHeaderStoryEnd()) {
-        // fib.setCcpHdd(fib.getCcpHdd() + adjustment);
-        // }
-        // if (_start < cpS.getHeaderTextboxEnd()) {
-        // fib.setCcpHdrTxtBx(fib.getCcpHdrTxtBx() + adjustment);
-        // }
-        // if (_start < cpS.getMainTextboxEnd()) {
-        // fib.setCcpTxtBx(fib.getCcpTxtBx() + adjustment);
-        // }
-
-        // much simple implementation base on SubdocumentType --sergey
-
-        int currentEnd = 0;
-        for ( SubdocumentType type : SubdocumentType.ORDERED )
-        {
-            int currentLength = fib.getSubdocumentTextStreamLength( type );
-            currentEnd += currentLength;
-
-            // do we need to shift this part?
-            if ( _start > currentEnd )
-                continue;
-
-            fib.setSubdocumentTextStreamLength( type, currentLength
-                    + adjustment );
-
-            break;
-        }
-    }
+		if (_start < cpS.getCommentsEnd()) {
+			fib.setCcpAtn(fib.getCcpAtn() + adjustment);
+		}
+		if (_start < cpS.getEndNoteEnd()) {
+			fib.setCcpEdn(fib.getCcpEdn() + adjustment);
+		}
+		if (_start < cpS.getFootnoteEnd()) {
+			fib.setCcpFtn(fib.getCcpFtn() + adjustment);
+		}
+		if (_start < cpS.getHeaderStoryEnd()) {
+			fib.setCcpHdd(fib.getCcpHdd() + adjustment);
+		}
+		if (_start < cpS.getHeaderTextboxEnd()) {
+			fib.setCcpHdrTxtBx(fib.getCcpHdrTxtBx() + adjustment);
+		}
+		if (_start < cpS.getMainTextboxEnd()) {
+			fib.setCcpTxtBx(fib.getCcpTxtBx() + adjustment);
+		}
+	}
 
 	/**
 	 * adjust this range after an insert happens.
@@ -1253,22 +1061,16 @@ public class Range { // TODO -instantiable superclass
 		_end += length;
 
 		reset();
-		Range parent = _parent.get();
+		Range parent = (Range) _parent.get();
 		if (parent != null) {
 			parent.adjustForInsert(length);
 		}
 	}
 
-	/**
-	 * @return Starting character offset of the range
-	 */
 	public int getStartOffset() {
 		return _start;
 	}
 
-	/**
-	 * @return The ending character offset of this range
-	 */
 	public int getEndOffset() {
 		return _end;
 	}
@@ -1276,58 +1078,4 @@ public class Range { // TODO -instantiable superclass
 	protected HWPFDocumentCore getDocument() {
 		return _doc;
 	}
-
-    @Override
-    public String toString()
-    {
-        return "Range from " + getStartOffset() + " to " + getEndOffset()
-                + " (chars)";
-    }
-
-    /**
-     * Method for debug purposes. Checks that all resolved elements are inside
-     * of current range.
-     */
-    public boolean sanityCheck()
-    {
-        if ( _start < 0 )
-            throw new AssertionError();
-        if ( _start > _text.length() )
-            throw new AssertionError();
-        if ( _end < 0 )
-            throw new AssertionError();
-        if ( _end > _text.length() )
-            throw new AssertionError();
-        if ( _start > _end )
-            throw new AssertionError();
-
-        if ( _charRangeFound )
-        {
-            for ( int c = _charStart; c < _charEnd; c++ )
-            {
-                CHPX chpx = _characters.get( c );
-
-                int left = Math.max( this._start, chpx.getStart() );
-                int right = Math.min( this._end, chpx.getEnd() );
-
-                if ( left >= right )
-                    throw new AssertionError();
-            }
-        }
-        if ( _parRangeFound )
-        {
-            for ( int p = _parStart; p < _parEnd; p++ )
-            {
-                PAPX papx = _paragraphs.get( p );
-
-                int left = Math.max( this._start, papx.getStart() );
-                int right = Math.min( this._end, papx.getEnd() );
-
-                if ( left >= right )
-                    throw new AssertionError();
-            }
-        }
-
-        return true;
-    }
 }

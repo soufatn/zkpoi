@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.model;
+package org.zkoss.poi.xssf.model;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,14 +23,6 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.apache.poi.ss.usermodel.FontFamily;
-import org.apache.poi.ss.usermodel.FontScheme;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -49,8 +41,16 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
+import org.zkoss.poi.ss.usermodel.FontFamily;
+import org.zkoss.poi.ss.usermodel.FontScheme;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
+import org.zkoss.poi.xssf.usermodel.XSSFFont;
+import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.zkoss.poi.xssf.usermodel.extensions.XSSFCellFill;
 
 
 /**
@@ -98,15 +98,6 @@ public class StylesTable extends POIXMLDocumentPart {
 
     public void setTheme(ThemesTable theme) {
         this.theme = theme;
-        
-        // Pass the themes table along to things which need to 
-        //  know about it, but have already been created by now
-        for(XSSFFont font : fonts) {
-           font.setThemesTable(theme);
-        }
-        for(XSSFCellBorder border : borders) {
-           border.setThemesTable(theme);
-        }
     }
 
 	/**
@@ -134,7 +125,6 @@ public class StylesTable extends POIXMLDocumentPart {
             if(ctfonts != null){
 				int idx = 0;
 				for (CTFont font : ctfonts.getFontArray()) {
-				   // Create the font and save it. Themes Table supplied later
 					XSSFFont f = new XSSFFont(font, idx);
 					fonts.add(f);
 					idx++;
@@ -257,7 +247,6 @@ public class StylesTable extends POIXMLDocumentPart {
 			return idx;
 		}
 		borders.add(border);
-		border.setThemesTable(theme);
 		return borders.size() - 1;
 	}
 
@@ -297,9 +286,6 @@ public class StylesTable extends POIXMLDocumentPart {
 		xfs.add(cellXf);
 		return xfs.size();
 	}
-   public void replaceCellXfAt(int idx, CTXf cellXf) {
-      xfs.set(idx, cellXf);
-   }
 
 	public CTXf getCellStyleXfAt(int idx) {
 		return styleXfs.get(idx);
@@ -308,10 +294,6 @@ public class StylesTable extends POIXMLDocumentPart {
 		styleXfs.add(cellStyleXf);
 		return styleXfs.size();
 	}
-	public void replaceCellStyleXfAt(int idx, CTXf cellStyleXf) {
-	   styleXfs.set(idx, cellStyleXf);
-	}
-	
 	/**
 	 * get the size of cell styles
 	 */
@@ -346,9 +328,6 @@ public class StylesTable extends POIXMLDocumentPart {
 	public CTStylesheet getCTStylesheet() {
 		return doc.getStyleSheet();
 	}
-    public int _getDXfsSize() {
-        return dxfs.size();
-    }
 
 
 	/**
@@ -500,11 +479,14 @@ public class StylesTable extends POIXMLDocumentPart {
 		return xssfFont;
 	}
 
-	public CTDxf getDxfAt(int idx) {
+	protected CTDxf getDxf(int idx) {
+		if (dxfs.size()==0) {
+			return CTDxf.Factory.newInstance();
+		}
 		return dxfs.get(idx);
 	}
 
-	public int putDxf(CTDxf dxf) {
+	protected int putDxf(CTDxf dxf) {
 		this.dxfs.add(dxf);
 		return this.dxfs.size();
 	}

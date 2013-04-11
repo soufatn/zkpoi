@@ -17,23 +17,23 @@
 ==================================================================== */
         
 
-package org.apache.poi.poifs.eventfilesystem;
+package org.zkoss.poi.poifs.eventfilesystem;
 
 import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
-import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
-import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.Property;
-import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
-import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.RawDataBlockList;
-import org.apache.poi.poifs.storage.SmallBlockTableReader;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.POIFSDocument;
+import org.zkoss.poi.poifs.filesystem.POIFSDocumentPath;
+import org.zkoss.poi.poifs.property.DirectoryProperty;
+import org.zkoss.poi.poifs.property.Property;
+import org.zkoss.poi.poifs.property.PropertyTable;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableReader;
+import org.zkoss.poi.poifs.storage.BlockList;
+import org.zkoss.poi.poifs.storage.HeaderBlockReader;
+import org.zkoss.poi.poifs.storage.RawDataBlockList;
+import org.zkoss.poi.poifs.storage.SmallBlockTableReader;
 
 /**
  * An event-driven reader for POIFS file systems. Users of this class
@@ -75,30 +75,32 @@ public class POIFSReader
         registryClosed = true;
 
         // read the header block from the stream
-        HeaderBlock header_block = new HeaderBlock(stream);
+        HeaderBlockReader header_block_reader = new HeaderBlockReader(stream);
 
         // read the rest of the stream into blocks
-        RawDataBlockList data_blocks = new RawDataBlockList(stream, header_block.getBigBlockSize());
+        RawDataBlockList  data_blocks         = new RawDataBlockList(stream, header_block_reader.getBigBlockSize());
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block.getBigBlockSize(),
-                                       header_block.getBATCount(),
-                                       header_block.getBATArray(),
-                                       header_block.getXBATCount(),
-                                       header_block.getXBATIndex(),
+        new BlockAllocationTableReader(header_block_reader.getBigBlockSize(),
+                                       header_block_reader.getBATCount(),
+                                       header_block_reader.getBATArray(),
+                                       header_block_reader.getXBATCount(),
+                                       header_block_reader.getXBATIndex(),
                                        data_blocks);
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block, data_blocks);
+            new PropertyTable(header_block_reader.getBigBlockSize(),
+                              header_block_reader.getPropertyStart(),
+                              data_blocks);
 
         // process documents
         processProperties(SmallBlockTableReader
             .getSmallDocumentBlocks(
-                  header_block.getBigBlockSize(),
+                  header_block_reader.getBigBlockSize(),
                   data_blocks, properties.getRoot(), 
-                  header_block.getSBATStart()), 
+                  header_block_reader.getSBATStart()), 
                   data_blocks, properties.getRoot()
                         .getChildren(), new POIFSDocumentPath());
     }

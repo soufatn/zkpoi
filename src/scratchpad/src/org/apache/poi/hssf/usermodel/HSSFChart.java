@@ -15,38 +15,42 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.FooterRecord;
-import org.apache.poi.hssf.record.HCenterRecord;
-import org.apache.poi.hssf.record.HeaderRecord;
-import org.apache.poi.hssf.record.PrintSetupRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtgBase;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressBase;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
+import org.zkoss.poi.hssf.record.BOFRecord;
+import org.zkoss.poi.hssf.record.DimensionsRecord;
+import org.zkoss.poi.hssf.record.EOFRecord;
+import org.zkoss.poi.hssf.record.FooterRecord;
+import org.zkoss.poi.hssf.record.HCenterRecord;
+import org.zkoss.poi.hssf.record.HeaderRecord;
+import org.zkoss.poi.hssf.record.PrintSetupRecord;
+import org.zkoss.poi.hssf.record.ProtectRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.RecordBase;
+import org.zkoss.poi.hssf.record.SCLRecord;
+import org.zkoss.poi.hssf.record.UnknownRecord;
+import org.zkoss.poi.hssf.record.VCenterRecord;
+import org.zkoss.poi.hssf.record.chart.*;
+import org.zkoss.poi.hssf.record.formula.Area3DPtg;
+import org.zkoss.poi.hssf.record.formula.AreaPtgBase;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.usermodel.ChartInfo;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellRangeAddressBase;
 
 /**
  * Has methods for construction of a chart object.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class HSSFChart {
+public final class HSSFChart implements ChartInfo {
 	private HSSFSheet sheet;
 	private ChartRecord chartRecord;
 
@@ -1337,4 +1341,72 @@ public final class HSSFChart {
 	public HSSFChartType getType() {
 		return type;
 	}
+
+	//20101015, henrichen@zkoss.org:
+	private Chart3DRecord chart3d;
+	private HSSFChartType getChartType(Record chartType) {
+		for (HSSFChartType type : HSSFChartType.values()) {
+			if (type == HSSFChartType.Unknown)
+			{
+				continue;
+			}
+			if (chartType.getSid() == type.getSid()) {
+				return type ;
+			}
+		}
+		return null;
+	}
+	//20101015, henrichen@zkoss.org: new constructor
+	private TextRecord titleTextRecord;
+	public HSSFChart(HSSFSheet sheet, ChartRecord chart, LegendRecord legend, 
+		ChartTitleFormatRecord chartTitleFormat, SeriesTextRecord chartTitleText, 
+		List<Object[]> seriesList, List<ValueRangeRecord> valueRanges, Record chartType, Chart3DRecord chart3d, TextRecord titleTextRecord) {
+		this.chartRecord = chart;
+		this.sheet = sheet;
+		this.legendRecord = legend;
+		this.chartTitleFormat = chartTitleFormat;
+		this.chartTitleText = chartTitleText;
+		this.shapeRecord = chartType;
+		this.type = getChartType(chartType);
+		this.chart3d = chart3d;
+		this.titleTextRecord = titleTextRecord;
+		for(Object[] seriesObj : seriesList) {
+			final SeriesRecord r = (SeriesRecord) seriesObj[0];
+			final HSSFSeries ser = new HSSFSeries( (SeriesRecord)r );
+			this.series.add(ser);
+			if (seriesObj[2] != null) {
+				ser.seriesTitleText = (SeriesTextRecord) seriesObj[2];
+			}
+			if (seriesObj[1] != null) {
+				List<LinkedDataRecord> dataList = (List<LinkedDataRecord>) seriesObj[1];
+				for(LinkedDataRecord data : dataList) {
+					ser.insertData(data);
+				}
+			}
+		}
+		for(ValueRangeRecord r : valueRanges) {
+			this.valueRanges.add(r);
+		}
+	}
+	
+	//20101018, henrichen:
+	public Chart3DRecord getChart3D() {
+		return this.chart3d;
+	}
+
+	//20101101, henrichen@zkoss.org: reserve shape record information
+	private Record shapeRecord; //Area, Pie, Bar, Line, Scatter ...
+	public Record getShapeRecord() {
+		return shapeRecord;
+	}
+	
+	//20101102, henrichen@zkoss.org: explore legend position
+	public int getLegendPos() {
+		return legendRecord.getType();
+	}
+
+	//20100102, henrichen@zkoss.org: whether NOT show the title
+    public boolean isAutoTitleDeleted() {
+    	return titleTextRecord != null ? titleTextRecord.isAutoLabelDeleted() : false;
+    }
 }

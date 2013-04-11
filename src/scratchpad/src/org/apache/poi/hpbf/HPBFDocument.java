@@ -15,20 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpbf;
+package org.zkoss.poi.hpbf;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.poi.POIDocument;
-import org.apache.poi.hpbf.model.EscherDelayStm;
-import org.apache.poi.hpbf.model.EscherStm;
-import org.apache.poi.hpbf.model.MainContents;
-import org.apache.poi.hpbf.model.QuillContents;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.POIDocument;
+import org.zkoss.poi.hpbf.model.EscherDelayStm;
+import org.zkoss.poi.hpbf.model.EscherStm;
+import org.zkoss.poi.hpbf.model.MainContents;
+import org.zkoss.poi.hpbf.model.QuillContents;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * This class provides the basic functionality
@@ -45,39 +44,27 @@ public final class HPBFDocument extends POIDocument {
 	 * Opens a new publisher document
 	 */
 	public HPBFDocument(POIFSFileSystem fs) throws IOException {
-	   this(fs.getRoot());
-	}
-	public HPBFDocument(NPOIFSFileSystem fs) throws IOException {
-	   this(fs.getRoot());
+		this(fs.getRoot(), fs);
 	}
 	public HPBFDocument(InputStream inp) throws IOException {
-	   this(new POIFSFileSystem(inp));
+		this(new POIFSFileSystem(inp));
 	}
 
 	/**
-	 * Opens an embedded publisher document,
+	 * Opens an embeded publisher document,
 	 *  at the given directory.
-	 * @deprecated Use {@link #HPBFDocument(DirectoryNode)} instead
 	 */
-	@Deprecated
 	public HPBFDocument(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-	   this(dir);
-	}
-	/**
-	 * Opens an embedded publisher document,
-	 *  at the given directory.
-	 */
-	public HPBFDocument(DirectoryNode dir) throws IOException {
-	   super(dir);
+		super(dir, fs);
 
-	   // Go looking for our interesting child
-	   //  streams
-	   mainContents = new MainContents(dir);
-	   quillContents = new QuillContents(dir);
+		// Go looking for our interesting child
+		//  streams
+		mainContents = new MainContents(dir);
+		quillContents = new QuillContents(dir);
 
-	   // Now the Escher bits
-	   escherStm = new EscherStm(dir);
-	   escherDelayStm = new EscherDelayStm(dir);
+		// Now the Escher bits
+		escherStm = new EscherStm(dir);
+		escherDelayStm = new EscherDelayStm(dir);
 	}
 
 	public MainContents getMainContents() {

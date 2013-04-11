@@ -15,13 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.util.Internal;
-
-@Internal
 public final class GenericPropertyNode
-  extends PropertyNode<GenericPropertyNode>
+  extends PropertyNode
 {
   public GenericPropertyNode(int start, int end, byte[] buf)
   {
@@ -33,15 +30,5 @@ public final class GenericPropertyNode
     return (byte[])_buf;
   }
 
-    @Override
-    public String toString()
-    {
-        return "GenericPropertyNode ["
-                + getStart()
-                + "; "
-                + getEnd()
-                + ") "
-                + ( getBytes() != null ? getBytes().length + " byte(s)"
-                        : "null" );
-    }
+
 }

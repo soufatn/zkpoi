@@ -17,18 +17,18 @@
 ==================================================================== */
         
 
-package org.apache.poi.poifs.property;
+package org.zkoss.poi.poifs.property;
 
 import java.io.IOException;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.storage.ListManagedBlock;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.storage.ListManagedBlock;
 
 /**
  * Factory for turning an array of RawDataBlock instances containing
- * Property data into an array of proper Property objects.
+ * Proprty data into an array of proper Property objects.
  *
  * The array produced may be sparse, in that any portion of data that
  * should correspond to a Property, but which does not map to a proper
@@ -40,6 +40,7 @@ import org.apache.poi.poifs.storage.ListManagedBlock;
 
 class PropertyFactory
 {
+
     // no need for an accessible constructor
     private PropertyFactory()
     {
@@ -55,52 +56,48 @@ class PropertyFactory
      *
      * @exception IOException if any of the blocks are empty
      */
-    static List<Property> convertToProperties(ListManagedBlock [] blocks)
+
+    static List convertToProperties(ListManagedBlock [] blocks)
         throws IOException
     {
-        List<Property> properties = new ArrayList<Property>();
+        List properties = new ArrayList();
 
-        for (int j = 0; j < blocks.length; j++) {
-            byte[] data = blocks[ j ].getData();
-            convertToProperties(data, properties);
+        for (int j = 0; j < blocks.length; j++)
+        {
+            byte[] data           = blocks[ j ].getData();
+            int    property_count = data.length
+                                    / POIFSConstants.PROPERTY_SIZE;
+            int    offset         = 0;
+
+            for (int k = 0; k < property_count; k++)
+            {
+                switch (data[ offset + PropertyConstants.PROPERTY_TYPE_OFFSET ])
+                {
+
+                    case PropertyConstants.DIRECTORY_TYPE :
+                        properties
+                            .add(new DirectoryProperty(properties.size(),
+                                                       data, offset));
+                        break;
+
+                    case PropertyConstants.DOCUMENT_TYPE :
+                        properties.add(new DocumentProperty(properties.size(),
+                                                            data, offset));
+                        break;
+
+                    case PropertyConstants.ROOT_TYPE :
+                        properties.add(new RootProperty(properties.size(),
+                                                        data, offset));
+                        break;
+
+                    default :
+                        properties.add(null);
+                        break;
+                }
+                offset += POIFSConstants.PROPERTY_SIZE;
+            }
         }
         return properties;
     }
-    
-    static void convertToProperties(byte[] data, List<Property> properties)
-        throws IOException
-    {
-       int property_count = data.length / POIFSConstants.PROPERTY_SIZE;
-       int offset         = 0;
-
-       for (int k = 0; k < property_count; k++) {
-          switch (data[ offset + PropertyConstants.PROPERTY_TYPE_OFFSET ]) {
-          case PropertyConstants.DIRECTORY_TYPE :
-             properties.add(
-                   new DirectoryProperty(properties.size(), data, offset)
-             );
-             break;
-
-          case PropertyConstants.DOCUMENT_TYPE :
-             properties.add(
-                   new DocumentProperty(properties.size(), data, offset)
-             );
-             break;
-
-          case PropertyConstants.ROOT_TYPE :
-             properties.add(
-                   new RootProperty(properties.size(), data, offset)
-             );
-             break;
-
-          default :
-             properties.add(null);
-             break;
-          }
-          
-          offset += POIFSConstants.PROPERTY_SIZE;
-       }
-    }
-    
 }   // end package scope class PropertyFactory
 

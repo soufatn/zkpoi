@@ -17,7 +17,7 @@
 ==================================================================== */
         
 
-package org.apache.poi.poifs.common;
+package org.zkoss.poi.poifs.common;
 
 /**
  * <p>A repository for constants shared by POI classes.</p>
@@ -33,18 +33,7 @@ public interface POIFSConstants
     public static final POIFSBigBlockSize LARGER_BIG_BLOCK_SIZE_DETAILS = 
        new POIFSBigBlockSize(LARGER_BIG_BLOCK_SIZE, (short)12);
     
-    /** How big a block in the small block stream is. Fixed size */
-    public static final int SMALL_BLOCK_SIZE = 0x0040; 
-    
-    /** How big a single property is */
     public static final int PROPERTY_SIZE  = 0x0080;
-    
-    /** 
-     * The minimum size of a document before it's stored using 
-     *  Big Blocks (normal streams). Smaller documents go in the 
-     *  Mini Stream (SBAT / Small Blocks)
-     */
-    public static final int BIG_BLOCK_MINIMUM_DOCUMENT_SIZE = 0x1000;
     
     /** The highest sector number you're allowed, 0xFFFFFFFA */
     public static final int LARGEST_REGULAR_SECTOR_NUMBER = -5;

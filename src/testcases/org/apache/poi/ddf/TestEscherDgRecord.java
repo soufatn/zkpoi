@@ -54,8 +54,7 @@ public final class TestEscherDgRecord extends TestCase {
     public void testToString() {
         String expected = "org.apache.poi.ddf.EscherDgRecord:" + '\n' +
                 "  RecordId: 0xF008" + '\n' +
-                "  Version: 0x0000" + '\n' +
-                "  Instance: 0x0001" + '\n' +
+                "  Options: 0x0010" + '\n' +
                 "  NumShapes: 2" + '\n' +
                 "  LastMSOSPID: 1025" + '\n';
         assertEquals( expected, createRecord().toString() );

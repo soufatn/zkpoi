@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.property;
+package org.zkoss.poi.poifs.property;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.storage.SmallDocumentBlock;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.storage.SmallDocumentBlock;
 
 /**
  * Root property
@@ -26,11 +26,10 @@ import org.apache.poi.poifs.storage.SmallDocumentBlock;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class RootProperty extends DirectoryProperty {
-   private static final String NAME = "Root Entry";
 
     RootProperty()
     {
-        super(NAME);
+        super("Root Entry");
 
         // overrides
         setNodeColor(_NODE_BLACK);
@@ -59,14 +58,5 @@ public final class RootProperty extends DirectoryProperty {
     public void setSize(int size)
     {
         super.setSize(SmallDocumentBlock.calcSize(size));
-    }
-
-    /**
-     * Returns the fixed name "Root Entry", as the
-     *  raw property doesn't have a real name set
-     */
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

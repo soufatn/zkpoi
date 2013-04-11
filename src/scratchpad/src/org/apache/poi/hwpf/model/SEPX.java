@@ -15,67 +15,47 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.sprm.SectionSprmCompressor;
-import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.sprm.SectionSprmCompressor;
+import org.zkoss.poi.hwpf.sprm.SectionSprmUncompressor;
+import org.zkoss.poi.hwpf.usermodel.SectionProperties;
 
-@Internal
-public final class SEPX extends PropertyNode<SEPX>
+/**
+ */
+public final class SEPX extends BytePropertyNode
 {
 
-    SectionProperties sectionProperties;
+  SectionDescriptor _sed;
 
-    SectionDescriptor _sed;
+  public SEPX(SectionDescriptor sed, int start, int end, CharIndexTranslator translator, byte[] grpprl)
+  {
+    super(start, end, translator, SectionSprmUncompressor.uncompressSEP(grpprl, 0));
+    _sed = sed;
+  }
 
-    public SEPX( SectionDescriptor sed, int start, int end, byte[] grpprl )
+  public byte[] getGrpprl()
+  {
+    return SectionSprmCompressor.compressSectionProperty((SectionProperties)_buf);
+  }
+
+  public SectionDescriptor getSectionDescriptor()
+  {
+    return _sed;
+  }
+
+  public SectionProperties getSectionProperties()
+  {
+    return (SectionProperties)_buf;
+  }
+
+  public boolean equals(Object o)
+  {
+    SEPX sepx = (SEPX)o;
+    if (super.equals(o))
     {
-        super( start, end, new SprmBuffer( grpprl, 0 ) );
-        _sed = sed;
+      return sepx._sed.equals(_sed);
     }
-
-    public byte[] getGrpprl()
-    {
-        if ( sectionProperties != null )
-        {
-            byte[] grpprl = SectionSprmCompressor
-                    .compressSectionProperty( sectionProperties );
-            _buf = new SprmBuffer( grpprl, 0 );
-        }
-
-        return ( (SprmBuffer) _buf ).toByteArray();
-    }
-
-    public SectionDescriptor getSectionDescriptor()
-    {
-        return _sed;
-    }
-
-    public SectionProperties getSectionProperties()
-    {
-        if ( sectionProperties == null )
-        {
-            sectionProperties = SectionSprmUncompressor.uncompressSEP(
-                    ( (SprmBuffer) _buf ).toByteArray(), 0 );
-        }
-        return sectionProperties;
-    }
-
-    public boolean equals( Object o )
-    {
-        SEPX sepx = (SEPX) o;
-        if ( super.equals( o ) )
-        {
-            return sepx._sed.equals( _sed );
-        }
-        return false;
-    }
-
-    public String toString()
-    {
-        return "SEPX from " + getStart() + " to " + getEnd();
-    }
+    return false;
+  }
 }

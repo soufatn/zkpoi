@@ -15,18 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 import java.util.Arrays;
 
-import org.apache.poi.ss.formula.ptg.ExpPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.TblPtg;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.hssf.record.ArrayRecord;
+import org.zkoss.poi.hssf.record.SharedFormulaRecord;
+import org.zkoss.poi.hssf.record.TableRecord;
+import org.zkoss.poi.hssf.record.formula.ExpPtg;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.hssf.record.formula.TblPtg;
+import org.zkoss.poi.hssf.util.CellReference;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianByteArrayInputStream;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Encapsulates an encoded formula token array.
@@ -162,9 +165,8 @@ public class Formula {
 	}
 
 	/**
-	 * Gets the locator for the corresponding {@link org.apache.poi.hssf.record.SharedFormulaRecord},
-     * {@link org.apache.poi.hssf.record.ArrayRecord} or {@link org.apache.poi.hssf.record.TableRecord}
-     * if this formula belongs to such a grouping.  The {@link CellReference}
+	 * Gets the locator for the corresponding {@link SharedFormulaRecord}, {@link ArrayRecord} or
+	 * {@link TableRecord} if this formula belongs to such a grouping.  The {@link CellReference}
 	 * returned by this method will  match the top left corner of the range of that grouping.
 	 * The return value is usually not the same as the location of the cell containing this formula.
 	 *

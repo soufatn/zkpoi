@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor;
+package org.zkoss.poi.hdf.extractor;
 
-import org.apache.poi.hdf.extractor.util.*;
+import org.zkoss.poi.hdf.extractor.util.*;
 
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class TextPiece extends PropertyNode implements Comparable
 {
   private boolean _usesUnicode;

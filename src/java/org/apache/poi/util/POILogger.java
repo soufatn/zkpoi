@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.util;
+package org.zkoss.poi.util;
 
 import java.util.*;
 
@@ -610,7 +610,7 @@ public abstract class POILogger {
 
             for (int j = 0; j < array.length; j++)
             {
-                results.add(Character.valueOf(array[ j ]));
+                results.add(new Character(array[ j ]));
             }
         }
         else if (object instanceof short [])

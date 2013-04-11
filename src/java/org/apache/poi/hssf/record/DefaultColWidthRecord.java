@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Default Column Width Record (0x0055) <P>
@@ -32,14 +32,8 @@ public final class DefaultColWidthRecord extends StandardRecord {
     public final static short sid = 0x0055;
     private int             field_1_col_width;
 
-    /**
-     *  The default column width is 8 characters
-     */
-    public final static int DEFAULT_COLUMN_WIDTH = 0x0008;
-
     public DefaultColWidthRecord()
     {
-        field_1_col_width = DEFAULT_COLUMN_WIDTH;
     }
 
     public DefaultColWidthRecord(RecordInputStream in)

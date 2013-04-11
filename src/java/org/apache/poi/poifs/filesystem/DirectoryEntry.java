@@ -15,16 +15,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+        
 
+package org.zkoss.poi.poifs.filesystem;
 
-package org.apache.poi.poifs.filesystem;
+import java.io.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
+import java.util.*;
 
-import org.apache.poi.hpsf.ClassID;
+import org.zkoss.poi.hpsf.ClassID;
 
 /**
  * This interface defines methods specific to Directory objects
@@ -67,12 +66,6 @@ public interface DirectoryEntry
      */
 
     public int getEntryCount();
-
-    /**
-     * Checks if entry with specified name present
-     */
-
-    public boolean hasEntry( final String name );
 
     /**
      * get a specified Entry by name

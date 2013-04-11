@@ -14,18 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.util.Internal;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FontCharset;
-import org.apache.poi.ss.usermodel.FontFamily;
-import org.apache.poi.ss.usermodel.FontScheme;
-import org.apache.poi.ss.usermodel.FontUnderline;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -38,6 +28,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontPr
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.FontCharset;
+import org.zkoss.poi.ss.usermodel.FontFamily;
+import org.zkoss.poi.ss.usermodel.FontScheme;
+import org.zkoss.poi.ss.usermodel.FontUnderline;
+import org.zkoss.poi.ss.usermodel.IndexedColors;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.xssf.model.StylesTable;
 
 /**
  * Represents a font used in a workbook.
@@ -56,11 +55,10 @@ public class XSSFFont implements Font {
     public static final short DEFAULT_FONT_SIZE = 11;
     /**
      * Default font color is black
-     * @see org.apache.poi.ss.usermodel.IndexedColors#BLACK
+     * @see org.zkoss.poi.ss.usermodel.IndexedColors#BLACK
      */
     public static final short DEFAULT_FONT_COLOR = IndexedColors.BLACK.getIndex();
 
-    private ThemesTable _themes;
     private CTFont _ctFont;
     private short _index;
 
@@ -110,7 +108,7 @@ public class XSSFFont implements Font {
      * get character-set to use.
      *
      * @return int - character-set (0-255)
-     * @see org.apache.poi.ss.usermodel.FontCharset
+     * @see org.zkoss.poi.ss.usermodel.FontCharset
      */
     public int getCharSet() {
         CTIntProperty charset = _ctFont.sizeOfCharsetArray() == 0 ? null : _ctFont.getCharsetArray(0);
@@ -149,15 +147,7 @@ public class XSSFFont implements Font {
      */
     public XSSFColor getXSSFColor() {
         CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
-        if(ctColor != null) {
-           XSSFColor color = new XSSFColor(ctColor);
-           if(_themes != null) {
-              _themes.inheritFromThemeAsRequired(color);
-           }
-           return color;
-        } else {
-           return null;
-        }
+        return ctColor == null ? null : new XSSFColor(ctColor);
     }
 
 
@@ -254,7 +244,7 @@ public class XSSFFont implements Font {
      * get type of text underlining to use
      *
      * @return byte - underlining type
-     * @see org.apache.poi.ss.usermodel.FontUnderline
+     * @see org.zkoss.poi.ss.usermodel.FontUnderline
      */
     public byte getUnderline() {
         CTUnderlineProperty underline = _ctFont.sizeOfUArray() == 0 ? null : _ctFont.getUArray(0);
@@ -316,11 +306,19 @@ public class XSSFFont implements Font {
      * @see FontCharset
      */
     public void setCharSet(int charset) {
-        FontCharset fontCharset = FontCharset.valueOf(charset);
-        if(fontCharset != null) {
-           setCharSet(fontCharset);
-        } else {
-           throw new POIXMLException("Attention: an attempt to set a type of unknow charset and charset");
+        CTIntProperty charsetProperty = _ctFont.sizeOfCharsetArray() == 0 ? _ctFont.addNewCharset() : _ctFont.getCharsetArray(0);
+        switch (charset) {
+            case Font.ANSI_CHARSET:
+                charsetProperty.setVal(FontCharset.ANSI.getValue());
+                break;
+            case Font.SYMBOL_CHARSET:
+                charsetProperty.setVal(FontCharset.SYMBOL.getValue());
+                break;
+            case Font.DEFAULT_CHARSET:
+                charsetProperty.setVal(FontCharset.DEFAULT.getValue());
+                break;
+            default:
+                throw new POIXMLException("Attention: an attempt to set a type of unknow charset and charset");
         }
     }
 
@@ -330,15 +328,7 @@ public class XSSFFont implements Font {
      * @param charSet
      */
     public void setCharSet(FontCharset charSet) {
-       CTIntProperty charsetProperty;
-       if(_ctFont.sizeOfCharsetArray() == 0) {
-          charsetProperty = _ctFont.addNewCharset();
-       } else {
-          charsetProperty = _ctFont.getCharsetArray(0);
-       }
-       // We know that FontCharset only has valid entries in it,
-       //  so we can just set the int value from it
-       charsetProperty.setVal( charSet.getValue() );
+        setCharSet((byte)charSet.getValue());
     }
 
     /**
@@ -530,18 +520,9 @@ public class XSSFFont implements Font {
      *  to the style table
      */
     public long registerTo(StylesTable styles) {
-        this._themes = styles.getTheme();
         short idx = (short)styles.putFont(this, true);
         this._index = idx;
         return idx;
-    }
-    /**
-     * Records the Themes Table that is associated with
-     *  the current font, used when looking up theme
-     *  based colours and properties.
-     */
-    public void setThemesTable(ThemesTable themes) {
-       this._themes = themes;
     }
 
     /**
@@ -549,7 +530,7 @@ public class XSSFFont implements Font {
      * is used only in StylesTable to create the default instance of font
      *
      * @return FontScheme
-     * @see org.apache.poi.xssf.model.StylesTable#createDefaultFont()
+     * @see org.zkoss.poi.xssf.model.StylesTable#createDefaultFont()
      */
     public FontScheme getScheme() {
         CTFontScheme scheme = _ctFont.sizeOfSchemeArray() == 0 ? null : _ctFont.getSchemeArray(0);
@@ -572,7 +553,7 @@ public class XSSFFont implements Font {
      * get the font family to use.
      *
      * @return the font family to use
-     * @see org.apache.poi.ss.usermodel.FontFamily
+     * @see org.zkoss.poi.ss.usermodel.FontFamily
      */
     public int getFamily() {
         CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? _ctFont.addNewFamily() : _ctFont.getFamilyArray(0);
@@ -608,6 +589,7 @@ public class XSSFFont implements Font {
      * @return unique index number of the underlying record this Font represents (probably you don't care
      *  unless you're comparing which one is which)
      */
+
     public short getIndex()
     {
         return _index;

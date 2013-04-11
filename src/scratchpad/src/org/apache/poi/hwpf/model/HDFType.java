@@ -15,16 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
-
-import org.apache.poi.util.Internal;
+package org.zkoss.poi.hwpf.model;
 
 /**
  *
  * @author  andy
  */
-@Internal
-@Deprecated
 public interface HDFType {
 
 }

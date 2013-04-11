@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * The BSE record is related closely to the <code>EscherBlipRecord</code> and stores
@@ -313,8 +313,7 @@ public final class EscherBSERecord extends EscherRecord {
         String extraData = _remainingData == null ? null : HexDump.toHex(_remainingData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( RECORD_ID ) + '\n' +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
                 "  BlipTypeWin32: " + field_1_blipTypeWin32 + '\n' +
                 "  BlipTypeMacOS: " + field_2_blipTypeMacOS + '\n' +
                 "  SUID: " + (field_3_uid == null ? "" : HexDump.toHex(field_3_uid)) + '\n' +

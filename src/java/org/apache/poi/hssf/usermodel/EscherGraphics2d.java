@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -308,7 +308,7 @@ public final class EscherGraphics2d extends Graphics2D {
 
     public void drawString(AttributedCharacterIterator attributedcharacteriterator, int x, int y)
     {
-        getEscherGraphics().drawString(attributedcharacteriterator, x, y);
+        drawString(attributedcharacteriterator, x, y);
     }
 
     public void fill(Shape shape)

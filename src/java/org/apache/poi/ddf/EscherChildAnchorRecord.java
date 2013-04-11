@@ -16,10 +16,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * The escher child achor record is used to specify the position of a shape under an
@@ -88,8 +88,7 @@ public class EscherChildAnchorRecord
 
         return getClass().getName() + ":" + nl +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + nl +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + nl +
+                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
                 "  X1: " + field_1_dx1 + nl +
                 "  Y1: " + field_2_dy1 + nl +
                 "  X2: " + field_3_dx2 + nl +

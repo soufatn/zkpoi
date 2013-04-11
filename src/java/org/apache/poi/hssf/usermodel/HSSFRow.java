@@ -15,18 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.hssf.model.InternalSheet;
+import org.zkoss.poi.hssf.record.CellValueRecordInterface;
+import org.zkoss.poi.hssf.record.ExtendedFormatRecord;
+import org.zkoss.poi.hssf.record.NoteRecord;
+import org.zkoss.poi.hssf.record.RowRecord;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Row;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -42,7 +43,7 @@ public final class HSSFRow implements Row {
     public final static int INITIAL_CAPACITY = 5;
 
     private int rowNum;
-    private HSSFCell[] cells;
+    private HSSFCell[] cells=new HSSFCell[INITIAL_CAPACITY];
 
     /**
      * reference to low level representation
@@ -65,7 +66,7 @@ public final class HSSFRow implements Row {
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
      * @param rowNum the row number of this row (0 based)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
     HSSFRow(HSSFWorkbook book, HSSFSheet sheet, int rowNum) {
         this(book, sheet, new RowRecord(rowNum));
@@ -78,19 +79,13 @@ public final class HSSFRow implements Row {
      * @param book low-level Workbook object containing the sheet that contains this row
      * @param sheet low-level Sheet object that contains this Row
      * @param record the low level api object this row should represent
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#createRow(int)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#createRow(int)
      */
     HSSFRow(HSSFWorkbook book, HSSFSheet sheet, RowRecord record) {
         this.book = book;
         this.sheet = sheet;
         row = record;
         setRowNum(record.getRowNumber());
-        
-        // Size the initial cell list such that a read only case won't waste
-        //  lots of memory, and a create/read followed by adding new cells can
-        //  add a bit without needing a resize
-        cells = new HSSFCell[record.getLastCol()+INITIAL_CAPACITY];
-        
         // Don't trust colIx boundaries as read by other apps
         // set the RowRecord empty for the moment
         record.setEmpty();
@@ -307,10 +302,9 @@ public final class HSSFRow implements Row {
         // re-allocate cells array as required.
         if(column>=cells.length) {
             HSSFCell[] oldCells=cells;
-            // New size based on the same logic as ArrayList
-            int newSize=oldCells.length*3/2+1;
+            int newSize=oldCells.length*2;
             if(newSize<column+1) {
-                newSize=column+INITIAL_CAPACITY;
+                newSize=column+1;
             }
             cells=new HSSFCell[newSize];
             System.arraycopy(oldCells,0,cells,0,oldCells.length);
@@ -355,7 +349,7 @@ public final class HSSFRow implements Row {
      * Get the hssfcell representing a given column (logical cell)
      *  0-based.  If you ask for a cell that is not defined then
      *  you get a null, unless you have set a different
-     *  {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} on the base workbook.
+     *  {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy} on the base workbook.
      *
      * @param cellnum  0 based column number
      * @return HSSFCell representing that column or null if undefined.
@@ -594,12 +588,6 @@ public final class HSSFRow implements Row {
         row.setFormatted(true);
         row.setXFIndex(style.getIndex());
     }
-    /**
-     * Applies a whole-row cell styling to the row.
-     */
-    public void setRowStyle(CellStyle style) {
-        setRowStyle((HSSFCellStyle)style);
-    }
 
     /**
      * @return cell iterator of the physically defined cells.
@@ -607,7 +595,7 @@ public final class HSSFRow implements Row {
      *  will not return un-defined (null) cells.
      * Call getCellNum() on the returned cells to know which cell they are.
      * As this only ever works on physically defined cells,
-     *  the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} has no effect.
+     *  the {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy} has no effect.
      */
     public Iterator<Cell> cellIterator()
     {
@@ -697,4 +685,120 @@ public final class HSSFRow implements Row {
         }
         return false;
     }
+    
+    //20100524, henrichen@zkoss.org
+    /**
+     * Shifts cells between startColumn and endColumn n number of columns.
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * @param startCol the column to start shifting
+     * @param endCol the column to end shifting
+     * @param n the number of columns to shift
+     * @param clearRest whether clear the rest cells after the shifted endCol
+     */
+    public void shiftCells(int startCol, int endCol, int n, boolean clearRest) {
+    	final InternalSheet internalSheet = sheet.getSheet();
+    	if (endCol < 0) {
+    		endCol = getLastCellNum() - 1;
+    	}
+    	
+        int s, inc;
+        if (n < 0) {
+        	if (endCol < (startCol + n))
+        		return;
+            s = startCol;
+            inc = 1;
+        } else {
+        	if (endCol < startCol)
+        		return;
+            s = endCol; 
+            inc = -1;
+        }
+
+        final int maxcol = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+        final int rowNum = getRowNum();
+        for ( int colNum = s; colNum >= startCol && colNum <= endCol && colNum >= 0 && colNum <= maxcol; colNum += inc ) {
+        	HSSFCell cell = getCell(colNum, RETURN_NULL_AND_BLANK);
+            // notify cell in this row that we are going to shift them,
+            // it can throw IllegalStateException if the operation is not allowed, for example,
+            // if the cell included in a multi-cell array formula
+            if(cell != null) notifyCellShifting(cell);
+
+            final int newColNum = colNum + n;
+            final boolean inbound = newColNum >= 0 && newColNum <= maxcol;
+            
+            if (!inbound) {
+            	if (cell != null) {
+            		removeCell(cell);
+            	}
+            	continue;
+            }
+
+            //exists target cell, shall remove it first! 
+        	HSSFCell replaceCell = getCell(newColNum, RETURN_NULL_AND_BLANK);
+        	if (replaceCell != null) {
+                removeCell(replaceCell);
+        	}
+        	
+        	if (cell == null) {
+        		continue;
+        	}
+        	
+            //move cell to target column
+            CellValueRecordInterface cellRecord = cell.getCellValueRecord();
+            
+            //remove cell from the row but keep the record in cell
+            if(cell.isPartOfArrayFormulaGroup()){
+                cell.notifyArrayFormulaChanging();
+            }
+            cells[colNum]=null;
+            
+            internalSheet.removeValueRecord(rowNum, cellRecord); //remove the record from the sheet
+            cellRecord.setColumn((short)newColNum); //set new column
+            addCell(cell);
+            internalSheet.addValueRecord(rowNum, cellRecord);
+
+            //adjust hyperlink columns
+            HSSFHyperlink link = cell.getHyperlink();
+            if(link != null){
+                link.setFirstColumn(link.getFirstColumn() + n);
+                link.setLastColumn(link.getLastColumn() + n);
+            }
+        }
+        //special case1: endCol < startCol
+        //special case2: (endCol - startCol + 1) < ABS(n)
+        if (n < 0) {
+        	if (endCol < startCol) { //special case1
+	    		final int replacedStartCol = startCol + n;
+	            for ( int colNum = replacedStartCol; colNum >= replacedStartCol && colNum <= endCol && colNum >= 0 && colNum <= maxcol; ++colNum) {
+	            	final HSSFCell cell = getCell(colNum, RETURN_NULL_AND_BLANK);
+	            	if (cell != null) {
+	            		removeCell(cell);
+	            	}
+	            }
+            } else if (clearRest) { //special case 2
+            	final int replacedStartCol = endCol + n + 1;
+            	if (replacedStartCol <= startCol) {
+    	            for ( int colNum = replacedStartCol; colNum >= replacedStartCol && colNum <= startCol && colNum >= 0 && colNum <= maxcol; ++colNum) {
+    	            	final HSSFCell cell = getCell(colNum, RETURN_NULL_AND_BLANK);
+    	            	if (cell != null) {
+    	            		removeCell(cell);
+    	            	}
+    	            }
+            	}
+        	}
+        }
+    }
+    
+    //20100524, henrichen@zkoss.org
+    private void notifyCellShifting(HSSFCell cell){
+        String msg = "Cell[rownum="+cell.getRowIndex()+", columnnum="+cell.getColumnIndex()+"] included in a multi-cell array formula. " +
+                "You cannot change part of an array.";
+        if(cell.isPartOfArrayFormulaGroup()){
+            cell.notifyArrayFormulaChanging(msg);
+        }
+    }
+
+
 }

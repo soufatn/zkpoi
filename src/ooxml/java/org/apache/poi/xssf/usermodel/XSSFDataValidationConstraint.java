@@ -14,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.util.Arrays;
 
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOperator.Enum;
+import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
 
 /**
  * @author <a href="rjankiraman@emptoris.com">Radhakrishnan J</a>
@@ -203,5 +203,33 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 			}
 		}
 		return builder.toString();
+	}
+	
+	//20100728, henrichen@zkoss.org: shall handle constraint equals to avoid multiple DataValidations with same constraint
+	@Override
+	public int hashCode() {
+		return (formula1 == null ? 0 : formula1.hashCode()) ^
+				(formula2 == null ? 0 : formula2.hashCode()) ^
+				validationType ^
+				operator ^
+				(explicitListOfValues == null ? 0 : explicitListOfValues.hashCode());
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof XSSFDataValidationConstraint)) {
+			return false;
+		}
+		final XSSFDataValidationConstraint o = (XSSFDataValidationConstraint) other;
+		return objEquals(formula1, o.formula1)
+			&& objEquals(formula2, o.formula2)
+			&& validationType == o.validationType
+			&& operator == o.operator
+			&& objEquals(explicitListOfValues, o.explicitListOfValues);
+	}
+	private boolean objEquals(Object s1, Object s2) {
+		return s1 == s2 
+			|| (s1 != null && s1.equals(s2))
+			|| (s2 != null && s2.equals(s1));
 	}
 }

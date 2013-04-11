@@ -17,6 +17,9 @@
 
 package org.apache.poi.hpbf;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 

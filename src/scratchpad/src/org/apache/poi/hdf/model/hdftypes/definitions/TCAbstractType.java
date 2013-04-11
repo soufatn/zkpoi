@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes.definitions;
+package org.zkoss.poi.hdf.model.hdftypes.definitions;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.hdf.model.hdftypes.HDFType;
+import org.zkoss.poi.hdf.model.hdftypes.HDFType;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
 
 /**
  * Table Cell Descriptor.
@@ -28,7 +28,6 @@ import org.apache.poi.hdf.model.hdftypes.HDFType;
 
  * @author S. Ryan Ackley
  */
-@Deprecated
 public abstract class TCAbstractType
     implements HDFType
 {

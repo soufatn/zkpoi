@@ -15,11 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This class holds all of the paragraph formatting 
@@ -29,10 +28,8 @@ import org.apache.poi.util.LittleEndian;
  * In common with the rest of the old support, it 
  *  is read only
  */
-@Internal
 public final class OldPAPBinTable extends PAPBinTable
 {
-
   public OldPAPBinTable(byte[] documentStream, int offset,
                      int size, int fcMin, TextPieceTable tpt)
   {
@@ -43,17 +40,20 @@ public final class OldPAPBinTable extends PAPBinTable
     {
       GenericPropertyNode node = binTable.getProperty(x);
 
-      int pageNum = LittleEndian.getUShort(node.getBytes());
+      int pageNum = LittleEndian.getShort(node.getBytes());
       int pageOffset = POIFSConstants.SMALLER_BIG_BLOCK_SIZE * pageNum;
 
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
-        documentStream, pageOffset, tpt);
+        documentStream, pageOffset, fcMin, tpt);
 
-            for ( PAPX papx : pfkp.getPAPXs() )
-            {
-                if ( papx != null )
-                    _paragraphs.add( papx );
-            }
+      int fkpSize = pfkp.size();
+
+      for (int y = 0; y < fkpSize; y++)
+      {
+    	PAPX papx = pfkp.getPAPX(y);
+        _paragraphs.add(papx);
+      }
     }
   }
 }
+

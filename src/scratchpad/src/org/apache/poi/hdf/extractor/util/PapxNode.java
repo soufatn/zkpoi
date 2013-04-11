@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor.util;
+package org.zkoss.poi.hdf.extractor.util;
 
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
 public final class PapxNode extends PropertyNode
 {
 

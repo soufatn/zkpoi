@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
 /**
  * This is the abstract base class for all escher properties.
@@ -62,7 +62,7 @@ public abstract class EscherProperty {
     }
 
     public String getName() {
-        return EscherProperties.getPropertyName(getPropertyNumber());
+        return EscherProperties.getPropertyName(_id);
     }
 
     /**

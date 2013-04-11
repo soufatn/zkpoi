@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -138,25 +138,26 @@ public enum UnderlinePatterns {
     private final int value;
 
     private UnderlinePatterns(int val) {
-       value = val;
+	value = val;
     }
 
     public int getValue() {
-       return value;
+	return value;
     }
 
     private static Map<Integer, UnderlinePatterns> imap = new HashMap<Integer, UnderlinePatterns>();
     static {
-       for (UnderlinePatterns p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+	for (UnderlinePatterns p : values()) {
+	    imap.put(p.getValue(), p);
+	}
     }
 
     public static UnderlinePatterns valueOf(int type) {
-       UnderlinePatterns align = imap.get(new Integer(type));
-       if (align == null)
-          throw new IllegalArgumentException("Unknown underline pattern: "
-                + type);
-       return align;
+	UnderlinePatterns align = imap.get(type);
+	if (align == null)
+	    throw new IllegalArgumentException("Unknown underline pattern: "
+		    + type);
+	return align;
     }
+
 }

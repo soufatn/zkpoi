@@ -14,16 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel.extensions;
+package org.zkoss.poi.xssf.usermodel.extensions;
 
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
+import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.xssf.usermodel.XSSFColor;
 
 /**
  * This element contains border formatting information, specifying border definition formats (left, right, top, bottom, diagonal)
@@ -31,16 +30,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
  * Color is optional.
  */
 public class XSSFCellBorder {
-    private ThemesTable _theme;
-    private CTBorder border;
 
-    /**
-     * Creates a Cell Border from the supplied XML definition
-     */
-    public XSSFCellBorder(CTBorder border, ThemesTable theme) {
-        this(border);
-        this._theme = theme;
-    }
+    private CTBorder border;
 
     /**
      * Creates a Cell Border from the supplied XML definition
@@ -50,22 +41,13 @@ public class XSSFCellBorder {
     }
 
     /**
-     * Creates a new, empty Cell Border.
-     * You need to attach this to the Styles Table
+     * Creates a new, empty Cell Border, on the
+     * given Styles Table
      */
     public XSSFCellBorder() {
         border = CTBorder.Factory.newInstance();
     }
 
-    /**
-     * Records the Themes Table that is associated with
-     *  the current font, used when looking up theme
-     *  based colours and properties.
-     */
-    public void setThemesTable(ThemesTable themes) {
-       this._theme = themes;
-    }
-    
     /**
      * The enumeration value indicating the side being used for a cell border.
      */
@@ -115,17 +97,8 @@ public class XSSFCellBorder {
      */
     public XSSFColor getBorderColor(BorderSide side) {
         CTBorderPr borderPr = getBorder(side);
-        
-        if(borderPr != null && borderPr.isSetColor()) { 
-            XSSFColor clr = new XSSFColor(borderPr.getColor());
-            if(_theme != null) {
-               _theme.inheritFromThemeAsRequired(clr);
-            }
-            return clr;
-        } else {
-           // No border set
-           return null;
-        }
+        return borderPr != null && borderPr.isSetColor() ?
+                new XSSFColor(borderPr.getColor()) : null;
     }
 
     /**
@@ -182,4 +155,5 @@ public class XSSFCellBorder {
         XSSFCellBorder cf = (XSSFCellBorder) o;
         return border.toString().equals(cf.getCTBorder().toString());
     }
+
 }

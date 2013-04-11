@@ -14,54 +14,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.zkoss.poi.ss.usermodel;
 
-package org.apache.poi.ss.usermodel;
-
-import java.util.List;
-
-import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.ManuallyPositionable;
-import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
-import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
+import org.zkoss.poi.ss.util.CellRangeAddressBase;
 
 /**
- * High level representation of a chart.
+ * Represents a chart in a SpreadsheetML document
  *
- * @author Roman Kashitsyn
+ * @author henrichen@zkoss.org
  */
-public interface Chart extends ManuallyPositionable {
-	
-	/**
-	 * @return an appropriate ChartDataFactory implementation
-	 */
-	ChartDataFactory getChartDataFactory();
+public interface Chart {
 
-	/**
-	 * @return an appropriate ChartAxisFactory implementation
-	 */
-	ChartAxisFactory getChartAxisFactory();
+    ClientAnchor getPreferredSize();
 
-	/**
-	 * @return chart legend instance
-	 */
-	ChartLegend getOrCreateLegend();
-
-	/**
-	 * Delete current chart legend.
-	 */
-	void deleteLegend();
-
-	/**
-	 * @return list of all chart axis
-	 */
-	List<? extends ChartAxis> getAxis();
-
-	/**
-	 * Plots specified data on the chart.
-	 *
-	 * @param data a data to plot
-	 */
-	void plot(ChartData data, ChartAxis... axis);
+    ChartInfo getChartInfo();
+    
+	String getName();
 }

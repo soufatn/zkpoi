@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpsf;
+package org.zkoss.poi.hpsf;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -297,14 +297,6 @@ public class Variant
      * msdn.microsoft.com/library/en-us/com/stgrstrc_0uwk.asp</a>.</p>
      */
     public static final int VT_CLSID = 72;
-
-    /**
-     * "MUST be a VersionedStream. The storage representing the (non-simple)
-     * property set MUST have a stream element with the name in the StreamName
-     * field." -- [MS-OLEPS] -- v20110920; Object Linking and Embedding (OLE)
-     * Property Set Data Structures; page 24 / 63
-     */
-    public static final int VT_VERSIONED_STREAM = 0x0049;
 
     /**
      * <p>[P] simple counted array. <span style="background-color:

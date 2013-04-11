@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.cont;
+package org.zkoss.poi.hssf.record.cont;
 
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.util.DelayableLittleEndianOutput;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.hssf.record.ContinueRecord;
+import org.zkoss.poi.util.DelayableLittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * An augmented {@link LittleEndianOutput} used for serialization of {@link ContinuableRecord}s.
@@ -204,22 +204,10 @@ public final class ContinuableRecordOutput implements LittleEndianOutput {
 		writeContinueIfRequired(b.length);
 		_ulrOutput.write(b);
 	}
-
 	public void write(byte[] b, int offset, int len) {
-
-        int i=0;
-        while(true) {
-            int nWritableChars = Math.min(len - i, _ulrOutput.getAvailableSpace() / 1);
-            for ( ; nWritableChars > 0; nWritableChars--) {
-                _ulrOutput.writeByte(b[offset + i++]);
-            }
-            if (i >= len) {
-                break;
-            }
-            writeContinue();
-        }
+		writeContinueIfRequired(len);
+		_ulrOutput.write(b, offset, len);
 	}
-
 	public void writeByte(int v) {
 		writeContinueIfRequired(1);
 		_ulrOutput.writeByte(v);

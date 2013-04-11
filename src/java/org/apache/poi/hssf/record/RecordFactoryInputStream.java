@@ -14,16 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.EncryptedDocumentException;
+import org.zkoss.poi.EncryptedDocumentException;
+import org.zkoss.poi.hssf.eventusermodel.HSSFEventFactory;
+import org.zkoss.poi.hssf.eventusermodel.HSSFListener;
+import org.zkoss.poi.hssf.record.crypto.Biff8EncryptionKey;
 
 /**
  * A stream based way to get at complete records, with
@@ -57,26 +57,11 @@ public final class RecordFactoryInputStream {
 			FilePassRecord fpr = null;
 			if (rec instanceof BOFRecord) {
 				_hasBOFRecord = true;
-				
-				// Fetch the next record, and see if it indicates whether
-				//  the document is encrypted or not
 				if (rs.hasNextRecord()) {
 					rs.nextRecord();
 					rec = RecordFactory.createSingleRecord(rs);
 					recSize += rec.getRecordSize();
 					outputRecs.add(rec);
-					
-					// Encrypted is normally BOF then FILEPASS
-					// May sometimes be BOF, WRITEPROTECT, FILEPASS
-					if (rec instanceof WriteProtectRecord && rs.hasNextRecord()) {
-	               rs.nextRecord();
-	               rec = RecordFactory.createSingleRecord(rs);
-	               recSize += rec.getRecordSize();
-	               outputRecs.add(rec);
-					}
-					
-					// If it's a FILEPASS, track it specifically but
-					//  don't include it in the main stream
 					if (rec instanceof FilePassRecord) {
 						fpr = (FilePassRecord) rec;
 						outputRecs.remove(outputRecs.size()-1);

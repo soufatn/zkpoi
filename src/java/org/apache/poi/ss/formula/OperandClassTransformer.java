@@ -15,18 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.ControlPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RangePtg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
-import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
+import org.zkoss.poi.hssf.record.formula.AbstractFunctionPtg;
+import org.zkoss.poi.hssf.record.formula.AttrPtg;
+import org.zkoss.poi.hssf.record.formula.ControlPtg;
+import org.zkoss.poi.hssf.record.formula.FuncVarPtg;
+import org.zkoss.poi.hssf.record.formula.MemAreaPtg;
+import org.zkoss.poi.hssf.record.formula.MemFuncPtg;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.hssf.record.formula.RangePtg;
+import org.zkoss.poi.hssf.record.formula.UnionPtg;
+import org.zkoss.poi.hssf.record.formula.ValueOperatorPtg;
 
 /**
  * This class performs 'operand class' transformation. Non-base tokens are classified into three

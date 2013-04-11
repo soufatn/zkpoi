@@ -15,25 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.datatypes;
+package org.zkoss.poi.hsmf.datatypes;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.poi.hsmf.datatypes.Types;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.hsmf.datatypes.Types;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * A Chunk made up of a single string.
  */
 public class StringChunk extends Chunk {
-   private static final String DEFAULT_ENCODING = "CP1252"; 
-   private String encoding7Bit = DEFAULT_ENCODING;
-   private byte[] rawValue;
-   private String value;
+	private String value;
+	private String encoding7Bit = "CP1252";
 
 	/**
 	 * Creates a String Chunk.
@@ -58,7 +56,7 @@ public class StringChunk extends Chunk {
 	public String get7BitEncoding() {
 	   return encoding7Bit;
 	}
-
+	
 	/**
 	 * Sets the Encoding that will be used to
 	 *  decode any "7 bit" (non unicode) data.
@@ -68,81 +66,62 @@ public class StringChunk extends Chunk {
 	 */
 	public void set7BitEncoding(String encoding) {
 	   this.encoding7Bit = encoding;
-
-	   // Re-read the String if we're a 7 bit one
-	   if(type == Types.ASCII_STRING) {
-	      parseString();
-	   }
 	}
-
+	
 	public void readValue(InputStream value) throws IOException {
-	   rawValue = IOUtils.toByteArray(value);
-	   parseString();
-	}
-	private void parseString() {
-	   String tmpValue;
+      String tmpValue;
+      byte[] data = IOUtils.toByteArray(value);
+      
 	   switch(type) {
 	   case Types.ASCII_STRING:
-	      tmpValue = parseAs7BitData(rawValue, encoding7Bit);
-	      break;
+	      tmpValue = parseAs7BitData(data, encoding7Bit);
+         break;
 	   case Types.UNICODE_STRING:
-	      tmpValue = StringUtil.getFromUnicodeLE(rawValue);
+	      tmpValue = StringUtil.getFromUnicodeLE(data);
 	      break;
 	   default:
 	      throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
 	   }
-
+	   
 	   // Clean up
-	   this.value = tmpValue.replace("\0", "");
+		this.value = tmpValue.replace("\0", "");
 	}
 	
 	public void writeValue(OutputStream out) throws IOException {
-	   out.write(rawValue);
-	}
-	private void storeString() {
+	   byte[] data;
+	   
       switch(type) {
       case Types.ASCII_STRING:
          try {
-            rawValue = value.getBytes(encoding7Bit);
+            data = value.getBytes(encoding7Bit);
          } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Encoding not found - " + encoding7Bit, e);
          }
          break;
       case Types.UNICODE_STRING:
-         rawValue = new byte[value.length()*2];
-         StringUtil.putUnicodeLE(value, rawValue, 0);
+         data = new byte[value.length()*2];
+         StringUtil.putUnicodeLE(value, data, 0);
          break;
       default:
          throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
       }
+      
+      out.write(data);
 	}
 	
-	/**
-	 * Returns the Text value of the chunk
-	 */
    public String getValue() {
       return this.value;
    }
-   
-   public byte[] getRawValue() {
-      return this.rawValue;
-   }
+	public String toString() {
+		return this.value;
+	}
 
-   public void setValue(String str) {
-      this.value = str;
-      storeString();
-   }
-   
-   public String toString() {
-      return this.value;
-   }
-   
    /**
     * Parses as non-unicode, supposedly 7 bit CP1252 data
     *  and returns the string that that yields.
     */
    protected static String parseAs7BitData(byte[] data) {
-      return parseAs7BitData(data, DEFAULT_ENCODING);
+      return parseAs7BitData(data, "CP1252");
    }
    /**
     * Parses as non-unicode, supposedly 7 bit data

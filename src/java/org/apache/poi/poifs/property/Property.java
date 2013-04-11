@@ -17,20 +17,20 @@
 ==================================================================== */
 
 
-package org.apache.poi.poifs.property;
+package org.zkoss.poi.poifs.property;
 
 import java.io.*;
 
 import java.util.*;
 
-import org.apache.poi.hpsf.ClassID;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.dev.POIFSViewable;
-import org.apache.poi.util.ByteField;
-import org.apache.poi.util.IntegerField;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.ShortField;
+import org.zkoss.poi.hpsf.ClassID;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.dev.POIFSViewable;
+import org.zkoss.poi.util.ByteField;
+import org.zkoss.poi.util.IntegerField;
+import org.zkoss.poi.util.LittleEndianConsts;
+import org.zkoss.poi.util.ShortField;
 
 /**
  * This abstract base class is the ancestor of all classes
@@ -65,7 +65,7 @@ public abstract class Property implements Child, POIFSViewable {
     static final protected byte _NODE_RED                 = 0;
 
     // documents must be at least this size to be stored in big blocks
-    static final private int    _big_block_minimum_bytes  = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
+    static final private int    _big_block_minimum_bytes  = 4096;
     private String              _name;
     private ShortField          _name_size;
     private ByteField           _property_type;

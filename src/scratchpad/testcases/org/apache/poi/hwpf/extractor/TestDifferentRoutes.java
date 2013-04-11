@@ -17,12 +17,15 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import junit.framework.TestCase;
+import java.util.Iterator;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.model.TextPiece;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+
+import junit.framework.TestCase;
 
 /**
  * Test the different routes to extracting text
@@ -75,10 +78,24 @@ public final class TestDifferentRoutes extends TestCase {
 	 * Test textPieces based extraction
 	 */
 	public void testExtractFromTextPieces() throws Exception {
+		StringBuffer textBuf = new StringBuffer();
+
+		Iterator textPieces = doc.getTextTable().getTextPieces().iterator();
+		while (textPieces.hasNext()) {
+			TextPiece piece = (TextPiece) textPieces.next();
+
+			String encoding = "Cp1252";
+			if (piece.isUnicode()) {
+				encoding = "UTF-16LE";
+			}
+			String text = new String(piece.getRawBytes(), encoding);
+			textBuf.append(text);
+		}
+
 		StringBuffer exp = new StringBuffer();
 		for (int i = 0; i < p_text.length; i++) {
 			exp.append(p_text[i]);
 		}
-		assertEquals(exp.toString(), doc.getDocumentText());
+		assertEquals(exp.toString(), textBuf.toString());
 	}
 }

@@ -17,6 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestSheetHiding;
 

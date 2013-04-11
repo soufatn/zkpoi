@@ -15,20 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Iterator;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Internal;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
@@ -41,6 +38,18 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.util.ImageUtils;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Represents a picture shape in a SpreadsheetML drawing.
@@ -207,6 +216,10 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         float w = 0;
         int col2 = anchor.getCol1();
         int dx2 = 0;
+        if(anchor.getDx1() > 0){
+            w += getColumnWidthInPixels(col2) - anchor.getDx1();
+            col2++;
+        }
 
         for (;;) {
             w += getColumnWidthInPixels(col2);
@@ -215,7 +228,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         }
 
         if(w > scaledWidth) {
-            double cw = getColumnWidthInPixels(col2 );
+            double cw = getColumnWidthInPixels(col2 + 1);
             double delta = w - scaledWidth;
             dx2 = (int)(EMU_PER_PIXEL*(cw-delta));
         }
@@ -226,6 +239,11 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         int row2 = anchor.getRow1();
         int dy2 = 0;
 
+        if(anchor.getDy1() > 0){
+            h += getRowHeightInPixels(row2) - anchor.getDy1();
+            row2++;
+        }
+
         for (;;) {
             h += getRowHeightInPixels(row2);
             if(h > scaledHeight) break;
@@ -233,7 +251,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         }
 
         if(h > scaledHeight) {
-            double ch = getRowHeightInPixels(row2);
+            double ch = getRowHeightInPixels(row2 + 1);
             double delta = h - scaledHeight;
             dy2 = (int)(EMU_PER_PIXEL*(ch-delta));
         }
@@ -303,4 +321,16 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         return ctPicture.getSpPr();
     }
 
+    //20101015, henrichen@zkoss.org
+    public String getName() {
+    	//TODO XSSFPicture#getName()
+    	return ctPicture.getNvPicPr().getCNvPr().getName();
+    }
+    public String getAlt() {
+    	//TODO XSSFPicture#getAlt()
+    	return ctPicture.getNvPicPr().getCNvPr().getDescr();
+    }
+    public ClientAnchor getClientAnchor() {
+    	return (ClientAnchor)getAnchor();
+    }
 }

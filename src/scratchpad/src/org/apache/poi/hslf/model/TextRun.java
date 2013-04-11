@@ -15,16 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
 import java.util.LinkedList;
 import java.util.Vector;
 
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.hslf.model.textproperties.TextPropCollection;
+import org.zkoss.poi.hslf.record.*;
+import org.zkoss.poi.hslf.usermodel.RichTextRun;
+import org.zkoss.poi.hslf.usermodel.SlideShow;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * This class represents a run of text in a powerpoint document. That
@@ -48,7 +48,7 @@ public final class TextRun
 	private SlideShow slideShow;
     private Sheet _sheet;
     private int shapeId;
-    private int slwtIndex = -1; //position in the owning SlideListWithText
+    private int slwtIndex; //position in the owning SlideListWithText
     /**
      * all text run records that follow TextHeaderAtom.
      * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
@@ -320,6 +320,12 @@ public final class TextRun
 	 *  touch the stylings.
 	 */
 	private void storeText(String s) {
+		// Remove a single trailing \r, as there is an implicit one at the
+		//  end of every record
+		if(s.endsWith("\r")) {
+			s = s.substring(0, s.length()-1);
+		}
+
 		// Store in the appropriate record
 		if(_isUnicode) {
 			// The atom can safely convert to unicode
@@ -573,7 +579,7 @@ public final class TextRun
 	/**
 	* Returns the type of the text, from the TextHeaderAtom.
 	* Possible values can be seen from TextHeaderAtom
-	* @see org.apache.poi.hslf.record.TextHeaderAtom
+	* @see org.zkoss.poi.hslf.record.TextHeaderAtom
 	*/
 	public int getRunType() {
 		return _headerAtom.getTextType();
@@ -583,7 +589,7 @@ public final class TextRun
 	* Changes the type of the text. Values should be taken
 	*  from TextHeaderAtom. No checking is done to ensure you
 	*  set this to a valid value!
-	* @see org.apache.poi.hslf.record.TextHeaderAtom
+	* @see org.zkoss.poi.hslf.record.TextHeaderAtom
 	*/
 	public void setRunType(int type) {
 		_headerAtom.setTextType(type);

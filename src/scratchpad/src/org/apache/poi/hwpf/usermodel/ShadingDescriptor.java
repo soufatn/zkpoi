@@ -15,54 +15,49 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.SHDAbstractType;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndian;
 
-/**
- * The SHD is a substructure of the CHP, PAP, and TC for Word 2000.
- * 
- * @author vlsergey
- */
-public final class ShadingDescriptor extends SHDAbstractType implements
-        Cloneable
+public final class ShadingDescriptor
+  implements Cloneable
 {
+  public static final int SIZE = 2;
 
-    public ShadingDescriptor()
-    {
-    }
+  private short _info;
+    private final static BitField _icoFore = BitFieldFactory.getInstance(0x1f);
+    private final static BitField _icoBack = BitFieldFactory.getInstance(0x3e0);
+    private final static BitField _ipat = BitFieldFactory.getInstance(0xfc00);
 
-    public ShadingDescriptor( byte[] buf, int offset )
-    {
-        super();
-        fillFields( buf, offset );
-    }
+  public ShadingDescriptor()
+  {
+  }
 
-    public ShadingDescriptor clone() throws CloneNotSupportedException
-    {
-        return (ShadingDescriptor) super.clone();
-    }
+  public ShadingDescriptor(byte[] buf, int offset)
+  {
+    this(LittleEndian.getShort(buf, offset));
+  }
 
-    public boolean isEmpty()
-    {
-        return field_3_ipat == 0;
-    }
+  public ShadingDescriptor(short info)
+  {
+    _info = info;
+  }
 
-    public byte[] serialize()
-    {
-        byte[] result = new byte[getSize()];
-        serialize( result, 0 );
-        return result;
-    }
+  public short toShort()
+  {
+    return _info;
+  }
 
-    @Override
-    public String toString()
-    {
-        if ( isEmpty() )
-            return "[SHD] EMPTY";
+  public void serialize(byte[] buf, int offset)
+  {
+    LittleEndian.putShort(buf, offset, _info);
+  }
 
-        return "[SHD] (cvFore: " + getCvFore() + "; cvBack: " + getCvBack()
-                + "; iPat: " + getIpat() + ")";
-    }
-
+  public Object clone()
+    throws CloneNotSupportedException
+  {
+    return super.clone();
+  }
 }

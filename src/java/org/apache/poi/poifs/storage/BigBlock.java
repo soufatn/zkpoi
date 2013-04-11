@@ -17,12 +17,12 @@
 ==================================================================== */
         
 
-package org.apache.poi.poifs.storage;
+package org.zkoss.poi.poifs.storage;
 
 /**
  * Abstract base class of all POIFS block storage classes. All
- * extensions of BigBlock should write 512 or 4096 bytes of data when
- * requested to write their data (as per their BigBlockSize).
+ * extensions of BigBlock should write 512 bytes of data when
+ * requested to write their data.
  *
  * This class has package scope, as there is no reason at this time to
  * make the class public.
@@ -33,8 +33,8 @@ package org.apache.poi.poifs.storage;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
 
 abstract class BigBlock
     implements BlockWritable

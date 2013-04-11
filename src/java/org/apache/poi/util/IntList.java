@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.util;
+package org.zkoss.poi.util;
 
 /**
  * A List of int's; as full an implementation of the java.util.List
@@ -343,9 +343,7 @@ public class IntList
     {
         if (index >= _limit)
         {
-            throw new IndexOutOfBoundsException(
-                  index + " not accessible in a list of length " + _limit
-            );
+            throw new IndexOutOfBoundsException();
         }
         return _array[ index ];
     }

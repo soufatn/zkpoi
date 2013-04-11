@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdgf.streams;
+package org.zkoss.poi.hdgf.streams;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.apache.poi.hdgf.HDGFLZW;
+import org.zkoss.poi.hdgf.HDGFLZW;
 
 /**
  * A StreamStore where the data on-disk is compressed,
@@ -78,7 +78,7 @@ public final class CompressedStreamStore extends StreamStore {
 
 		// Decompress
 		HDGFLZW lzw = new HDGFLZW();
-		byte[] decompressed = lzw.decompress(bais);
+		byte[] decompressed = lzw.decode(bais);
 
 		// Split into header and contents
 		byte[][] ret = new byte[2][];

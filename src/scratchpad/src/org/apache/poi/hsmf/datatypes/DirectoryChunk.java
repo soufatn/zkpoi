@@ -14,14 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hsmf.datatypes;
+package org.zkoss.poi.hsmf.datatypes;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.hsmf.MAPIMessage;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
 
 /**
  * A Chunk that is just a placeholder in the
@@ -53,7 +53,7 @@ public class DirectoryChunk extends Chunk {
      *  object to process it with.
      */
     public MAPIMessage getAsEmbededMessage() throws IOException {
-        return new MAPIMessage(dir);
+        return new MAPIMessage(dir, dir.getFileSystem());
     }
 
     @Override

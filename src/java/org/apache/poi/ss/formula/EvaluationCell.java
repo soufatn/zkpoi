@@ -15,7 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
+
+import java.util.HashMap;
 
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
@@ -27,8 +29,7 @@ package org.apache.poi.ss.formula;
  */
 public interface EvaluationCell {
 	/**
-	 * @return an Object that identifies the underlying cell,
-     * suitable for use as a key in a {@link java.util.HashMap}
+	 * @return an Object that identifies the underlying cell, suitable for use as a key in a {@link HashMap}
 	 */
 	Object getIdentityKey();
 
@@ -41,6 +42,4 @@ public interface EvaluationCell {
 	String getStringCellValue();
 	boolean getBooleanCellValue();
 	int getErrorCellValue();
-
-	int getCachedFormulaResultType();
 }

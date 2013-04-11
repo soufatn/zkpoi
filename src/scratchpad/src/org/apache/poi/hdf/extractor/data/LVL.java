@@ -15,14 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor.data;
+package org.zkoss.poi.hdf.extractor.data;
 
 /**
  * Comment me
  *
  * @author Ryan Ackley
  */
-@Deprecated
+
+
 public final class LVL
 {
   public int _iStartAt;

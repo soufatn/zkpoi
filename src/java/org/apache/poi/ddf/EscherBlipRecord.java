@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * @author Glen Stampoultzis
@@ -77,8 +77,7 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
         String extraData = HexDump.toHex(field_pictureData, 32);
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
-                "  Version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
+                "  Options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
                 "  Extra Data:" + '\n' + extraData;
     }
 }

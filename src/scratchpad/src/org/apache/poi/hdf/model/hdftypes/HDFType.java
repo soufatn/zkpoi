@@ -15,13 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.zkoss.poi.hdf.model.hdftypes;
 
 /**
  *
  * @author  andy
  */
-@Deprecated
 public interface HDFType {
 
 }

@@ -14,27 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.eventusermodel;
+package org.zkoss.poi.xssf.eventusermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.xssf.usermodel.XSSFRelation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.xssf.usermodel.XSSFRelation;
 
 /**
  * <p>This is a lightweight way to process the Shared Strings
@@ -93,7 +91,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     /**
      * The shared strings table.
      */
-    private List<String> strings;
+    private String[] strings;
 
     /**
      * @param pkg
@@ -175,28 +173,24 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      * @return the item at the specified position in this Shared String table.
      */
     public String getEntryAt(int idx) {
-        return strings.get(idx);
-    }
-
-    public List<String> getItems() {
-        return strings;
+        return strings[idx];
     }
 
     //// ContentHandler methods ////
 
     private StringBuffer characters;
     private boolean tIsOpen;
+    private int index;
 
     public void startElement(String uri, String localName, String name,
                              Attributes attributes) throws SAXException {
         if ("sst".equals(name)) {
             String count = attributes.getValue("count");
-            if(count != null) this.count = Integer.parseInt(count);
             String uniqueCount = attributes.getValue("uniqueCount");
-            if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
-
-            this.strings = new ArrayList<String>(this.uniqueCount);
-
+            this.count = Integer.parseInt(count);
+            this.uniqueCount = Integer.parseInt(uniqueCount);
+            this.strings = new String[this.uniqueCount];
+            index = 0;
             characters = new StringBuffer();
         } else if ("si".equals(name)) {
             characters.setLength(0);
@@ -208,7 +202,8 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     public void endElement(String uri, String localName, String name)
             throws SAXException {
         if ("si".equals(name)) {
-            strings.add(characters.toString());
+            strings[index] = characters.toString();              
+            ++index;
         } else if ("t".equals(name)) {
            tIsOpen = false;
         }

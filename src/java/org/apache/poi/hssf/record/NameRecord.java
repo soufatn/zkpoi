@@ -15,15 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.hssf.record.cont.ContinuableRecord;
-import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.util.*;
+import org.zkoss.poi.hssf.record.formula.Area3DPtg;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.hssf.record.formula.Ref3DPtg;
+import org.zkoss.poi.ss.formula.Formula;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * Title:        DEFINEDNAME Record (0x0018) <p/>
@@ -34,7 +35,7 @@ import org.apache.poi.util.*;
  * @author Glen Stampoultzis (glens at apache.org)
  * @author Petr Udalau - added method setFunction(boolean)
  */
-public final class NameRecord extends ContinuableRecord {
+public final class NameRecord extends StandardRecord {
     public final static short sid = 0x0018;
 	/**Included for completeness sake, not implemented */
 	public final static byte  BUILTIN_CONSOLIDATE_AREA      = 1;
@@ -341,12 +342,8 @@ public final class NameRecord extends ContinuableRecord {
 		return field_17_status_bar_text;
 	}
 
-    /**
-     * NameRecord can span into
-     *
-     * @param out a data output stream
-     */
-	public void serialize(ContinuableRecordOutput out) {
+
+	public void serialize(LittleEndianOutput out) {
 
 		int field_7_length_custom_menu = field_14_custom_menu_text.length();
 		int field_8_length_description_text = field_15_description_text.length();
@@ -433,13 +430,7 @@ public final class NameRecord extends ContinuableRecord {
 	 * @param ris the RecordInputstream to read the record from
 	 */
 	public NameRecord(RecordInputStream ris) {
-        // YK: Formula data can span into continue records, for example,
-        // when containing a large array of strings. See Bugzilla 50244
-
-        // read all remaining bytes and wrap into a LittleEndianInput
-        byte[] remainder = ris.readAllContinuedRemainder();
-        LittleEndianInput in = new LittleEndianByteArrayInputStream(remainder);
-
+		LittleEndianInput in = ris;
 		field_1_option_flag                 = in.readShort();
 		field_2_keyboard_shortcut           = in.readByte();
 		int field_3_length_name_text        = in.readUByte();

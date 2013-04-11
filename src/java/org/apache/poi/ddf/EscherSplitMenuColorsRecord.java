@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.RecordFormatException;
 
 /**
  * A list of the most recently used colours for the drawings contained in
@@ -90,8 +90,7 @@ public class EscherSplitMenuColorsRecord
     public String toString() {
         return getClass().getName() + ":" + '\n' +
                 "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + '\n' +
-                "  Version: 0x" + HexDump.toHex(getVersion()) + '\n' +
-                "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
+                "  Options: 0x" + HexDump.toHex(getOptions()) + '\n' +
                 "  Color1: 0x" + HexDump.toHex(field_1_color1) + '\n' +
                 "  Color2: 0x" + HexDump.toHex(field_2_color2) + '\n' +
                 "  Color3: 0x" + HexDump.toHex(field_3_color3) + '\n' +

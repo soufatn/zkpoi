@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.format;
+package org.zkoss.poi.ss.format;
 
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
  * This class implements printing out an elapsed time format.
  *
  * @author Ken Arnold, Industrious Media LLC
+ * @author henrichen@zkoss.org, modify to use integer instead of double to avoid calculation error.(See XXX__FACTOR)
  */
 public class CellElapsedFormatter extends CellFormatter {
     private final List<TimeSpec> specs;
@@ -34,19 +35,17 @@ public class CellElapsedFormatter extends CellFormatter {
     private final String printfFmt;
 
     private static final Pattern PERCENTS = Pattern.compile("%");
-
-    private static final double HOUR__FACTOR = 1.0 / 24.0;
-    private static final double MIN__FACTOR = HOUR__FACTOR / 60.0;
-    private static final double SEC__FACTOR = MIN__FACTOR / 60.0;
-
+    private static final int HOUR__FACTOR = 24;
+    private static final int MIN__FACTOR = HOUR__FACTOR * 60;
+    private static final int SEC__FACTOR = MIN__FACTOR * 60;
     private static class TimeSpec {
         final char type;
         final int pos;
         final int len;
-        final double factor;
-        double modBy;
+        final int factor;
+        int modBy;
 
-        public TimeSpec(char type, int pos, int len, double factor) {
+        public TimeSpec(char type, int pos, int len, int factor) {
             this.type = type;
             this.pos = pos;
             this.len = len;
@@ -57,9 +56,11 @@ public class CellElapsedFormatter extends CellFormatter {
         public long valueFor(double elapsed) {
             double val;
             if (modBy == 0)
-                val = elapsed / factor;
-            else
-                val = elapsed / factor % modBy;
+                val = elapsed * factor;
+            else {
+            	//0.001 to compensate double calculation error
+                val = (elapsed * factor + 0.001) % modBy;
+            }
             if (type == '0')
                 return Math.round(val);
             else
@@ -154,7 +155,7 @@ public class CellElapsedFormatter extends CellFormatter {
         return spec;
     }
 
-    private static double factorFor(char type, int len) {
+    private static int factorFor(char type, int len) {
         switch (type) {
         case 'h':
             return HOUR__FACTOR;
@@ -163,14 +164,14 @@ public class CellElapsedFormatter extends CellFormatter {
         case 's':
             return SEC__FACTOR;
         case '0':
-            return SEC__FACTOR / Math.pow(10, len);
+            return SEC__FACTOR * ((int) Math.pow(10, len));
         default:
             throw new IllegalArgumentException(
                     "Uknown elapsed time spec: " + type);
         }
     }
 
-    private static double modFor(char type, int len) {
+    private static int modFor(char type, int len) {
         switch (type) {
         case 'h':
             return 24;
@@ -179,7 +180,7 @@ public class CellElapsedFormatter extends CellFormatter {
         case 's':
             return 60;
         case '0':
-            return Math.pow(10, len);
+            return (int) Math.pow(10, len);
         default:
             throw new IllegalArgumentException(
                     "Uknown elapsed time spec: " + type);

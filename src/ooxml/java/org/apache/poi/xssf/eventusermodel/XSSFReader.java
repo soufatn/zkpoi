@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.eventusermodel;
+package org.zkoss.poi.xssf.eventusermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,25 +23,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
+import org.zkoss.poi.xssf.model.SharedStringsTable;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.usermodel.XSSFRelation;
 
 /**
  * This class makes it easy to get at individual parts
@@ -84,15 +82,7 @@ public class XSSFReader {
      */
     public StylesTable getStylesTable() throws IOException, InvalidFormatException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.STYLES.getContentType());
-        if(parts.size() == 0) return null;
-        
-        // Create the Styles Table, and associate the Themes if present
-        StylesTable styles = new StylesTable(parts.get(0), null);
-        parts = pkg.getPartsByContentType( XSSFRelation.THEME.getContentType());
-        if(parts.size() != 0) {
-           styles.setTheme(new ThemesTable(parts.get(0), null));
-        }
-        return styles;
+        return parts.size() == 0 ? null : new StylesTable(parts.get(0), null);
     }
 
 
@@ -111,14 +101,6 @@ public class XSSFReader {
      */
     public InputStream getStylesData() throws IOException, InvalidFormatException {
         return XSSFRelation.STYLES.getContents(workbookPart);
-    }
-
-    /**
-     * Returns an InputStream to read the contents of the
-     *  themes table.
-     */
-    public InputStream getThemesData() throws IOException, InvalidFormatException {
-        return XSSFRelation.THEME.getContents(workbookPart);
     }
 
     /**
@@ -148,7 +130,7 @@ public class XSSFReader {
         }
         return sheet.getInputStream();
     }
-
+    
     /**
      * Returns an Iterator which will let you get at all the
      *  different Sheets in turn.
@@ -174,7 +156,7 @@ public class XSSFReader {
          * Current CTSheet bean
          */
         private CTSheet ctSheet;
-        
+
         /**
          * Iterator over CTSheet objects, returns sheets in <tt>logical</tt> order.
          * We can't rely on the Ooxml4J's relationship iterator because it returns objects in physical order,
@@ -247,42 +229,27 @@ public class XSSFReader {
         public String getSheetName() {
             return ctSheet.getName();
         }
-        
-        /**
-         * Returns the comments associated with this sheet,
-         *  or null if there aren't any
-         */
-        public CommentsTable getSheetComments() {
-           PackagePart sheetPkg = getSheetPart();
-           
-           // Do we have a comments relationship? (Only ever one if so)
-           try {
-              PackageRelationshipCollection commentsList = 
-                   sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
-              if(commentsList.size() > 0) {
-                 PackageRelationship comments = commentsList.getRelationship(0);
-                 PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
-                 PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
-                 return new CommentsTable(commentsPart, comments);
-              }
-           } catch (InvalidFormatException e) {
-              return null;
-           } catch (IOException e) {
-              return null;
-           }
-           return null;
-        }
-        
-        public PackagePart getSheetPart() {
-           String sheetId = ctSheet.getId();
-           return sheetMap.get(sheetId);
-        }
 
-        /**
-         * We're read only, so remove isn't supported
-         */
         public void remove() {
             throw new IllegalStateException("Not supported");
         }
+    }
+
+    /**
+     * Returns an ExternalLinkPart with the specified relationId.
+     * @param relId the relationId of the external reference, from a r:id on the workbook
+     */
+    public PackagePart getExternalLink(String relId) throws IOException, InvalidFormatException {
+        PackageRelationship rel = workbookPart.getRelationship(relId);
+        if(rel == null) {
+            throw new IllegalArgumentException("No ExternalLink found with r:id " + relId);
+        }
+        PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+        System.out.println("relName:"+relName);
+        PackagePart externalLink = pkg.getPart(relName);
+        if(externalLink == null) {
+            throw new IllegalArgumentException("No data found for ExternalLink with r:id " + relId);
+        }
+        return externalLink;
     }
 }

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.extractor;
+package org.zkoss.poi.hslf.extractor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,13 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.POIOLE2TextExtractor;
+import org.zkoss.poi.hslf.HSLFSlideShow;
+import org.zkoss.poi.hslf.model.*;
+import org.zkoss.poi.hslf.usermodel.SlideShow;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * This class can be used to extract text from a PowerPoint file. Can optionally
@@ -39,14 +38,14 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Nick Burch
  */
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
-   private HSLFSlideShow _hslfshow;
-   private SlideShow _show;
-   private Slide[] _slides;
+	private HSLFSlideShow _hslfshow;
+	private SlideShow _show;
+	private Slide[] _slides;
 
-   private boolean _slidesByDefault = true;
-   private boolean _notesByDefault = false;
-   private boolean _commentsByDefault = false;
-   private boolean _masterByDefault = false;
+	private boolean _slidesByDefault = true;
+	private boolean _notesByDefault = false;
+	private boolean _commentsByDefault = false;
+    private boolean _masterByDefault = false;
 
 	/**
 	 * Basic extractor. Returns all the text, and optionally all the notes
@@ -101,32 +100,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param fs the POIFSFileSystem containing the PowerPoint document
 	 */
 	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot());
+		this(new HSLFSlideShow(fs));
 	}
 
-   /**
-    * Creates a PowerPointExtractor, from an open NPOIFSFileSystem
-    *
-    * @param fs the NPOIFSFileSystem containing the PowerPoint document
-    */
-   public PowerPointExtractor(NPOIFSFileSystem fs) throws IOException {
-      this(fs.getRoot());
-   }
-
-   /**
-    * Creates a PowerPointExtractor, from a specific place
-    *  inside an open NPOIFSFileSystem
-    *
-    * @param dir the POIFS Directory containing the PowerPoint document
-    */
-   public PowerPointExtractor(DirectoryNode dir) throws IOException {
-      this(new HSLFSlideShow(dir));
-   }
-
-   /**
-    * @deprecated Use {@link #PowerPointExtractor(DirectoryNode)} instead
-    */
-   @Deprecated
 	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
 		this(new HSLFSlideShow(dir, fs));
 	}
@@ -221,22 +197,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		if (getSlideText) {
             if (getMasterText) {
                 for (SlideMaster master : _show.getSlidesMasters()) {
-                    for(Shape sh : master.getShapes()){
-                        if(sh instanceof TextShape){
-                            if(MasterSheet.isPlaceholder(sh)) {
-                                // don't bother about boiler
-                                // plate text on master
-                                // sheets
-                                continue;
-                            }
-                            TextShape tsh = (TextShape)sh;
-                            String text = tsh.getText();
-                            ret.append(text);
-                            if (!text.endsWith("\n")) {
-                                ret.append("\n");
-                            }
-                        }
-                    }
+                    textRunsToText(ret, master.getTextRuns());
                 }
             }
 

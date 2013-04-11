@@ -15,18 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.extractor;
+package org.zkoss.poi.hdf.extractor;
 
 
-import org.apache.poi.hdf.extractor.util.*;
-import org.apache.poi.hdf.extractor.data.*;
 import java.util.*;
 import java.io.*;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
 
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hdf.extractor.data.*;
+import org.zkoss.poi.hdf.extractor.util.*;
+import org.zkoss.poi.poifs.filesystem.DocumentEntry;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This class contains the main functionality for the Word file "reader". Much
@@ -35,7 +35,6 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-@Deprecated
 public final class WordDocument {
 	// TODO - name this constant properly
 	private static final float K_1440_0F = 1440.0f;

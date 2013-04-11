@@ -15,13 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.util;
+package org.zkoss.poi.ss.util;
 
-import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.hssf.record.SelectionRecord;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.hssf.record.RecordInputStream;
+import org.zkoss.poi.hssf.record.SelectionRecord;
+import org.zkoss.poi.util.LittleEndianByteArrayOutputStream;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
@@ -81,24 +80,10 @@ public class CellRangeAddress extends CellRangeAddressBase {
      *         like single cell references (e.g. 'A1' instead of 'A1:A1').
      */
     public String formatAsString() {
-        return formatAsString(null, false);
-    }
-
-    /**
-     * @return the text format of this range using specified sheet name.
-     */
-    public String formatAsString(String sheetName, boolean useAbsoluteAddress) {
         StringBuffer sb = new StringBuffer();
-        if (sheetName != null) {
-            sb.append(SheetNameFormatter.format(sheetName));
-            sb.append("!");
-        }
-        CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn(),
-                useAbsoluteAddress, useAbsoluteAddress);
-        CellReference cellRefTo = new CellReference(getLastRow(), getLastColumn(),
-                useAbsoluteAddress, useAbsoluteAddress);
+        CellReference cellRefFrom = new CellReference(getFirstRow(), getFirstColumn());
+        CellReference cellRefTo = new CellReference(getLastRow(), getLastColumn());
         sb.append(cellRefFrom.formatAsString());
-
         //for a single-cell reference return A1 instead of A1:A1
         if(!cellRefFrom.equals(cellRefTo)){
             sb.append(':');

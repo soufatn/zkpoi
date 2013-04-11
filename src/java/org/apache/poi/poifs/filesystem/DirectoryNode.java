@@ -15,30 +15,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+        
 
+package org.zkoss.poi.poifs.filesystem;
 
-package org.apache.poi.poifs.filesystem;
+import java.io.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.poi.hpsf.ClassID;
-import org.apache.poi.poifs.dev.POIFSViewable;
-import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.poifs.property.Property;
+import org.zkoss.poi.hpsf.ClassID;
+import org.zkoss.poi.poifs.dev.POIFSViewable;
+import org.zkoss.poi.poifs.property.DirectoryProperty;
+import org.zkoss.poi.poifs.property.DocumentProperty;
+import org.zkoss.poi.poifs.property.Property;
 
 /**
  * Simple implementation of DirectoryEntry
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
+
 public class DirectoryNode
     extends EntryNode
     implements DirectoryEntry, POIFSViewable, Iterable<Entry>
@@ -49,11 +45,8 @@ public class DirectoryNode
     // Our list of entries, kept sorted to preserve order
     private ArrayList<Entry> _entries;
 
-   // Only one of these two will exist
     // the POIFSFileSystem we belong to
-    private POIFSFileSystem   _ofilesystem;
-    // the NPOIFSFileSytem we belong to
-    private NPOIFSFileSystem  _nfilesystem;
+    private POIFSFileSystem   _filesystem;
 
     // the path described by this document
     private POIFSDocumentPath _path;
@@ -66,37 +59,12 @@ public class DirectoryNode
      * @param filesystem the POIFSFileSystem we belong to
      * @param parent the parent of this entry
      */
+
     DirectoryNode(final DirectoryProperty property,
                   final POIFSFileSystem filesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent, filesystem, (NPOIFSFileSystem)null);
-    }
-
-    /**
-     * create a DirectoryNode. This method is not public by design; it
-     * is intended strictly for the internal use of this package
-     *
-     * @param property the DirectoryProperty for this DirectoryEntry
-     * @param nfilesystem the NPOIFSFileSystem we belong to
-     * @param parent the parent of this entry
-     */
-    DirectoryNode(final DirectoryProperty property,
-                  final NPOIFSFileSystem nfilesystem,
-                  final DirectoryNode parent)
-    {
-       this(property, parent, (POIFSFileSystem)null, nfilesystem);
-    }
-
-    private DirectoryNode(final DirectoryProperty property,
-                          final DirectoryNode parent,
-                          final POIFSFileSystem ofilesystem,
-                          final NPOIFSFileSystem nfilesystem)
-    {
         super(property, parent);
-        this._ofilesystem = ofilesystem;
-        this._nfilesystem = nfilesystem;
-
         if (parent == null)
         {
             _path = new POIFSDocumentPath();
@@ -108,6 +76,7 @@ public class DirectoryNode
                 property.getName()
             });
         }
+        _filesystem = filesystem;
         _byname     = new HashMap<String, Entry>();
         _entries    = new ArrayList<Entry>();
         Iterator<Property> iter = property.getChildren();
@@ -119,16 +88,13 @@ public class DirectoryNode
 
             if (child.isDirectory())
             {
-                DirectoryProperty childDir = (DirectoryProperty) child;
-                if(_ofilesystem != null) {
-                   childNode = new DirectoryNode(childDir, _ofilesystem, this);
-                } else {
-                   childNode = new DirectoryNode(childDir, _nfilesystem, this);
-                }
+                childNode = new DirectoryNode(( DirectoryProperty ) child,
+                                              _filesystem, this);
             }
             else
             {
-                childNode = new DocumentNode((DocumentProperty) child, this);
+                childNode = new DocumentNode(( DocumentProperty ) child,
+                                             this);
             }
             _entries.add(childNode);
             _byname.put(childNode.getName(), childNode);
@@ -143,23 +109,16 @@ public class DirectoryNode
     {
         return _path;
     }
-
+    
     /**
      * @return the filesystem that this belongs to
      */
+    
     public POIFSFileSystem getFileSystem()
     {
-        return _ofilesystem;
+        return _filesystem; 
     }
-
-    /**
-     * @return the filesystem that this belongs to
-     */
-    public NPOIFSFileSystem getNFileSystem()
-    {
-        return _nfilesystem;
-    }
-
+    
     /**
      * open a document in the directory's entry's list of entries
      *
@@ -170,34 +129,19 @@ public class DirectoryNode
      * @exception IOException if the document does not exist or the
      *            name is that of a DirectoryEntry
      */
+
     public DocumentInputStream createDocumentInputStream(
             final String documentName)
         throws IOException
     {
-        return createDocumentInputStream(getEntry(documentName));
-    }
+        Entry document = getEntry(documentName);
 
-    /**
-     * open a document in the directory's entry's list of entries
-     *
-     * @param document the document to be opened
-     *
-     * @return a newly opened DocumentInputStream or NDocumentInputStream
-     *
-     * @exception IOException if the document does not exist or the
-     *            name is that of a DirectoryEntry
-     */
-    public DocumentInputStream createDocumentInputStream(
-            final Entry document)
-        throws IOException
-    {
-        if (!document.isDocumentEntry()) {
-            throw new IOException("Entry '" + document.getName()
+        if (!document.isDocumentEntry())
+        {
+            throw new IOException("Entry '" + documentName
                                   + "' is not a DocumentEntry");
         }
-
-        DocumentEntry entry = (DocumentEntry)document;
-        return new DocumentInputStream(entry);
+        return new DocumentInputStream(( DocumentEntry ) document);
     }
 
     /**
@@ -209,6 +153,7 @@ public class DirectoryNode
      *
      * @exception IOException
      */
+
     DocumentEntry createDocument(final POIFSDocument document)
         throws IOException
     {
@@ -216,31 +161,7 @@ public class DirectoryNode
         DocumentNode     rval     = new DocumentNode(property, this);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
-        _ofilesystem.addDocument(document);
-
-        _entries.add(rval);
-        _byname.put(property.getName(), rval);
-        return rval;
-    }
-
-    /**
-     * create a new DocumentEntry
-     *
-     * @param document the new document
-     *
-     * @return the new DocumentEntry
-     *
-     * @exception IOException
-     */
-    DocumentEntry createDocument(final NPOIFSDocument document)
-        throws IOException
-    {
-        DocumentProperty property = document.getDocumentProperty();
-        DocumentNode     rval     = new DocumentNode(property, this);
-
-        (( DirectoryProperty ) getProperty()).addChild(property);
-        _nfilesystem.addDocument(document);
-
+        _filesystem.addDocument(document);
         _entries.add(rval);
         _byname.put(property.getName(), rval);
         return rval;
@@ -254,6 +175,7 @@ public class DirectoryNode
      *
      * @return true if the operation succeeded, else false
      */
+
     boolean changeName(final String oldName, final String newName)
     {
         boolean   rval  = false;
@@ -289,13 +211,8 @@ public class DirectoryNode
         if (rval)
         {
             _entries.remove(entry);
-        	   _byname.remove(entry.getName());
-
-        	   if(_ofilesystem != null) {
-               _ofilesystem.remove(entry);
-        	   } else {
-        	      _nfilesystem.remove(entry);
-        	   }
+        	_byname.remove(entry.getName());
+            _filesystem.remove(entry);
         }
         return rval;
     }
@@ -340,11 +257,6 @@ public class DirectoryNode
     public int getEntryCount()
     {
         return _entries.size();
-    }
-
-    public boolean hasEntry( String name )
-    {
-        return name != null && _byname.containsKey( name );
     }
 
     /**
@@ -394,11 +306,7 @@ public class DirectoryNode
                                         final InputStream stream)
         throws IOException
     {
-        if(_nfilesystem != null) {
-           return createDocument(new NPOIFSDocument(name, _nfilesystem, stream));
-        } else {
-           return createDocument(new POIFSDocument(name, stream));
-        }
+        return createDocument(new POIFSDocument(name, stream));
     }
 
     /**
@@ -433,18 +341,12 @@ public class DirectoryNode
     public DirectoryEntry createDirectory(final String name)
         throws IOException
     {
-        DirectoryNode rval;
         DirectoryProperty property = new DirectoryProperty(name);
-
-        if(_ofilesystem != null) {
-           rval = new DirectoryNode(property, _ofilesystem, this);
-           _ofilesystem.addDirectory(property);
-        } else {
-           rval = new DirectoryNode(property, _nfilesystem, this);
-           _nfilesystem.addDirectory(property);
-        }
+        DirectoryNode     rval     = new DirectoryNode(property, _filesystem,
+                                         this);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
+        _filesystem.addDirectory(property);
         _entries.add(rval);
         _byname.put(name, rval);
         return rval;
@@ -567,7 +469,7 @@ public class DirectoryNode
      * Returns an Iterator over all the entries
      */
     public Iterator<Entry> iterator() {
-        return getEntries();
+        return getEntries(); 
     }
 
     /* **********  END  begin implementation of POIFSViewable ********** */

@@ -29,7 +29,6 @@
         <menu-item label="Download" href="download.html"/>
         <menu-item label="Components" href="overview.html"/>
         <menu-item label="Text Extraction" href="text-extraction.html"/>
-        <menu-item label="Encryption support" href="encryption.html"/>
         <menu-item label="Case Studies" href="casestudies.html"/>
         <menu-item label="Legal" href="legal.html"/>
     </menu>
@@ -58,7 +57,6 @@
         <menu-item label="OLE2 Document Props (HPSF)" href="hpsf/index.html"/>
         <menu-item label="Outlook (HSMF)" href="hsmf/index.html"/>
         <menu-item label="Visio (HDGF)" href="hdgf/index.html"/>
-        <menu-item label="TNEF (HMEF)" href="hmef/index.html"/>
         <menu-item label="Publisher (HPBF)" href="hpbf/index.html"/>
     </menu>
 

@@ -15,48 +15,47 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherChildAnchorRecord;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
-import org.apache.poi.ddf.EscherClientDataRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherRecordFactory;
-import org.apache.poi.ddf.EscherSerializationListener;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherSpgrRecord;
-import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hssf.model.AbstractShape;
-import org.apache.poi.hssf.model.CommentShape;
-import org.apache.poi.hssf.model.ConvertAnchor;
-import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.model.TextboxShape;
-import org.apache.poi.hssf.usermodel.HSSFAnchor;
-import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFPicture;
-import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.hssf.usermodel.HSSFShapeContainer;
-import org.apache.poi.hssf.usermodel.HSSFShapeGroup;
-import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
-import org.apache.poi.hssf.usermodel.HSSFTextbox;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ddf.DefaultEscherRecordFactory;
+import org.zkoss.poi.ddf.EscherBoolProperty;
+import org.zkoss.poi.ddf.EscherClientAnchorRecord;
+import org.zkoss.poi.ddf.EscherClientDataRecord;
+import org.zkoss.poi.ddf.EscherContainerRecord;
+import org.zkoss.poi.ddf.EscherDgRecord;
+import org.zkoss.poi.ddf.EscherDggRecord;
+import org.zkoss.poi.ddf.EscherOptRecord;
+import org.zkoss.poi.ddf.EscherProperties;
+import org.zkoss.poi.ddf.EscherProperty;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.ddf.EscherRecordFactory;
+import org.zkoss.poi.ddf.EscherSerializationListener;
+import org.zkoss.poi.ddf.EscherSimpleProperty;
+import org.zkoss.poi.ddf.EscherSpRecord;
+import org.zkoss.poi.ddf.EscherSpgrRecord;
+import org.zkoss.poi.ddf.EscherTextboxRecord;
+import org.zkoss.poi.hssf.model.AbstractShape;
+import org.zkoss.poi.hssf.model.CommentShape;
+import org.zkoss.poi.hssf.model.ConvertAnchor;
+import org.zkoss.poi.hssf.model.DrawingManager2;
+import org.zkoss.poi.hssf.model.TextboxShape;
+import org.zkoss.poi.hssf.usermodel.HSSFClientAnchor;
+import org.zkoss.poi.hssf.usermodel.HSSFPatriarch;
+import org.zkoss.poi.hssf.usermodel.HSSFPicture;
+import org.zkoss.poi.hssf.usermodel.HSSFShape;
+import org.zkoss.poi.hssf.usermodel.HSSFShapeContainer;
+import org.zkoss.poi.hssf.usermodel.HSSFShapeGroup;
+import org.zkoss.poi.hssf.usermodel.HSSFTextbox;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This class is used to aggregate the MSODRAWING and OBJ record
@@ -75,7 +74,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class EscherAggregate extends AbstractEscherHolderRecord {
+public class EscherAggregate extends AbstractEscherHolderRecord {
 	public static final short sid = 9876; // not a real sid - dummy value
 	private static POILogger log = POILogFactory.getLogger(EscherAggregate.class);
 
@@ -585,7 +584,93 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			);
 		}
 
-		convertRecordsToUserModelRecursive(tcc, patriarch, null);
+		// Now process the containers for each group
+		//  and objects
+		for(int i=1; i<tcc.size(); i++) {
+			EscherContainerRecord shapeContainer =
+				(EscherContainerRecord)tcc.get(i);
+			//System.err.println("\n\n*****\n\n");
+			//System.err.println(shapeContainer);
+
+			// Could be a group, or a base object
+
+			if (shapeContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER)
+			{
+				// Group
+				if (shapeContainer.getChildRecords().size() > 0)
+				{
+					HSSFShapeGroup group = new HSSFShapeGroup( null,
+							new HSSFClientAnchor() );
+					patriarch.getChildren().add( group );
+
+					EscherContainerRecord groupContainer = (EscherContainerRecord) shapeContainer
+							.getChild( 0 );
+					convertRecordsToUserModel( groupContainer, group );
+				} else
+				{
+					log.log( POILogger.WARN,
+							"Found drawing group without children." );
+				}
+
+			} else if (shapeContainer.getRecordId() == EscherContainerRecord.SP_CONTAINER)
+			{
+				EscherSpRecord spRecord = shapeContainer
+						.getChildById( EscherSpRecord.RECORD_ID );
+				int type = spRecord.getOptions() >> 4;
+
+				switch (type)
+				{
+				case ST_TEXTBOX:
+					HSSFTextbox box = new HSSFTextbox( null,
+							new HSSFClientAnchor() );
+					patriarch.getChildren().add( box );
+
+					convertRecordsToUserModel( shapeContainer, box );
+					break;
+				case ST_PICTUREFRAME:
+					// Duplicated from
+					// org.apache.poi.hslf.model.Picture.getPictureIndex()
+					EscherOptRecord opt = (EscherOptRecord) getEscherChild(
+							shapeContainer, EscherOptRecord.RECORD_ID );
+					EscherSimpleProperty prop = (EscherSimpleProperty) getEscherProperty(
+							opt, EscherProperties.BLIP__BLIPTODISPLAY );
+					if (prop == null)
+					{
+						log.log( POILogger.WARN,
+								"Picture index for picture shape not found." );
+					} else
+					{
+						int pictureIndex = prop.getPropertyValue();
+
+						EscherClientAnchorRecord anchorRecord = (EscherClientAnchorRecord) getEscherChild(
+								shapeContainer,
+								EscherClientAnchorRecord.RECORD_ID );
+						HSSFClientAnchor anchor = new HSSFClientAnchor();
+						anchor.setCol1( anchorRecord.getCol1() );
+						anchor.setCol2( anchorRecord.getCol2() );
+						anchor.setDx1( anchorRecord.getDx1() );
+						anchor.setDx2( anchorRecord.getDx2() );
+						anchor.setDy1( anchorRecord.getDy1() );
+						anchor.setDy2( anchorRecord.getDy2() );
+						anchor.setRow1( anchorRecord.getRow1() );
+						anchor.setRow2( anchorRecord.getRow2() );
+
+						HSSFPicture picture = new HSSFPicture( null, anchor );
+						picture.setPictureIndex( pictureIndex );
+						patriarch.getChildren().add( picture );
+					}
+					break;
+				default:
+					log.log( POILogger.WARN, "Unhandled shape type: "
+							+ type );
+					break;
+				}
+			} else
+			{
+				log.log( POILogger.WARN, "Unexpected record id of shape group." );
+			}
+
+		}
 
 		// Now, clear any trace of what records make up
 		//  the patriarch
@@ -599,146 +684,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		// log.log(POILogger.WARN, "Not processing objects into Patriarch!");
 	}
 
-	private static void convertRecordsToUserModelRecursive(List tcc, HSSFShapeContainer container, HSSFShape parent) {
-		// Now process the containers for each group
-		//  and objects
-		for(int i=1; i<tcc.size(); i++) {
-			EscherContainerRecord shapeContainer = (EscherContainerRecord)tcc.get(i);
-
-			// Could be a group, or a base object
-			if (shapeContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER)
-			{
-				// Group
-				final int shapeChildren = shapeContainer.getChildRecords().size();
-				if (shapeChildren > 0)
-				{
-					HSSFShapeGroup group = new HSSFShapeGroup( parent, new HSSFClientAnchor() );
-					addToParentOrContainer(group, container, parent);
-
-					EscherContainerRecord groupContainer = (EscherContainerRecord) shapeContainer.getChild( 0 );
-					convertRecordsToUserModel( groupContainer, group );
-					
-					if (shapeChildren>1){
-						convertRecordsToUserModelRecursive(shapeContainer.getChildRecords(), container, group);
-					}
-				} else
-				{
-					log.log( POILogger.WARN,
-							"Found drawing group without children." );
-				}
-
-			} else if (shapeContainer.getRecordId() == EscherContainerRecord.SP_CONTAINER)
-			{
-				EscherSpRecord spRecord = shapeContainer
-						.getChildById( EscherSpRecord.RECORD_ID );
-				int type = spRecord.getShapeType();
-
-				switch (type)
-				{
-				case ST_TEXTBOX:
-					HSSFTextbox box = new HSSFTextbox( parent,
-							new HSSFClientAnchor() );
-					addToParentOrContainer(box, container, parent);
-
-					convertRecordsToUserModel( shapeContainer, box );
-					break;
-				case ST_PICTUREFRAME:
-					// Duplicated from
-					// org.apache.poi.hslf.model.Picture.getPictureIndex()
-					EscherOptRecord opt = (EscherOptRecord) getEscherChild(
-							shapeContainer, EscherOptRecord.RECORD_ID );
-					EscherSimpleProperty prop = (EscherSimpleProperty)opt.lookup(
-							EscherProperties.BLIP__BLIPTODISPLAY );
-					if (prop == null)
-					{
-						log.log( POILogger.WARN,
-								"Picture index for picture shape not found." );
-					} else
-					{
-						int pictureIndex = prop.getPropertyValue();
-
-						EscherClientAnchorRecord anchorRecord = (EscherClientAnchorRecord) getEscherChild(
-								shapeContainer,
-								EscherClientAnchorRecord.RECORD_ID );
-
-						EscherChildAnchorRecord childRecord = (EscherChildAnchorRecord) getEscherChild(
-								shapeContainer,
-								EscherChildAnchorRecord.RECORD_ID );
-
-						if (anchorRecord!=null && childRecord!=null){
-							log.log( POILogger.WARN, "Picture with both CLIENT and CHILD anchor: "+ type );
-						}
-					
-						HSSFAnchor anchor;
-						if (anchorRecord!=null){
-							anchor = toClientAnchor(anchorRecord);
-						}else{
-							anchor = toChildAnchor(childRecord);
-						}
-
-						HSSFPicture picture = new HSSFPicture( parent, anchor );
-						picture.setPictureIndex( pictureIndex );
-
-						addToParentOrContainer(picture, container, parent);
-					}
-					break;
-				default:
-					final HSSFSimpleShape shape = new HSSFSimpleShape( parent,
-							new HSSFClientAnchor() );
-					addToParentOrContainer(shape, container, parent);
-					convertRecordsToUserModel( shapeContainer, shape);
-					
-					log.log( POILogger.WARN, "Unhandled shape type: "
-							+ type );
-					break;
-				}
-			} else
-			{
-				log.log( POILogger.WARN, "Unexpected record id of shape group." );
-			}
-
-		}
-	}
-
-    private static void addToParentOrContainer(HSSFShape shape, HSSFShapeContainer container, HSSFShape parent) {
-
-    	if (parent instanceof HSSFShapeGroup)
-    		((HSSFShapeGroup) parent).addShape(shape);
-    	else if (container instanceof HSSFPatriarch)
-    		((HSSFPatriarch) container).addShape(shape);
-    	else
-    		container.getChildren().add(shape);
-	}
-
-	private static HSSFClientAnchor toClientAnchor(EscherClientAnchorRecord anchorRecord){
-        HSSFClientAnchor anchor = new HSSFClientAnchor();
-        anchor.setAnchorType(anchorRecord.getFlag());
-        anchor.setCol1( anchorRecord.getCol1() );
-        anchor.setCol2( anchorRecord.getCol2() );
-        anchor.setDx1( anchorRecord.getDx1() );
-        anchor.setDx2( anchorRecord.getDx2() );
-        anchor.setDy1( anchorRecord.getDy1() );
-        anchor.setDy2( anchorRecord.getDy2() );
-        anchor.setRow1( anchorRecord.getRow1() );
-        anchor.setRow2( anchorRecord.getRow2() );
-        return anchor;
-    }
-
-    private static HSSFChildAnchor toChildAnchor(EscherChildAnchorRecord anchorRecord){
-        HSSFChildAnchor anchor = new HSSFChildAnchor();
-//        anchor.setAnchorType(anchorRecord.getFlag());
-//        anchor.setCol1( anchorRecord.getCol1() );
-//        anchor.setCol2( anchorRecord.getCol2() );
-        anchor.setDx1( anchorRecord.getDx1() );
-        anchor.setDx2( anchorRecord.getDx2() );
-        anchor.setDy1( anchorRecord.getDy1() );
-        anchor.setDy2( anchorRecord.getDy2() );
-//        anchor.setRow1( anchorRecord.getRow1() );
-//        anchor.setRow2( anchorRecord.getRow2() );
-        return anchor;
-    }
-
-	private static void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
+	private void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
 		for(Iterator<EscherRecord> it = shapeContainer.getChildIterator(); it.hasNext();) {
 			EscherRecord r = it.next();
 			if(r instanceof EscherSpgrRecord) {
@@ -776,10 +722,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			}
 			else if(r instanceof EscherSpRecord) {
 				// Use flags if needed
-				final EscherSpRecord spr = (EscherSpRecord) r;
-				if (model instanceof HSSFShape){
-					final HSSFShape s = (HSSFShape) model;
-				}
 			}
 			else if(r instanceof EscherOptRecord) {
 				// Use properties if needed
@@ -1024,4 +966,32 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		return null;
 	}
 
+	/**
+	 * Returns escher property by id.
+	 * 
+	 * @return escher property or <code>null</code> if not found.
+	 */
+	private static EscherProperty getEscherProperty(EscherOptRecord opt,
+			int propId)
+	{
+		if (opt != null)
+			for (Iterator iterator = opt.getEscherProperties().iterator(); iterator
+					.hasNext();)
+			{
+				EscherProperty prop = (EscherProperty) iterator.next();
+				if (prop.getPropertyNumber() == propId)
+					return prop;
+			}
+		return null;
+	}
+
+	//20101227, henrichen: eschor records, to be overridden
+	public List<? extends Record> getAggregateRecords() {
+		return Collections.emptyList();
+	}
+	
+	//20101227, henrichen: eschor records factory, to be overridden
+	public EscherRecordFactory getRecordFactory() {
+		return null;
+	}
 }

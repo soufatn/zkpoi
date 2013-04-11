@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.datatypes;
+package org.zkoss.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,12 +32,12 @@ import java.util.List;
 public final class RecipientChunks implements ChunkGroup {
    public static final String PREFIX = "__recip_version1.0_#";
    
-   public static final MAPIProperty RECIPIENT_NAME   = MAPIProperty.DISPLAY_NAME;
-   public static final MAPIProperty DELIVERY_TYPE    = MAPIProperty.ADDRTYPE;
-   public static final MAPIProperty RECIPIENT_EMAIL_ADDRESS = MAPIProperty.EMAIL_ADDRESS;
-   public static final MAPIProperty RECIPIENT_SEARCH        = MAPIProperty.SEARCH_KEY;
-   public static final MAPIProperty RECIPIENT_SMTP_ADDRESS  = MAPIProperty.SMTP_ADDRESS;
-   public static final MAPIProperty RECIPIENT_DISPLAY_NAME  = MAPIProperty.RECIPIENT_DISPLAY_NAME;
+   public static final int RECIPIENT_NAME   = 0x3001;
+   public static final int DELIVERY_TYPE    = 0x3002;
+   public static final int RECIPIENT_EMAIL_ADDRESS = 0x3003;
+   public static final int RECIPIENT_SEARCH        = 0x300B;
+   public static final int RECIPIENT_SMTP_ADDRESS  = 0x39FE;
+   public static final int RECIPIENT_DISPLAY_NAME  = 0x5FF6;
    
    /** Our 0 based position in the list of recipients */
    public int recipientNumber;
@@ -167,24 +167,26 @@ public final class RecipientChunks implements ChunkGroup {
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
-      if(chunk.getChunkId() == RECIPIENT_SEARCH.id) {
+      switch(chunk.getChunkId()) {
+      case RECIPIENT_SEARCH:
          // TODO - parse
          recipientSearchChunk = (ByteChunk)chunk;
-      }
-      else if(chunk.getChunkId() == RECIPIENT_NAME.id) {
+         break;
+      case RECIPIENT_NAME:
          recipientDisplayNameChunk = (StringChunk)chunk;
-      }
-      else if(chunk.getChunkId() == RECIPIENT_DISPLAY_NAME.id) {
+         break;
+      case RECIPIENT_DISPLAY_NAME:
          recipientNameChunk = (StringChunk)chunk;
-      }
-      else if(chunk.getChunkId() == RECIPIENT_EMAIL_ADDRESS.id) {
+         break;
+      case RECIPIENT_EMAIL_ADDRESS:
          recipientEmailChunk = (StringChunk)chunk;
-      }
-      else if(chunk.getChunkId() == RECIPIENT_SMTP_ADDRESS.id) {
+         break;
+      case RECIPIENT_SMTP_ADDRESS:
          recipientSMTPChunk = (StringChunk)chunk;
-      }
-      else if(chunk.getChunkId() == DELIVERY_TYPE.id) {
+         break;
+      case DELIVERY_TYPE:
          deliveryTypeChunk = (StringChunk)chunk;
+         break;
       }
 
       // And add to the main list

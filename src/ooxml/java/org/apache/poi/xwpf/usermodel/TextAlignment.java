@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,19 +59,20 @@ public enum TextAlignment {
     }
 
     public int getValue(){
-       return value;
+	return value;
     }
 
     private static Map<Integer, TextAlignment> imap = new HashMap<Integer, TextAlignment>();
     static{
-       for (TextAlignment p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+	for (TextAlignment p : values()) {
+	    imap.put(p.getValue(), p);
+	}
     }
 
     public static TextAlignment valueOf(int type){
-       TextAlignment align = imap.get(new Integer(type));
-       if(align == null) throw new IllegalArgumentException("Unknown text alignment: " + type);
-       return align;
+	TextAlignment align = imap.get(type);
+	if(align == null) throw new IllegalArgumentException("Unknown text alignment: " + type);
+	return align;
     }
+
 }

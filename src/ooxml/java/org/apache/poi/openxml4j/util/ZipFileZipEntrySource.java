@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.openxml4j.util;
+package org.zkoss.poi.openxml4j.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,29 +28,21 @@ import java.util.zip.ZipFile;
  *  normal ZipFile implementation is.
  */
 public class ZipFileZipEntrySource implements ZipEntrySource {
-   private ZipFile zipArchive;
-   public ZipFileZipEntrySource(ZipFile zipFile) {
-      this.zipArchive = zipFile;
-   }
-
-   public void close() throws IOException {
-      if(zipArchive != null) {
-         zipArchive.close();
-      }
-      zipArchive = null;
-   }
-
-   public Enumeration<? extends ZipEntry> getEntries() {
-      if (zipArchive == null)
-         throw new IllegalStateException("Zip File is closed");
-      
-      return zipArchive.entries();
-   }
-
-   public InputStream getInputStream(ZipEntry entry) throws IOException {
-      if (zipArchive == null)
-         throw new IllegalStateException("Zip File is closed");
-      
-      return zipArchive.getInputStream(entry);
-   }
+	private ZipFile zipArchive;
+	public ZipFileZipEntrySource(ZipFile zipFile) {
+		this.zipArchive = zipFile;
+	}
+	
+	public void close() throws IOException {
+		zipArchive.close();
+		zipArchive = null;
+	}
+	
+	public Enumeration<? extends ZipEntry> getEntries() {
+		return zipArchive.entries();
+	}
+	
+	public InputStream getInputStream(ZipEntry entry) throws IOException {
+		return zipArchive.getInputStream(entry);
+	}
 }

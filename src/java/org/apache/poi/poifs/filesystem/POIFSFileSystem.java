@@ -17,7 +17,7 @@
 ==================================================================== */
 
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -31,28 +31,27 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.dev.POIFSViewable;
-import org.apache.poi.poifs.property.DirectoryProperty;
-import org.apache.poi.poifs.property.Property;
-import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.poi.poifs.storage.BATBlock;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
-import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
-import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.BlockWritable;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.RawDataBlockList;
-import org.apache.poi.poifs.storage.SmallBlockTableReader;
-import org.apache.poi.poifs.storage.SmallBlockTableWriter;
-import org.apache.poi.util.CloseIgnoringInputStream;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LongField;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.poifs.dev.POIFSViewable;
+import org.zkoss.poi.poifs.property.DirectoryProperty;
+import org.zkoss.poi.poifs.property.Property;
+import org.zkoss.poi.poifs.property.PropertyTable;
+import org.zkoss.poi.poifs.storage.BATBlock;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableReader;
+import org.zkoss.poi.poifs.storage.BlockAllocationTableWriter;
+import org.zkoss.poi.poifs.storage.BlockList;
+import org.zkoss.poi.poifs.storage.BlockWritable;
+import org.zkoss.poi.poifs.storage.HeaderBlockConstants;
+import org.zkoss.poi.poifs.storage.HeaderBlockReader;
+import org.zkoss.poi.poifs.storage.HeaderBlockWriter;
+import org.zkoss.poi.poifs.storage.RawDataBlockList;
+import org.zkoss.poi.poifs.storage.SmallBlockTableReader;
+import org.zkoss.poi.poifs.storage.SmallBlockTableWriter;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.LongField;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This is the main class of the POIFS system; it manages the entire
@@ -66,6 +65,23 @@ public class POIFSFileSystem
 {
 	private static final POILogger _logger =
 		POILogFactory.getLogger(POIFSFileSystem.class);
+
+    private static final class CloseIgnoringInputStream extends InputStream {
+
+        private final InputStream _is;
+        public CloseIgnoringInputStream(InputStream is) {
+            _is = is;
+        }
+        public int read() throws IOException {
+            return _is.read();
+        }
+        public int read(byte[] b, int off, int len) throws IOException {
+            return _is.read(b, off, len);
+        }
+        public void close() {
+            // do nothing
+        }
+    }
 
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
@@ -90,8 +106,7 @@ public class POIFSFileSystem
      */
     public POIFSFileSystem()
     {
-        HeaderBlock header_block = new HeaderBlock(bigBlockSize);
-        _property_table = new PropertyTable(header_block);
+        _property_table = new PropertyTable(bigBlockSize);
         _documents      = new ArrayList();
         _root           = null;
     }
@@ -131,12 +146,12 @@ public class POIFSFileSystem
         this();
         boolean success = false;
 
-        HeaderBlock header_block;
+        HeaderBlockReader header_block_reader;
         RawDataBlockList data_blocks;
         try {
             // read the header block from the stream
-            header_block = new HeaderBlock(stream);
-            bigBlockSize = header_block.getBigBlockSize();
+            header_block_reader = new HeaderBlockReader(stream);
+            bigBlockSize = header_block_reader.getBigBlockSize();
 
             // read the rest of the stream into blocks
             data_blocks = new RawDataBlockList(stream, bigBlockSize);
@@ -148,27 +163,29 @@ public class POIFSFileSystem
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block.getBigBlockSize(),
-                                       header_block.getBATCount(),
-                                       header_block.getBATArray(),
-                                       header_block.getXBATCount(),
-                                       header_block.getXBATIndex(),
+        new BlockAllocationTableReader(header_block_reader.getBigBlockSize(),
+                                       header_block_reader.getBATCount(),
+                                       header_block_reader.getBATArray(),
+                                       header_block_reader.getXBATCount(),
+                                       header_block_reader.getXBATIndex(),
                                        data_blocks);
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block, data_blocks);
+            new PropertyTable(bigBlockSize,
+                              header_block_reader.getPropertyStart(),
+                              data_blocks);
 
         // init documents
         processProperties(
         		SmallBlockTableReader.getSmallDocumentBlocks(
         		      bigBlockSize, data_blocks, properties.getRoot(),
-        				header_block.getSBATStart()
+        				header_block_reader.getSBATStart()
         		),
         		data_blocks,
         		properties.getRoot().getChildren(),
         		null,
-        		header_block.getPropertyStart()
+        		header_block_reader.getPropertyStart()
         );
 
         // For whatever reason CLSID of root is always 0.

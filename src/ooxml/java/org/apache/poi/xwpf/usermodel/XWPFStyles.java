@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,33 +27,27 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPrDefault;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
 /**
  * @author Philipp Epp
  *
  */
 public class XWPFStyles extends POIXMLDocumentPart{
-    
-    private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
-    private CTStyles ctStyles;
-    XWPFLatentStyles latentStyles;
-
-    /**
+	private CTStyles ctStyles;
+	protected XWPFLatentStyles latentStyles;
+	protected List<XWPFStyle> listStyle;
+	
+	/**
      * Construct XWPFStyles from a package part
      *
      * @param part the package part holding the data of the styles,
@@ -62,60 +56,46 @@ public class XWPFStyles extends POIXMLDocumentPart{
 
 	public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException{
 		super(part, rel);
+		onDocumentRead();
 	}
-
 	/**
-	 * Construct XWPFStyles from scratch for a new document.
+	 * Read document
 	 */
-	public XWPFStyles() {
+	 @Override
+	protected void onDocumentRead ()throws IOException{
+		listStyle = new ArrayList<XWPFStyle>();
+		StylesDocument stylesDoc;
+		try {
+			InputStream is = getPackagePart().getInputStream();
+			stylesDoc = StylesDocument.Factory.parse(is);
+	        ctStyles = stylesDoc.getStyles();
+	        latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
+	        
+		} catch (XmlException e) {
+			throw new POIXMLException();
+		}
+        //get any Style
+        for(CTStyle style : ctStyles.getStyleList()) {
+            listStyle.add(new XWPFStyle(style, this));
+        }
 	}
+	
+	 @Override
+	    protected void commit() throws IOException {
+	        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+	        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
+	        Map map = new HashMap();
+	        map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
+	        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
+	        xmlOptions.setSaveSuggestedPrefixes(map);
+	        PackagePart part = getPackagePart();
+	        OutputStream out = part.getOutputStream();
+	        ctStyles.save(out, xmlOptions);
+	        out.close();
+	    }
 
-   /**
-    * Read document
-    */
-   @Override
-   protected void onDocumentRead() throws IOException{
-      StylesDocument stylesDoc;
-      try {
-         InputStream is = getPackagePart().getInputStream();
-         stylesDoc = StylesDocument.Factory.parse(is);
-         ctStyles = stylesDoc.getStyles();
-         latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
-      } catch (XmlException e) {
-         throw new POIXMLException("Unable to read styles", e);
-      }
-      
-      // Build up all the style objects
-      for(CTStyle style : ctStyles.getStyleList()) {
-         listStyle.add(new XWPFStyle(style, this));
-      }
-   }
 	
-   @Override
-   protected void commit() throws IOException {
-      if (ctStyles == null) {
-         throw new IllegalStateException("Unable to write out styles that were never read in!");
-      }
-      
-      XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-      xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
-      Map<String,String> map = new HashMap<String,String>();
-      map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
-      map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
-      xmlOptions.setSaveSuggestedPrefixes(map);
-      PackagePart part = getPackagePart();
-      OutputStream out = part.getOutputStream();
-      ctStyles.save(out, xmlOptions);
-      out.close();
-   }
-	
-    /**
-     * Sets the ctStyles
-     * @param styles
-     */
-    public void setStyles(CTStyles styles) {
-       ctStyles = styles;
-    }
+
 	
 	 /**
 	  * checks whether style with styleID exist
@@ -193,97 +173,6 @@ public class XWPFStyles extends POIXMLDocumentPart{
 		return usedStyleList;
 	}
 	
-	/**
-	 * Sets the default spelling language on ctStyles DocDefaults parameter
-	 * @param strSpellingLanguage
-	 */
-	public void setSpellingLanguage(String strSpellingLanguage) {
-		CTDocDefaults docDefaults = null;
-		CTRPr runProps = null;
-		CTLanguage lang = null;
-
-		// Just making sure we use the members that have already been defined
-		if(ctStyles.isSetDocDefaults()) {
-			docDefaults = ctStyles.getDocDefaults();
-			if(docDefaults.isSetRPrDefault()) {
-				CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
-				if(RPrDefault.isSetRPr()) {
-					runProps = RPrDefault.getRPr();
-					if(runProps.isSetLang())
-						lang = runProps.getLang();
-				}
-			}
-		}
-
-		if(docDefaults == null)
-			docDefaults = ctStyles.addNewDocDefaults();
-		if(runProps == null)
-			runProps = docDefaults.addNewRPrDefault().addNewRPr();
-		if(lang == null)
-			lang = runProps.addNewLang();
-
-		lang.setVal(strSpellingLanguage);
-		lang.setBidi(strSpellingLanguage);
-	}
-
-	/**
-	 * Sets the default East Asia spelling language on ctStyles DocDefaults parameter
-	 * @param strEastAsia
-	 */
-	public void setEastAsia(String strEastAsia) {
-		CTDocDefaults docDefaults = null;
-		CTRPr runProps = null;
-		CTLanguage lang = null;
-
-		// Just making sure we use the members that have already been defined
-		if(ctStyles.isSetDocDefaults()) {
-			docDefaults = ctStyles.getDocDefaults();
-			if(docDefaults.isSetRPrDefault()) {
-				CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
-				if(RPrDefault.isSetRPr()) {
-					runProps = RPrDefault.getRPr();
-					if(runProps.isSetLang())
-						lang = runProps.getLang();
-				}
-			}
-		}
-
-		if(docDefaults == null)
-			docDefaults = ctStyles.addNewDocDefaults();
-		if(runProps == null)
-			runProps = docDefaults.addNewRPrDefault().addNewRPr();
-		if(lang == null)
-			lang = runProps.addNewLang();
-
-		lang.setEastAsia(strEastAsia);
-	}
-
-	/**
-	 * Sets the default font on ctStyles DocDefaults parameter
-	 * @param fonts
-	 */
-	public void setDefaultFonts(CTFonts fonts) {
-		CTDocDefaults docDefaults = null;
-		CTRPr runProps = null;
-
-		// Just making sure we use the members that have already been defined
-		if(ctStyles.isSetDocDefaults()) {
-			docDefaults = ctStyles.getDocDefaults();
-			if(docDefaults.isSetRPrDefault()) {
-				CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
-				if(RPrDefault.isSetRPr()) {
-					runProps = RPrDefault.getRPr();
-				}
-			}
-		}
-
-		if(docDefaults == null)
-			docDefaults = ctStyles.addNewDocDefaults();
-		if(runProps == null)
-			runProps = docDefaults.addNewRPrDefault().addNewRPr();
-
-		runProps.setRFonts(fonts);
-	}
 	
 	
 	/**

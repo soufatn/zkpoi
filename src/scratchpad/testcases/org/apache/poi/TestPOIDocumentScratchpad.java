@@ -95,7 +95,7 @@ public final class TestPOIDocumentScratchpad extends TestCase {
     	POIFSFileSystem inFS = new POIFSFileSystem(bais);
 
     	// Check they're still there
-    	doc.directory = inFS.getRoot();
+    	doc.filesystem = inFS;
     	doc.readProperties();
 
     	// Delegate test

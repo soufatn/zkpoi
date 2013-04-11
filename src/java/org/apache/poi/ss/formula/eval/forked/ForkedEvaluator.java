@@ -15,28 +15,28 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval.forked;
+package org.zkoss.poi.ss.formula.eval.forked;
 
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.IStabilityClassifier;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.hssf.record.formula.eval.BoolEval;
+import org.zkoss.poi.hssf.record.formula.eval.ErrorEval;
+import org.zkoss.poi.hssf.record.formula.eval.NumberEval;
+import org.zkoss.poi.hssf.record.formula.eval.StringEval;
+import org.zkoss.poi.hssf.record.formula.eval.ValueEval;
+import org.zkoss.poi.hssf.record.formula.udf.UDFFinder;
+import org.zkoss.poi.hssf.usermodel.HSSFCell;
+import org.zkoss.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.formula.IStabilityClassifier;
+import org.zkoss.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.usermodel.Workbook;
 
 /**
  * An alternative workbook evaluator that saves memory in situations where a single workbook is
  * concurrently and independently evaluated many times.  With standard formula evaluation, around
- * 90% of memory consumption is due to loading of the {@link HSSFWorkbook} or {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}.
+ * 90% of memory consumption is due to loading of the {@link HSSFWorkbook} or {@link org.zkoss.poi.xssf.usermodel.XSSFWorkbook}.
  * This class enables a 'master workbook' to be loaded just once and shared between many evaluation
  * clients.  Each evaluation client creates its own {@link ForkedEvaluator} and can set cell values
  * that will be used for local evaluations (and don't disturb evaluations on other evaluators).
@@ -113,17 +113,17 @@ public final class ForkedEvaluator {
 		EvaluationCell cell = _sewb.getEvaluationCell(sheetName, rowIndex, columnIndex);
 
 		switch (cell.getCellType()) {
-			case Cell.CELL_TYPE_BOOLEAN:
+			case HSSFCell.CELL_TYPE_BOOLEAN:
 				return BoolEval.valueOf(cell.getBooleanCellValue());
-			case Cell.CELL_TYPE_ERROR:
+			case HSSFCell.CELL_TYPE_ERROR:
 				return ErrorEval.valueOf(cell.getErrorCellValue());
-			case Cell.CELL_TYPE_FORMULA:
+			case HSSFCell.CELL_TYPE_FORMULA:
 				return _evaluator.evaluate(cell);
-			case Cell.CELL_TYPE_NUMERIC:
+			case HSSFCell.CELL_TYPE_NUMERIC:
 				return new NumberEval(cell.getNumericCellValue());
-			case Cell.CELL_TYPE_STRING:
+			case HSSFCell.CELL_TYPE_STRING:
 				return new StringEval(cell.getStringCellValue());
-			case Cell.CELL_TYPE_BLANK:
+			case HSSFCell.CELL_TYPE_BLANK:
 				return null;
 		}
 		throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");

@@ -14,109 +14,108 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.Internal;
+package org.zkoss.poi.hwpf.model;
 
-/**
- * The LFOLVL structure contains information that is used to override the
- * formatting information of a corresponding LVL.
- * <p>
- * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
- * Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format
- */
-@Internal
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.LittleEndian;
+
+import java.util.Arrays;
+
 public final class ListFormatOverrideLevel
 {
-    private LFOLVLBase _base;
-    private ListLevel _lvl;
+  private static final int BASE_SIZE = 8;
 
-    public ListFormatOverrideLevel( byte[] buf, int offset )
+  int _iStartAt;
+  byte _info;
+   private static BitField _ilvl = BitFieldFactory.getInstance(0xf);
+   private static BitField _fStartAt = BitFieldFactory.getInstance(0x10);
+   private static BitField _fFormatting = BitFieldFactory.getInstance(0x20);
+  byte[] _reserved = new byte[3];
+  ListLevel _lvl;
+
+  public ListFormatOverrideLevel(byte[] buf, int offset)
+  {
+    _iStartAt = LittleEndian.getInt(buf, offset);
+    offset += LittleEndian.INT_SIZE;
+    _info = buf[offset++];
+    System.arraycopy(buf, offset, _reserved, 0, _reserved.length);
+    offset += _reserved.length;
+
+    if (_fFormatting.getValue(_info) > 0)
     {
-        _base = new LFOLVLBase( buf, offset );
-        offset += LFOLVLBase.getSize();
+      _lvl = new ListLevel(buf, offset);
+    }
+  }
 
-        if ( _base.isFFormatting() )
-        {
-            _lvl = new ListLevel( buf, offset );
-        }
+  public ListLevel getLevel()
+  {
+    return _lvl;
+  }
+
+  public int getLevelNum()
+  {
+    return _ilvl.getValue(_info);
+  }
+
+  public boolean isFormatting()
+  {
+    return _fFormatting.getValue(_info) != 0;
+  }
+
+  public boolean isStartAt()
+  {
+    return _fStartAt.getValue(_info) != 0;
+  }
+
+  public int getSizeInBytes()
+  {
+    return (_lvl == null ? BASE_SIZE : BASE_SIZE + _lvl.getSizeInBytes());
+  }
+
+  public boolean equals(Object obj)
+  {
+    if (obj == null)
+    {
+      return false;
+    }
+    ListFormatOverrideLevel lfolvl = (ListFormatOverrideLevel)obj;
+    boolean lvlEquality = false;
+    if (_lvl != null)
+    {
+      lvlEquality = _lvl.equals(lfolvl._lvl);
+    }
+    else
+    {
+      lvlEquality = lfolvl._lvl == null;
     }
 
-    public boolean equals( Object obj )
-    {
-        if ( obj == null )
-        {
-            return false;
-        }
-        ListFormatOverrideLevel lfolvl = (ListFormatOverrideLevel) obj;
-        boolean lvlEquality = false;
-        if ( _lvl != null )
-        {
-            lvlEquality = _lvl.equals( lfolvl._lvl );
-        }
-        else
-        {
-            lvlEquality = lfolvl._lvl == null;
-        }
+    return lvlEquality && lfolvl._iStartAt == _iStartAt && lfolvl._info == _info &&
+      Arrays.equals(lfolvl._reserved, _reserved);
+  }
 
-        return lvlEquality && lfolvl._base.equals( _base );
+  public byte[] toByteArray()
+  {
+    byte[] buf = new byte[getSizeInBytes()];
+
+    int offset = 0;
+    LittleEndian.putInt(buf, _iStartAt);
+    offset += LittleEndian.INT_SIZE;
+    buf[offset++] = _info;
+    System.arraycopy(_reserved, 0, buf, offset, 3);
+    offset += 3;
+
+    if (_lvl != null)
+    {
+      byte[] levelBuf = _lvl.toByteArray();
+      System.arraycopy(levelBuf, 0, buf, offset, levelBuf.length);
     }
 
-    public int getIStartAt()
-    {
-        return _base.getIStartAt();
-    }
+    return buf;
+  }
 
-    public ListLevel getLevel()
-    {
-        return _lvl;
-    }
-
-    public int getLevelNum()
-    {
-        return _base.getILvl();
-    }
-
-    public int getSizeInBytes()
-    {
-        return _lvl == null ? LFOLVLBase.getSize() : LFOLVLBase.getSize()
-                + _lvl.getSizeInBytes();
-    }
-
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + _base.hashCode();
-        result = prime * result + ( _lvl != null ? _lvl.hashCode() : 0 );
-        return result;
-    }
-
-    public boolean isFormatting()
-    {
-        return _base.isFFormatting();
-    }
-
-    public boolean isStartAt()
-    {
-        return _base.isFStartAt();
-    }
-
-    public byte[] toByteArray()
-    {
-        int offset = 0;
-
-        byte[] buf = new byte[getSizeInBytes()];
-        _base.serialize( buf, offset );
-        offset += LFOLVLBase.getSize();
-
-        if ( _lvl != null )
-        {
-            byte[] levelBuf = _lvl.toByteArray();
-            System.arraycopy( levelBuf, 0, buf, offset, levelBuf.length );
-        }
-
-        return buf;
-    }
+  public int getIStartAt() {
+    return _iStartAt;
+  }
 }

@@ -15,15 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.storage;
+package org.zkoss.poi.poifs.storage;
 
 import java.io.IOException;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.*;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.util.IntList;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianConsts;
 
 /**
  * This class manages and creates the Block Allocation Table, which is
@@ -41,8 +43,7 @@ import org.apache.poi.util.*;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class BlockAllocationTableReader {
-    private static final POILogger _logger = POILogFactory.getLogger(BlockAllocationTableReader.class);
-
+    
     /**
      * Maximum number size (in blocks) of the allocation table as supported by
      * POI.<br/>
@@ -80,7 +81,16 @@ public final class BlockAllocationTableReader {
             int xbat_count, int xbat_index, BlockList raw_block_list) throws IOException {
         this(bigBlockSize);
         
-        sanityCheckBlockCount(block_count);
+        if (block_count <= 0) {
+            throw new IOException(
+                "Illegal block count; minimum count is 1, got " + block_count
+                + " instead");
+        }
+
+        if (block_count > MAX_BLOCK_COUNT) {
+            throw new IOException("Block count " + block_count 
+                    + " is too high. POI maximum is " + MAX_BLOCK_COUNT + ".");
+        }
 
         // We want to get the whole of the FAT table
         // To do this:
@@ -176,21 +186,6 @@ public final class BlockAllocationTableReader {
         this.bigBlockSize = bigBlockSize;
         _entries = new IntList();
     }
-    
-    public static void sanityCheckBlockCount(int block_count) throws IOException {
-       if (block_count <= 0) {
-          throw new IOException(
-                "Illegal block count; minimum count is 1, got " + 
-                block_count + " instead"
-          );
-       }
-       if (block_count > MAX_BLOCK_COUNT) {
-          throw new IOException(
-                "Block count " + block_count + 
-                " is too high. POI maximum is " + MAX_BLOCK_COUNT + "."
-          );
-       }
-    }
 
     /**
      * walk the entries from a specified point and return the
@@ -226,12 +221,12 @@ public final class BlockAllocationTableReader {
             } catch(IOException e) {
                 if(currentBlock == headerPropertiesStartBlock) {
                     // Special case where things are in the wrong order
-                    _logger.log(POILogger.WARN, "Warning, header block comes after data blocks in POIFS block listing");
+                    System.err.println("Warning, header block comes after data blocks in POIFS block listing");
                     currentBlock = POIFSConstants.END_OF_CHAIN;
                 } else if(currentBlock == 0 && firstPass) {
                     // Special case where the termination isn't done right
                     //  on an empty set
-                    _logger.log(POILogger.WARN, "Warning, incorrectly terminated empty data blocks in POIFS block listing (should end at -2, ended at 0)");
+                    System.err.println("Warning, incorrectly terminated empty data blocks in POIFS block listing (should end at -2, ended at 0)");
                     currentBlock = POIFSConstants.END_OF_CHAIN;
                 } else {
                     // Ripple up

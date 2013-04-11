@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.model.hdftypes;
+package org.zkoss.poi.hdf.model.hdftypes;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
+import org.zkoss.poi.hdf.model.hdftypes.definitions.TCAbstractType;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Represents a document's stylesheet. A word documents formatting is stored as
@@ -28,7 +28,6 @@ import org.apache.poi.hdf.model.hdftypes.definitions.TCAbstractType;
  *
  * @author Ryan Ackley
  */
-@Deprecated
 public final class StyleSheet implements HDFType {
 
   private static final int NIL_STYLE = 4095;

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.exceptions;
+package org.zkoss.poi.openxml4j.exceptions;
 
 /**
  * Global exception throws when a critical error occurs (this exception is
@@ -31,8 +31,4 @@ public class OpenXML4JRuntimeException extends RuntimeException {
 	public OpenXML4JRuntimeException(String msg) {
 		super(msg);
 	}
-
-    public OpenXML4JRuntimeException(String msg, Throwable reason) {
-        super(msg, reason);
-    }
 }

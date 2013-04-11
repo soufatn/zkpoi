@@ -15,67 +15,70 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.model;
+package org.zkoss.poi.hssf.model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.CFHeaderRecord;
-import org.apache.poi.hssf.record.CalcCountRecord;
-import org.apache.poi.hssf.record.CalcModeRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.DVALRecord;
-import org.apache.poi.hssf.record.DefaultColWidthRecord;
-import org.apache.poi.hssf.record.DefaultRowHeightRecord;
-import org.apache.poi.hssf.record.DeltaRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.DrawingRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.FeatHdrRecord;
-import org.apache.poi.hssf.record.FeatRecord;
-import org.apache.poi.hssf.record.GridsetRecord;
-import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.IterationRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.PaneRecord;
-import org.apache.poi.hssf.record.PrintGridlinesRecord;
-import org.apache.poi.hssf.record.PrintHeadersRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RefModeRecord;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.SaveRecalcRecord;
-import org.apache.poi.hssf.record.SelectionRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
-import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
-import org.apache.poi.hssf.record.aggregates.CustomViewSettingsRecordAggregate;
-import org.apache.poi.hssf.record.aggregates.DataValidityTable;
-import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
-import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
+import org.zkoss.poi.hssf.record.BOFRecord;
+import org.zkoss.poi.hssf.record.CFHeaderRecord;
+import org.zkoss.poi.hssf.record.CalcCountRecord;
+import org.zkoss.poi.hssf.record.CalcModeRecord;
+import org.zkoss.poi.hssf.record.CellValueRecordInterface;
+import org.zkoss.poi.hssf.record.ColumnInfoRecord;
+import org.zkoss.poi.hssf.record.DVALRecord;
+import org.zkoss.poi.hssf.record.DefaultColWidthRecord;
+import org.zkoss.poi.hssf.record.DefaultRowHeightRecord;
+import org.zkoss.poi.hssf.record.DeltaRecord;
+import org.zkoss.poi.hssf.record.DimensionsRecord;
+import org.zkoss.poi.hssf.record.DrawingRecord;
+import org.zkoss.poi.hssf.record.EOFRecord;
+import org.zkoss.poi.hssf.record.EscherAggregate;
+import org.zkoss.poi.hssf.record.FeatHdrRecord;
+import org.zkoss.poi.hssf.record.FeatRecord;
+import org.zkoss.poi.hssf.record.GridsetRecord;
+import org.zkoss.poi.hssf.record.GutsRecord;
+import org.zkoss.poi.hssf.record.IndexRecord;
+import org.zkoss.poi.hssf.record.IterationRecord;
+import org.zkoss.poi.hssf.record.MergeCellsRecord;
+import org.zkoss.poi.hssf.record.NoteRecord;
+import org.zkoss.poi.hssf.record.ObjRecord;
+import org.zkoss.poi.hssf.record.PaneRecord;
+import org.zkoss.poi.hssf.record.PrintGridlinesRecord;
+import org.zkoss.poi.hssf.record.PrintHeadersRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.RecordBase;
+import org.zkoss.poi.hssf.record.RefModeRecord;
+import org.zkoss.poi.hssf.record.RowRecord;
+import org.zkoss.poi.hssf.record.SCLRecord;
+import org.zkoss.poi.hssf.record.SaveRecalcRecord;
+import org.zkoss.poi.hssf.record.SelectionRecord;
+import org.zkoss.poi.hssf.record.UncalcedRecord;
+import org.zkoss.poi.hssf.record.WSBoolRecord;
+import org.zkoss.poi.hssf.record.WindowTwoRecord;
+import org.zkoss.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
+import org.zkoss.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
+import org.zkoss.poi.hssf.record.aggregates.ConditionalFormattingTable;
+import org.zkoss.poi.hssf.record.aggregates.CustomViewSettingsRecordAggregate;
+import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
+import org.zkoss.poi.hssf.record.aggregates.MergedCellsTable;
+import org.zkoss.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.zkoss.poi.hssf.record.aggregates.RecordAggregate;
+import org.zkoss.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.zkoss.poi.hssf.record.aggregates.WorksheetProtectionBlock;
+import org.zkoss.poi.hssf.record.aggregates.RecordAggregate.PositionTrackingVisitor;
+import org.zkoss.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.zkoss.poi.hssf.record.formula.FormulaShifter;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
@@ -95,8 +98,8 @@ import org.apache.poi.util.POILogger;
  * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
  * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little)
  *
- * @see org.apache.poi.hssf.model.InternalWorkbook
- * @see org.apache.poi.hssf.usermodel.HSSFSheet
+ * @see org.zkoss.poi.hssf.model.InternalWorkbook
+ * @see org.zkoss.poi.hssf.usermodel.HSSFSheet
  */
 @Internal
 public final class InternalSheet {
@@ -111,8 +114,8 @@ public final class InternalSheet {
     protected PrintGridlinesRecord       printGridlines    =     null;
     protected GridsetRecord              gridset           =     null;
     private   GutsRecord                 _gutsRecord;
-    protected DefaultColWidthRecord      defaultcolwidth   =     new DefaultColWidthRecord();
-    protected DefaultRowHeightRecord     defaultrowheight  =     new DefaultRowHeightRecord();
+    protected DefaultColWidthRecord      defaultcolwidth   =     null;
+    protected DefaultRowHeightRecord     defaultrowheight  =     null;
     private PageSettingsBlock _psBlock;
 
     /**
@@ -156,8 +159,8 @@ public final class InternalSheet {
      *
      * @return Sheet object with all values set to those read from the file
      *
-     * @see org.apache.poi.hssf.model.InternalWorkbook
-     * @see org.apache.poi.hssf.record.Record
+     * @see org.zkoss.poi.hssf.model.InternalWorkbook
+     * @see org.zkoss.poi.hssf.record.Record
      */
     public static InternalSheet createSheet(RecordStream rs) {
         return new InternalSheet(rs);
@@ -273,7 +276,7 @@ public final class InternalSheet {
                 records.add(rec);
                 continue;
             }
-
+            
             if (recSid == EOFRecord.sid) {
                 records.add(rec);
                 break;
@@ -351,6 +354,9 @@ public final class InternalSheet {
         RecordOrderer.addNewSheetRecord(records, _protectionBlock);
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
+        
+        //20100826, henrichen@zkoss.org: handle the defaultColumnWidth
+        _columnInfos.setDefaultColumnWidth(this.defaultcolwidth.getColWidth()); 
     }
     private static void spillAggregate(RecordAggregate ra, final List<RecordBase> recs) {
         ra.visitContainedRecords(new RecordVisitor() {
@@ -361,13 +367,13 @@ public final class InternalSheet {
 
     private static final class RecordCloner implements RecordVisitor {
 
-        private final List<Record> _destList;
+        private final List<RecordBase> _destList;
 
-        public RecordCloner(List<Record> destList) {
+        public RecordCloner(List<RecordBase> destList) {
             _destList = destList;
         }
         public void visitRecord(Record r) {
-            _destList.add((Record)r.clone());
+            _destList.add((RecordBase)r.clone());
         }
     }
 
@@ -379,20 +385,12 @@ public final class InternalSheet {
      * belongs to a sheet.
      */
     public InternalSheet cloneSheet() {
-        List<Record> clonedRecords = new ArrayList<Record>(_records.size());
+        List<RecordBase> clonedRecords = new ArrayList<RecordBase>(_records.size());
         for (int i = 0; i < _records.size(); i++) {
             RecordBase rb = _records.get(i);
             if (rb instanceof RecordAggregate) {
                 ((RecordAggregate) rb).visitContainedRecords(new RecordCloner(clonedRecords));
                 continue;
-            }
-            if (rb instanceof EscherAggregate){
-                // EscherAggregate is used only as a container for SODRAWING and OBJ record combinations
-                // So, if the container is empty, there is no reason to clone this record
-                // See https://issues.apache.org/bugzilla/show_bug.cgi?id=49529
-                if (0 == rb.getRecordSize()){
-                    continue;
-                }
             }
             Record rec = (Record) ((Record) rb).clone();
             clonedRecords.add(rec);
@@ -463,6 +461,9 @@ public final class InternalSheet {
         _records = records;
         if (log.check( POILogger.DEBUG ))
             log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
+        
+        //20100826, henrichen@zkoss.org: handle the defaultColumnWidth
+        _columnInfos.setDefaultColumnWidth(this.defaultcolwidth.getColWidth());
     }
 
     public RowRecordsAggregate getRowsAggregate() {
@@ -536,7 +537,7 @@ public final class InternalSheet {
      * sets the values in the sheet's DimensionsRecord object to be correct.  Excel doesn't
      * really care, but we want to play nice with other libraries.
      *
-     * @see org.apache.poi.hssf.record.DimensionsRecord
+     * @see org.zkoss.poi.hssf.record.DimensionsRecord
      */
     public void setDimensions(int firstrow, short firstcol, int lastrow,
                               short lastcol)
@@ -654,7 +655,7 @@ public final class InternalSheet {
      *
      * @param row - the row of the value record you wish to remove
      * @param col - a record supporting the CellValueRecordInterface.
-     * @see org.apache.poi.hssf.record.CellValueRecordInterface
+     * @see org.zkoss.poi.hssf.record.CellValueRecordInterface
      */
     public void removeValueRecord(int row, CellValueRecordInterface col) {
 
@@ -734,8 +735,8 @@ public final class InternalSheet {
     }
 
     /**
-     * Get all the value records (from LOC). Records will be returned from the first
-     *  record (starting at LOC) which is a value record.
+     * get the NEXT value record (from LOC).  The first record that is a value record
+     * (starting at LOC) will be returned.
      *
      * <P>
      * This method is "loc" sensitive.  Meaning you need to set LOC to where you
@@ -744,27 +745,8 @@ public final class InternalSheet {
      * at what this sets it to.  For this method, set loc to dimsloc to start with,
      * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
      *
-     * @return Iterator of CellValueRecordInterface representing the value records
+     * @return CellValueRecordInterface representing the next value record or NULL if there are no more
      */
-    public Iterator<CellValueRecordInterface> getCellValueIterator(){
-    	return _rowsAggregate.getCellValueIterator();
-    }
-
-    /**
-     * Get all the value records (from LOC). Records will be returned from the first
-     *  record (starting at LOC) which is a value record.
-     *
-     * <P>
-     * This method is "loc" sensitive.  Meaning you need to set LOC to where you
-     * want it to start searching.  If you don't know do this: setLoc(getDimsLoc).
-     * When adding several rows you can just start at the last one by leaving loc
-     * at what this sets it to.  For this method, set loc to dimsloc to start with,
-     * subsequent calls will return values in (physical) sequence or NULL when you get to the end.
-     *
-     * @return Array of CellValueRecordInterface representing the remaining value records
-     * @deprecated use {@link #getCellValueIterator()} instead
-     */
-    @Deprecated
     public CellValueRecordInterface[] getValueRecords() {
         return _rowsAggregate.getValueRecords();
     }
@@ -943,7 +925,7 @@ public final class InternalSheet {
         DefaultRowHeightRecord retval = new DefaultRowHeightRecord();
 
         retval.setOptionFlags(( short ) 0);
-        retval.setRowHeight(DefaultRowHeightRecord.DEFAULT_ROW_HEIGHT);
+        retval.setRowHeight(( short ) 0xff);
         return retval;
     }
 
@@ -964,7 +946,7 @@ public final class InternalSheet {
       */
     private static DefaultColWidthRecord createDefaultColWidth() {
         DefaultColWidthRecord retval = new DefaultColWidthRecord();
-        retval.setColWidth(DefaultColWidthRecord.DEFAULT_COLUMN_WIDTH);
+        retval.setColWidth(( short ) 8);
         return retval;
     }
 
@@ -1010,8 +992,6 @@ public final class InternalSheet {
      */
     public void setDefaultRowHeight(short dch) {
         defaultrowheight.setRowHeight(dch);
-        // set the bit that specifies that the default settings for the row height have been changed.
-        defaultrowheight.setOptionFlags((short)1);
     }
 
     /**
@@ -1025,8 +1005,8 @@ public final class InternalSheet {
     /**
      * get the width of a given column in units of 1/256th of a character width
      * @param columnIndex index
-     * @see org.apache.poi.hssf.record.DefaultColWidthRecord
-     * @see org.apache.poi.hssf.record.ColumnInfoRecord
+     * @see org.zkoss.poi.hssf.record.DefaultColWidthRecord
+     * @see org.zkoss.poi.hssf.record.ColumnInfoRecord
      * @see #setColumnWidth(int, int)
      * @return column width in units of 1/256th of a character width
      */
@@ -1080,8 +1060,8 @@ public final class InternalSheet {
     /**
      * Get the hidden property for a given column.
      * @param columnIndex column index
-     * @see org.apache.poi.hssf.record.DefaultColWidthRecord
-     * @see org.apache.poi.hssf.record.ColumnInfoRecord
+     * @see org.zkoss.poi.hssf.record.DefaultColWidthRecord
+     * @see org.zkoss.poi.hssf.record.ColumnInfoRecord
      * @see #setColumnHidden(int, boolean)
      * @return whether the column is hidden or not.
      */
@@ -1203,7 +1183,7 @@ public final class InternalSheet {
     /**
      * Returns the active row
      *
-     * @see org.apache.poi.hssf.record.SelectionRecord
+     * @see org.zkoss.poi.hssf.record.SelectionRecord
      * @return row the active row index
      */
     public int getActiveCellRow() {
@@ -1217,7 +1197,7 @@ public final class InternalSheet {
      * Sets the active row
      *
      * @param row the row index
-     * @see org.apache.poi.hssf.record.SelectionRecord
+     * @see org.zkoss.poi.hssf.record.SelectionRecord
      */
     public void setActiveCellRow(int row) {
         //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
@@ -1227,7 +1207,7 @@ public final class InternalSheet {
     }
 
     /**
-     * @see org.apache.poi.hssf.record.SelectionRecord
+     * @see org.zkoss.poi.hssf.record.SelectionRecord
      * @return column of the active cell
      */
     public short getActiveCellCol() {
@@ -1241,7 +1221,7 @@ public final class InternalSheet {
      * Sets the active column
      *
      * @param col the column index
-     * @see org.apache.poi.hssf.record.SelectionRecord
+     * @see org.zkoss.poi.hssf.record.SelectionRecord
      */
     public void setActiveCellCol(short col) {
         //shouldn't have a sheet w/o a SelectionRecord, but best to guard anyway
@@ -1345,9 +1325,6 @@ public final class InternalSheet {
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
-     *
-     * <p>If both colSplit and rowSplit are zero then the existing freeze pane is removed</p>
-     *
      * @param colSplit      Horizonatal position of split.
      * @param rowSplit      Vertical position of split.
      * @param topRow        Top row visible in bottom pane
@@ -1357,15 +1334,6 @@ public final class InternalSheet {
         int paneLoc = findFirstRecordLocBySid(PaneRecord.sid);
         if (paneLoc != -1)
             _records.remove(paneLoc);
-
-        // If both colSplit and rowSplit are zero then the existing freeze pane is removed
-        if(colSplit == 0 && rowSplit == 0){
-            windowTwo.setFreezePanes(false);
-            windowTwo.setFreezePanesNoSplit(false);
-            SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
-            sel.setPane(PaneInformation.PANE_UPPER_LEFT);
-            return;
-        }
 
         int loc = findFirstRecordLocBySid(WindowTwoRecord.sid);
         PaneRecord pane = new PaneRecord();
@@ -1377,7 +1345,7 @@ public final class InternalSheet {
             pane.setTopRow((short)0);
             pane.setActivePane((short)1);
         } else if (colSplit == 0) {
-            pane.setLeftColumn((short)0);
+            pane.setLeftColumn((short)64);
             pane.setActivePane((short)2);
         } else {
             pane.setActivePane((short)0);
@@ -1525,7 +1493,13 @@ public final class InternalSheet {
      * @param createIfMissing Should one be created if missing?
      */
     public int aggregateDrawingRecords(DrawingManager2 drawingManager, boolean createIfMissing) {
-        int loc = findFirstRecordLocBySid(DrawingRecord.sid);
+//20101014, henrichen@zkoss.org: EscherAggregate could have been created and insert into records    	
+        int loc = findFirstRecordLocBySid(EscherAggregate.sid);
+        if (loc >= 0) {
+        	return loc;
+        }  
+        
+        loc = findFirstRecordLocBySid(DrawingRecord.sid);
         boolean noDrawingRecordsFound = (loc == -1);
         if (noDrawingRecordsFound) {
             if(!createIfMissing) {
@@ -1544,17 +1518,27 @@ public final class InternalSheet {
             return loc;
         }
         List<RecordBase> records = getRecords();
+//20101013, henrichen@zkoss.org: handle EscherAggregate for ZK
+        if (mergeRecordsIntoEscherAggregate(records, loc, drawingManager)) {
+        	return loc;
+        }
         EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
         int startloc = loc;
-        while ( loc + 1 < records.size()
+//20100614, Henri Chen: there is not always an ObjRecord after a DrawingRecord
+/*        while ( loc + 1 < records.size()
                 && records.get( loc ) instanceof DrawingRecord
-                && (records.get( loc + 1 ) instanceof ObjRecord ||
-                    records.get( loc + 1 ) instanceof TextObjectRecord) )
+                && records.get( loc + 1 ) instanceof ObjRecord )
         {
             loc += 2;
-            if (records.get( loc ) instanceof NoteRecord) loc ++;
         }
-
+*/
+        boolean drawRecord = true;
+        while (loc + 1 < records.size() 
+        		&& ((drawRecord && records.get(loc) instanceof DrawingRecord)
+        		|| (!drawRecord && records.get(loc) instanceof ObjRecord))) {
+    		++loc;
+    		drawRecord = !drawRecord;
+       	}
         int endloc = loc-1;
         for(int i = 0; i < (endloc - startloc + 1); i++)
             records.remove(startloc);
@@ -1657,5 +1641,25 @@ public final class InternalSheet {
         NoteRecord[] result = new NoteRecord[temp.size()];
         temp.toArray(result);
         return result;
+    }
+
+    //20101013, henrichen@zkoss.org: merge drawing records into a fake EscherAggregate record if possible 
+    @SuppressWarnings("unchecked")
+	private boolean mergeRecordsIntoEscherAggregate(List<RecordBase> records, int loc, DrawingManager2 drawingManager) {
+	    final String clsName = Library.getProperty("org.zkoss.zss.model.EscherAggregate.class");
+	    if (clsName != null) {
+	    	try {
+	    		final Class cls = Classes.forNameByThread(clsName);
+				final Object r = cls.getConstructor(DrawingManager2.class).newInstance(drawingManager);
+				final Method m = Classes.getMethodInPublic(cls, "mergeRecordsIntoEscherAggregate", new Class[] {List.class, int.class, DrawingManager2.class});
+				return ((Boolean)m.invoke(r, records, new Integer(loc), drawingManager)).booleanValue();
+	    	} catch (InvocationTargetException e) {
+	    		throw new RuntimeException(e.getCause());
+			} catch (Exception ex) {
+				//ignore, falling to return false
+				log.log(POILogger.DEBUG, ex);
+			}
+	    }
+	    return false;
     }
 }

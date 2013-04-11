@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -24,14 +24,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.pivottable.*;
+import org.zkoss.poi.hssf.record.chart.*;
+import org.zkoss.poi.hssf.record.pivottable.*;
 
 /**
  * Title:  Record Factory<P>
  * Description:  Takes a stream and outputs an array of Record objects.<P>
  *
- * @see org.apache.poi.hssf.eventmodel.EventRecordFactory
+ * @see org.zkoss.poi.hssf.eventmodel.EventRecordFactory
  * @author Andrew C. Oliver (acoliver at apache dot org)
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Glen Stampoultzis (glens at apache.org)
@@ -106,9 +106,17 @@ public final class RecordFactory {
 	 */
 	@SuppressWarnings("unchecked")
 	private static final Class<? extends Record>[] recordClasses = new Class[] {
+		AreaFormatRecord.class,
+		AreaRecord.class,
 		ArrayRecord.class,
         AutoFilterInfoRecord.class,
-        BackupRecord.class,
+		AxisLineFormatRecord.class,
+		AxisOptionsRecord.class,
+		AxisParentRecord.class,
+		AxisRecord.class,
+		AxisUsedRecord.class,
+		BackupRecord.class,
+		BarRecord.class,
 		BlankRecord.class,
 		BOFRecord.class,
 		BookBoolRecord.class,
@@ -117,8 +125,11 @@ public final class RecordFactory {
 		BoundSheetRecord.class,
 		CalcCountRecord.class,
 		CalcModeRecord.class,
+		CategorySeriesAxisRecord.class,
 		CFHeaderRecord.class,
 		CFRuleRecord.class,
+		Chart3DRecord.class,
+		ChartFormatRecord.class,
 		ChartRecord.class,
 		ChartTitleFormatRecord.class,
 		CodepageRecord.class,
@@ -127,10 +138,11 @@ public final class RecordFactory {
 		CountryRecord.class,
 		CRNCountRecord.class,
 		CRNRecord.class,
+		DatRecord.class,
 		DateWindow1904Record.class,
 		DBCellRecord.class,
-                DConRefRecord.class,
 		DefaultColWidthRecord.class,
+		DefaultDataLabelTextPropertiesRecord.class,
 		DefaultRowHeightRecord.class,
 		DeltaRecord.class,
 		DimensionsRecord.class,
@@ -150,10 +162,13 @@ public final class RecordFactory {
 		FilePassRecord.class,
 		FileSharingRecord.class,
 		FnGroupCountRecord.class,
+		FontBasisRecord.class,
+		FontIndexRecord.class,
 		FontRecord.class,
 		FooterRecord.class,
 		FormatRecord.class,
 		FormulaRecord.class,
+		FrameRecord.class,
 		GridsetRecord.class,
 		GutsRecord.class,
 		HCenterRecord.class,
@@ -170,6 +185,8 @@ public final class RecordFactory {
 		LabelSSTRecord.class,
 		LeftMarginRecord.class,
 		LegendRecord.class,
+		LineFormatRecord.class,
+		LineRecord.class,
 		MergeCellsRecord.class,
 		MMSRecord.class,
 		MulBlankRecord.class,
@@ -180,10 +197,15 @@ public final class RecordFactory {
 		NumberRecord.class,
 		ObjectProtectRecord.class,
 		ObjRecord.class,
+		ObjectLinkRecord.class,
 		PaletteRecord.class,
 		PaneRecord.class,
 		PasswordRecord.class,
 		PasswordRev4Record.class,
+		PieRecord.class,
+		PieFormatRecord.class,
+		PlotAreaRecord.class,
+		PlotGrowthRecord.class,
 		PrecisionRecord.class,
 		PrintGridlinesRecord.class,
 		PrintHeadersRecord.class,
@@ -196,12 +218,17 @@ public final class RecordFactory {
 		RightMarginRecord.class,
 		RKRecord.class,
 		RowRecord.class,
+		SCLRecord.class,
 		SaveRecalcRecord.class,
+		ScatterRecord.class,
 		ScenarioProtectRecord.class,
 		SelectionRecord.class,
+		SeriesIndexRecord.class,
+		SeriesListRecord.class,
 		SeriesRecord.class,
 		SeriesTextRecord.class,
 		SharedFormulaRecord.class,
+		SheetPropertiesRecord.class,
 		SSTRecord.class,
 		StringRecord.class,
 		StyleRecord.class,
@@ -210,6 +237,8 @@ public final class RecordFactory {
 		TableRecord.class,
 		TableStylesRecord.class,
 		TextObjectRecord.class,
+		TextRecord.class,
+		TickRecord.class,
 		TopMarginRecord.class,
 		UncalcedRecord.class,
 		UseSelFSRecord.class,
@@ -227,14 +256,14 @@ public final class RecordFactory {
 
 		// chart records
 		BeginRecord.class,
+		Chart3DBarShapeRecord.class,
 		ChartFRTInfoRecord.class,
 		ChartStartBlockRecord.class,
 		ChartEndBlockRecord.class,
-// TODO ChartFormatRecord.class,
 		ChartStartObjectRecord.class,
 		ChartEndObjectRecord.class,
 		CatLabRecord.class,
-      DataFormatRecord.class,
+		DataFormatRecord.class,
 		EndRecord.class,
 		LinkedDataRecord.class,
 		SeriesToChartGroupRecord.class,

@@ -17,8 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
@@ -33,7 +31,6 @@ import org.apache.poi.hwpf.model.StyleSheet;
  */
 public final class TestProblems extends HWPFTestCase {
 
-    
    /**
     * ListEntry passed no ListTable
     */
@@ -91,6 +88,10 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals("One paragraph is ok\7", r.getParagraph(3).text());
       assertEquals("\7", r.getParagraph(4).text());
       assertEquals("\r", r.getParagraph(5).text());
+      for(int i=0; i<=5; i++) {
+         assertFalse(r.getParagraph(i).usesUnicode());
+      }
+
 
       // Get the table
       Table t = r.getTable(p);
@@ -104,7 +105,7 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(0, row._parStart);
       assertEquals(5, row._parEnd);
       assertEquals(0, row.getStartOffset());
-      assertEquals(86, row.getEndOffset());
+      assertEquals(87, row.getEndOffset());
 
 
       // get the first cell
@@ -288,6 +289,9 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals("Row 3/Cell 3\u0007", r.getParagraph(10).text());
       assertEquals("\u0007", r.getParagraph(11).text());
       assertEquals("\r", r.getParagraph(12).text());
+      for(int i=0; i<=12; i++) {
+         assertFalse(r.getParagraph(i).usesUnicode());
+      }
 
       Paragraph p;
 
@@ -414,5 +418,4 @@ public final class TestProblems extends HWPFTestCase {
       assertEquals(119, cell.getEndOffset());
       assertEquals("Row 3/Cell 3\u0007", cell.text());
    }
-
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.extractor;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -37,13 +38,4 @@ public final class TestWordExtractorBugs extends TestCase {
 		extractor.getParagraphText();
 		extractor.getTextFromPieces();
 	}
-
-    public void testBug50688() throws Exception {
-        WordExtractor extractor =
-            new WordExtractor(POIDataSamples.getDocumentInstance().openResourceAsStream("parentinvguid.doc"));
-
-        // Check it gives text without error
-        extractor.getText();
-    }
-    
 }

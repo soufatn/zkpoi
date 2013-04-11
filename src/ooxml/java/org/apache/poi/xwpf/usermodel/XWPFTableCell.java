@@ -14,35 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+import org.zkoss.poi.util.Internal;
 
-/**
- * XWPFTableCell class.
- *
- * @author Gregg Morris (gregg dot morris at gmail dot com) - added XWPFVertAlign enum,
- *         setColor(),
- *         setVerticalAlignment()
- */
+
 public class XWPFTableCell implements IBody {
     private final CTTc ctTc;
     protected List<XWPFParagraph> paragraphs = null;
@@ -50,28 +36,6 @@ public class XWPFTableCell implements IBody {
     protected List<IBodyElement> bodyElements = null;
     protected IBody part;
     private XWPFTableRow tableRow = null;
-    // Create a map from this XWPF-level enum to the STVerticalJc.Enum values
-    public static enum XWPFVertAlign { TOP, CENTER, BOTH, BOTTOM };
-    private static EnumMap<XWPFVertAlign, STVerticalJc.Enum> alignMap;
-    // Create a map from the STVerticalJc.Enum values to the XWPF-level enums
-    private static HashMap<Integer, XWPFVertAlign> stVertAlignTypeMap;
-
-    static {
-        // populate enum maps
-        alignMap = new EnumMap<XWPFVertAlign, STVerticalJc.Enum>(XWPFVertAlign.class);
-        alignMap.put(XWPFVertAlign.TOP, STVerticalJc.Enum.forInt(STVerticalJc.INT_TOP));
-        alignMap.put(XWPFVertAlign.CENTER, STVerticalJc.Enum.forInt(STVerticalJc.INT_CENTER));
-        alignMap.put(XWPFVertAlign.BOTH, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTH));
-        alignMap.put(XWPFVertAlign.BOTTOM, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTTOM));
-
-        stVertAlignTypeMap = new HashMap<Integer, XWPFVertAlign>();
-        stVertAlignTypeMap.put(STVerticalJc.INT_TOP, XWPFVertAlign.TOP);
-        stVertAlignTypeMap.put(STVerticalJc.INT_CENTER, XWPFVertAlign.CENTER);
-        stVertAlignTypeMap.put(STVerticalJc.INT_BOTH, XWPFVertAlign.BOTH);
-        stVertAlignTypeMap.put(STVerticalJc.INT_BOTTOM, XWPFVertAlign.BOTTOM);
-
-    }
-
     /**
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt
      */
@@ -101,7 +65,6 @@ public class XWPFTableCell implements IBody {
             	bodyElements.add(t);
             }
         }
-        cursor.dispose();
     }
 
 
@@ -112,7 +75,7 @@ public class XWPFTableCell implements IBody {
 
     /**
      * returns an Iterator with paragraphs and tables
-     * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getBodyElements()
      */
     public List<IBodyElement> getBodyElements(){
       return Collections.unmodifiableList(bodyElements);
@@ -186,59 +149,6 @@ public class XWPFTableCell implements IBody {
     	return tableRow;
     }
     
-    /**
-     * Set cell color. This sets some associated values; for finer control
-     * you may want to access these elements individually.
-     * @param rgbStr - the desired cell color, in the hex form "RRGGBB".
-     */
-    public void setColor(String rgbStr) {
-        CTTcPr tcpr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
-        CTShd ctshd = tcpr.isSetShd() ? tcpr.getShd() : tcpr.addNewShd();
-        ctshd.setColor("auto");
-        ctshd.setVal(STShd.CLEAR);
-        ctshd.setFill(rgbStr);
-    }
-
-    /**
-     * Get cell color. Note that this method only returns the "fill" value.
-     * @return RGB string of cell color
-     */
-    public String getColor() {
-    	String color = null;
-        CTTcPr tcpr = ctTc.getTcPr();
-        if (tcpr != null) {
-        	CTShd ctshd = tcpr.getShd();
-        	if (ctshd != null) {
-        		color = ctshd.xgetFill().getStringValue();
-        	}
-        }
-    	return color;
-    }
-
-    /**
-     * Set the vertical alignment of the cell.
-     * @param vAlign - the desired alignment enum value
-     */
-    public void setVerticalAlignment(XWPFVertAlign vAlign) {
-        CTTcPr tcpr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
-    	CTVerticalJc va = tcpr.addNewVAlign();
-    	va.setVal(alignMap.get(vAlign));
-    }
-
-    /**
-     * Get the vertical alignment of the cell.
-     * @return the cell alignment enum value
-     */
-    public XWPFVertAlign getVerticalAlignment() {
-    	XWPFVertAlign vAlign = null;
-        CTTcPr tcpr = ctTc.getTcPr();
-        if (ctTc != null) {
-        	CTVerticalJc va = tcpr.getVAlign();
-        	vAlign = stVertAlignTypeMap.get(va.getVal().intValue());
-        }
-        return vAlign;
-    }
-
     /**
      * add a new paragraph at position of the cursor
      * @param cursor
@@ -328,7 +238,7 @@ public class XWPFTableCell implements IBody {
 	
 
 	/**
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getParagraphArray(int)
 	 */
 	public XWPFParagraph getParagraphArray(int pos) {
 		if(pos > 0 && pos < paragraphs.size()){
@@ -337,18 +247,20 @@ public class XWPFTableCell implements IBody {
 		return null;
 	}
 
-    /**
-     * get the to which the TableCell belongs
-     * 
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
-     */
-    public POIXMLDocumentPart getPart() {
-        return tableRow.getTable().getPart();
-    }
+
+
+
+	/**
+	 * get the to which the TableCell belongs 
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getPart()
+	 */
+	public IBody getPart() {
+		return tableRow.getTable().getPart();
+	}
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getPartType()
 	 */
 	public BodyType getPartType() {
 		return BodyType.TABLECELL;
@@ -357,7 +269,7 @@ public class XWPFTableCell implements IBody {
 
 	/**
 	 * get a table by its CTTbl-Object
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
 	 */
 	public XWPFTable getTable(CTTbl ctTable) {
 		for(int i=0; i<tables.size(); i++){
@@ -368,7 +280,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTableArray(int)
 	 */
 	public XWPFTable getTableArray(int pos) {
 		if(pos > 0 && pos < tables.size()){
@@ -379,7 +291,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTables()
 	 */
 	public List<XWPFTable> getTables() {
 		return Collections.unmodifiableList(tables);
@@ -388,7 +300,7 @@ public class XWPFTableCell implements IBody {
 
 	/**
 	 * inserts an existing XWPFTable to the arrays bodyElements and tables
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int, org.apache.poi.xwpf.usermodel.XWPFTable)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#insertTable(int, org.zkoss.poi.xwpf.usermodel.XWPFTable)
 	 */
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);
@@ -424,7 +336,6 @@ public class XWPFTableCell implements IBody {
 		CTRow row = (CTRow)o;
 		cursor.toParent();
 		o = cursor.getObject();
-        cursor.dispose();
 		if(! (o instanceof CTTbl)){
 			return null;
 		}
@@ -434,7 +345,7 @@ public class XWPFTableCell implements IBody {
 			return null;
 		}
 		XWPFTableRow tableRow = table.getRow(row);
-		if (tableRow == null) {
+		if(row == null){
 			return null;
 		}
 		return tableRow.getTableCell(cell);

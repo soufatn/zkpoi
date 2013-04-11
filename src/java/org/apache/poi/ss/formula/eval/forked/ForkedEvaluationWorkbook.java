@@ -15,20 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval.forked;
+package org.zkoss.poi.ss.formula.eval.forked;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationName;
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.hssf.record.formula.NamePtg;
+import org.zkoss.poi.hssf.record.formula.NameXPtg;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.hssf.record.formula.functions.FreeRefFunction;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationName;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook;
+import org.zkoss.poi.ss.usermodel.Workbook;
 
 /**
  * Represents a workbook being used for forked evaluation. Most operations are delegated to the
@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * updated after a call to {@link #getOrCreateUpdatableCell(String, int, int)}.
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 
@@ -87,6 +88,10 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 		return _masterBook.convertFromExternSheetIndex(externSheetIndex);
 	}
 
+	public int convertLastIndexFromExternSheetIndex(int externSheetIndex) {
+		return _masterBook.convertLastIndexFromExternSheetIndex(externSheetIndex);
+	}
+
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 		return _masterBook.getExternalSheet(externSheetIndex);
 	}
@@ -102,10 +107,6 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 	public EvaluationName getName(NamePtg namePtg) {
 		return _masterBook.getName(namePtg);
 	}
-
-    public EvaluationName getName(String name, int sheetIndex){
-        return _masterBook.getName(name, sheetIndex);
-    }
 
 	public EvaluationSheet getSheet(int sheetIndex) {
 		return getSharedSheet(getSheetName(sheetIndex));
@@ -134,10 +135,6 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 	public String resolveNameXText(NameXPtg ptg) {
 		return _masterBook.resolveNameXText(ptg);
 	}
-
-    public UDFFinder getUDFFinder(){
-        return _masterBook.getUDFFinder();
-    }
 
 	private static final class OrderedSheet implements Comparable<OrderedSheet> {
 		private final String _sheetName;

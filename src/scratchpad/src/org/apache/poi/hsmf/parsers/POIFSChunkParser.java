@@ -15,28 +15,27 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hsmf.parsers;
+package org.zkoss.poi.hsmf.parsers;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.poi.hsmf.datatypes.AttachmentChunks;
-import org.apache.poi.hsmf.datatypes.ByteChunk;
-import org.apache.poi.hsmf.datatypes.Chunk;
-import org.apache.poi.hsmf.datatypes.ChunkGroup;
-import org.apache.poi.hsmf.datatypes.Chunks;
-import org.apache.poi.hsmf.datatypes.DirectoryChunk;
-import org.apache.poi.hsmf.datatypes.MAPIProperty;
-import org.apache.poi.hsmf.datatypes.MessageSubmissionChunk;
-import org.apache.poi.hsmf.datatypes.NameIdChunks;
-import org.apache.poi.hsmf.datatypes.RecipientChunks;
-import org.apache.poi.hsmf.datatypes.StringChunk;
-import org.apache.poi.hsmf.datatypes.Types;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.hsmf.datatypes.AttachmentChunks;
+import org.zkoss.poi.hsmf.datatypes.ByteChunk;
+import org.zkoss.poi.hsmf.datatypes.Chunk;
+import org.zkoss.poi.hsmf.datatypes.ChunkGroup;
+import org.zkoss.poi.hsmf.datatypes.Chunks;
+import org.zkoss.poi.hsmf.datatypes.DirectoryChunk;
+import org.zkoss.poi.hsmf.datatypes.MessageSubmissionChunk;
+import org.zkoss.poi.hsmf.datatypes.NameIdChunks;
+import org.zkoss.poi.hsmf.datatypes.RecipientChunks;
+import org.zkoss.poi.hsmf.datatypes.StringChunk;
+import org.zkoss.poi.hsmf.datatypes.Types;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.DocumentNode;
+import org.zkoss.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Processes a POIFS of a .msg file into groups of Chunks, such as
@@ -121,24 +120,13 @@ public final class POIFSChunkParser {
       
       // Split it into its parts
       int splitAt = entryName.lastIndexOf('_');
-      String namePrefix = entryName.substring(0, splitAt+1);
-      String ids = entryName.substring(splitAt+1);
-      
-      // Make sure we got what we expected, should be of 
-      //  the form __<name>_<id><type>
-      if(namePrefix.equals("Olk10SideProps") ||
-         namePrefix.equals("Olk10SideProps_")) {
-         // This is some odd Outlook 2002 thing, skip
-         return;
-      } else if(splitAt <= entryName.length()-8) {
-         // In the right form for a normal chunk
-         // We'll process this further in a little bit
-      } else {
-         // Underscores not the right place, something's wrong
+      if(splitAt == -1 || splitAt > (entryName.length()-8)) {
          throw new IllegalArgumentException("Invalid chunk name " + entryName);
       }
       
       // Now try to turn it into id + type
+      String namePrefix = entryName.substring(0, splitAt+1);
+      String ids = entryName.substring(splitAt+1);
       try {
          int chunkId = Integer.parseInt(ids.substring(0, 4), 16);
          int type    = Integer.parseInt(ids.substring(4, 8), 16);
@@ -146,10 +134,11 @@ public final class POIFSChunkParser {
          Chunk chunk = null;
          
          // Special cases based on the ID
-         if(chunkId == MAPIProperty.MESSAGE_SUBMISSION_ID.id) {
+         switch(chunkId) {
+         case Chunks.SUBMISSION_ID_DATE:
             chunk = new MessageSubmissionChunk(namePrefix, chunkId, type);
-         } 
-         else {
+            break;
+         default:
             // Nothing special about this ID
             // So, do the usual thing which is by type
             switch(type) {

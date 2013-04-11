@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record.aggregates;
+package org.zkoss.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,23 +23,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.ArrayRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.hssf.record.DBCellRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.MulBlankRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
-import org.apache.poi.hssf.record.TableRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.hssf.model.RecordStream;
+import org.zkoss.poi.hssf.record.ArrayRecord;
+import org.zkoss.poi.hssf.record.CellValueRecordInterface;
+import org.zkoss.poi.hssf.record.ContinueRecord;
+import org.zkoss.poi.hssf.record.DBCellRecord;
+import org.zkoss.poi.hssf.record.DimensionsRecord;
+import org.zkoss.poi.hssf.record.FormulaRecord;
+import org.zkoss.poi.hssf.record.IndexRecord;
+import org.zkoss.poi.hssf.record.MergeCellsRecord;
+import org.zkoss.poi.hssf.record.MulBlankRecord;
+import org.zkoss.poi.hssf.record.Record;
+import org.zkoss.poi.hssf.record.RowRecord;
+import org.zkoss.poi.hssf.record.SharedFormulaRecord;
+import org.zkoss.poi.hssf.record.TableRecord;
+import org.zkoss.poi.hssf.record.UnknownRecord;
+import org.zkoss.poi.hssf.record.formula.FormulaShifter;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 
 /**
  *
@@ -53,10 +53,6 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	private final ValueRecordsAggregate _valuesAgg;
 	private final List<Record> _unknownRecords;
 	private final SharedValueManager _sharedValueManager;
-
-	// Cache values to speed up performance of
-    // getStartRowNumberForBlock / getEndRowNumberForBlock, see Bugzilla 47405
-    private RowRecord[] _rowRecordValues = null;
 
 	/** Creates a new instance of ValueRecordsAggregate */
 	public RowRecordsAggregate() {
@@ -125,8 +121,6 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	public void insertRow(RowRecord row) {
 		// Integer integer = Integer.valueOf(row.getRowNumber());
 		_rowRecords.put(Integer.valueOf(row.getRowNumber()), row);
-		// Clear the cached values
-		_rowRecordValues = null; 
 		if ((row.getRowNumber() < _firstrow) || (_firstrow == -1)) {
 			_firstrow = row.getRowNumber();
 		}
@@ -147,9 +141,6 @@ public final class RowRecordsAggregate extends RecordAggregate {
 			_rowRecords.put(key, rr);
 			throw new RuntimeException("Attempt to remove row that does not belong to this sheet");
 		}
-		
-		// Clear the cached values
-		_rowRecordValues = null;
 	}
 
 	public RowRecord getRow(int rowIndex) {
@@ -202,17 +193,22 @@ public final class RowRecordsAggregate extends RecordAggregate {
 
 	/** Returns the physical row number of the first row in a block*/
 	private int getStartRowNumberForBlock(int block) {
-	    int startIndex = block * DBCellRecord.BLOCK_SIZE;
-
-        if(_rowRecordValues == null){
-            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
-        }
-
-        try {
-            return _rowRecordValues[startIndex].getRowNumber();
-        } catch(ArrayIndexOutOfBoundsException e) {
+	  //Given that we basically iterate through the rows in order,
+	  // TODO - For a performance improvement, it would be better to return an instance of
+	  //an iterator and use that instance throughout, rather than recreating one and
+	  //having to move it to the right position.
+	  int startIndex = block * DBCellRecord.BLOCK_SIZE;
+	  Iterator<RowRecord> rowIter = _rowRecords.values().iterator();
+	  RowRecord row = null;
+	  //Position the iterator at the start of the block
+	  for (int i=0; i<=startIndex;i++) {
+		row = rowIter.next();
+	  }
+	  if (row == null) {
 		  throw new RuntimeException("Did not find start row for block " + block);
-	    }
+	  }
+
+	  return row.getRowNumber();
 	}
 
 	/** Returns the physical row number of the end row in a block*/
@@ -221,15 +217,15 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	  if (endIndex >= _rowRecords.size())
 		endIndex = _rowRecords.size()-1;
 
-        if(_rowRecordValues == null){
-            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
-        }
-
-        try {
-            return _rowRecordValues[endIndex].getRowNumber();
-        } catch(ArrayIndexOutOfBoundsException e) {
-            throw new RuntimeException("Did not find end row for block " + block);
+	  Iterator<RowRecord> rowIter = _rowRecords.values().iterator();
+	  RowRecord row = null;
+	  for (int i=0; i<=endIndex;i++) {
+		row = rowIter.next();
 	  }
+	  if (row == null) {
+		  throw new RuntimeException("Did not find start row for block " + block);
+	  }
+	  return row.getRowNumber();
 	}
 
 	private int visitRowRecordsForBlock(int blockIndex, RecordVisitor rv) {
@@ -364,7 +360,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 	 *
 	 * @param rowNumber row number
 	 * @return RowRecord created for the passed in row number
-	 * @see org.apache.poi.hssf.record.RowRecord
+	 * @see org.zkoss.poi.hssf.record.RowRecord
 	 */
 	public static RowRecord createRow(int rowNumber) {
 		return new RowRecord(rowNumber);
@@ -447,17 +443,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
 
 		return startHidden;
 	}
-	
-	/**
-	 * Returns an iterator for the cell values
-	 */
-	public Iterator<CellValueRecordInterface> getCellValueIterator() {
-		return _valuesAgg.iterator();
-	}
 
-	/**
-	 * @deprecated use {@link #getCellValueIterator()} instead
-	 */
 	public CellValueRecordInterface[] getValueRecords() {
 		return _valuesAgg.getValueRecords();
 	}

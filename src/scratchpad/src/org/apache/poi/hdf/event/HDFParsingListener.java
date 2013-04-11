@@ -15,15 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hdf.event;
+package org.zkoss.poi.hdf.event;
 
-import org.apache.poi.hdf.model.hdftypes.SectionProperties;
-import org.apache.poi.hdf.model.hdftypes.CharacterProperties;
-import org.apache.poi.hdf.model.hdftypes.ParagraphProperties;
-import org.apache.poi.hdf.model.hdftypes.TableProperties;
-import org.apache.poi.hdf.model.hdftypes.DocumentProperties;
+import org.zkoss.poi.hdf.model.hdftypes.CharacterProperties;
+import org.zkoss.poi.hdf.model.hdftypes.DocumentProperties;
+import org.zkoss.poi.hdf.model.hdftypes.ParagraphProperties;
+import org.zkoss.poi.hdf.model.hdftypes.SectionProperties;
+import org.zkoss.poi.hdf.model.hdftypes.TableProperties;
 
-@Deprecated
 public interface HDFParsingListener
 {
   public void document(DocumentProperties dop);

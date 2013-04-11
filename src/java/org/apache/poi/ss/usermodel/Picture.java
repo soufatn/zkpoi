@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 /**
  * Repersents a picture in a SpreadsheetML document
@@ -50,12 +50,11 @@ public interface Picture {
     void resize(double scale);
 
     ClientAnchor getPreferredSize();
-    
-    /**
-     * Return picture data for this picture
-     *
-     * @return picture data for this picture
-     */
+
+    //20101015, henrichen@zkoss.org
     PictureData getPictureData();
+    String getName();
+    String getAlt();
+    ClientAnchor getClientAnchor();
 
 }

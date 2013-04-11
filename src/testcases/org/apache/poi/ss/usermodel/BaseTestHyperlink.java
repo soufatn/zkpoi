@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**

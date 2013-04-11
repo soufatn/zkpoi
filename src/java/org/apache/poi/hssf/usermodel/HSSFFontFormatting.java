@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
+import org.zkoss.poi.hssf.record.cf.FontFormatting;
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
@@ -26,18 +26,24 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
  * @author Dmitriy Kumshayev
  *
  */
-public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.FontFormatting
+public final class HSSFFontFormatting
 {
+	/** Escapement type - None */
+	public final static short SS_NONE  = FontFormatting.SS_NONE;
+	/** Escapement type - Superscript */
+	public final static short SS_SUPER = FontFormatting.SS_SUPER;
+	/** Escapement type - Subscript */
+	public final static short SS_SUB   = FontFormatting.SS_SUB;
 
-	/** Underline type - None */
+	/** Underline type - None */ 
 	public final static byte U_NONE              = FontFormatting.U_NONE;
-	/** Underline type - Single */
+	/** Underline type - Single */ 
 	public final static byte U_SINGLE            = FontFormatting.U_SINGLE;
-	/** Underline type - Double */
+	/** Underline type - Double */ 
 	public final static byte U_DOUBLE            = FontFormatting.U_DOUBLE;
-	/**  Underline type - Single Accounting */
+	/**  Underline type - Single Accounting */ 
 	public final static byte U_SINGLE_ACCOUNTING = FontFormatting.U_SINGLE_ACCOUNTING;
-	/** Underline type - Double Accounting */
+	/** Underline type - Double Accounting */ 
 	public final static byte U_DOUBLE_ACCOUNTING = FontFormatting.U_DOUBLE_ACCOUNTING;
 
 	private final FontFormatting fontFormatting;
@@ -96,7 +102,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 	}
 
 	/**
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#getRawRecord()
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#getRawRecord()
 	 */
 	protected byte[] getRawRecord()
 	{
@@ -268,7 +274,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setEscapementTypeModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setEscapementTypeModified(boolean)
 	 */
 	public void setEscapementTypeModified(boolean modified)
 	{
@@ -277,7 +283,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontCancellationModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontCancellationModified(boolean)
 	 */
 	public void setFontCancellationModified(boolean modified)
 	{
@@ -286,7 +292,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param fci
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontColorIndex(short)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontColorIndex(short)
 	 */
 	public void setFontColorIndex(short fci)
 	{
@@ -295,7 +301,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param height
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontHeight(int)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontHeight(int)
 	 */
 	public void setFontHeight(int height)
 	{
@@ -304,7 +310,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontOutlineModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontOutlineModified(boolean)
 	 */
 	public void setFontOutlineModified(boolean modified)
 	{
@@ -313,7 +319,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontShadowModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontShadowModified(boolean)
 	 */
 	public void setFontShadowModified(boolean modified)
 	{
@@ -322,7 +328,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontStyleModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontStyleModified(boolean)
 	 */
 	public void setFontStyleModified(boolean modified)
 	{
@@ -331,7 +337,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param on
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setOutline(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setOutline(boolean)
 	 */
 	public void setOutline(boolean on)
 	{
@@ -341,7 +347,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param on
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setShadow(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setShadow(boolean)
 	 */
 	public void setShadow(boolean on)
 	{
@@ -351,7 +357,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param strike
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setStrikeout(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setStrikeout(boolean)
 	 */
 	public void setStrikeout(boolean strike)
 	{
@@ -392,7 +398,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setUnderlineTypeModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setUnderlineTypeModified(boolean)
 	 */
 	public void setUnderlineTypeModified(boolean modified)
 	{

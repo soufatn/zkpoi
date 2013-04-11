@@ -15,20 +15,38 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.util.HSSFColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STFontCollectionIndex;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Represents a shape with a predefined geometry in a SpreadsheetML drawing.
- * Possible shape types are defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}
+ * Possible shape types are defined in {@link org.zkoss.poi.ss.usermodel.ShapeTypes}
  *
  * @author Yegor Kozlov
  */
@@ -115,10 +133,10 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
     }
 
     /**
-     * Gets the shape type, one of the constants defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}.
+     * Gets the shape type, one of the constants defined in {@link org.zkoss.poi.ss.usermodel.ShapeTypes}.
      *
      * @return the shape type
-     * @see org.apache.poi.ss.usermodel.ShapeTypes
+     * @see org.zkoss.poi.ss.usermodel.ShapeTypes
      */
     public int getShapeType() {
         return ctShape.getSpPr().getPrstGeom().getPrst().intValue();
@@ -127,8 +145,8 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
     /**
      * Sets the shape types.
      *
-     * @param type the shape type, one of the constants defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}.
-     * @see org.apache.poi.ss.usermodel.ShapeTypes
+     * @param type the shape type, one of the constants defined in {@link org.zkoss.poi.ss.usermodel.ShapeTypes}.
+     * @see org.zkoss.poi.ss.usermodel.ShapeTypes
      */
     public void setShapeType(int type) {
         ctShape.getSpPr().getPrstGeom().setPrst(STShapeType.Enum.forInt(type));
@@ -172,48 +190,15 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
 
     /**
      *
-     * org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt to
-     * org.openxmlformats.schemas.drawingml.x2006.main.CTFont adapter
+     * CTRPrElt --> CTFont adapter
      */
     private static void applyAttributes(CTRPrElt pr, CTTextCharacterProperties rPr){
 
         if(pr.sizeOfBArray() > 0) rPr.setB(pr.getBArray(0).getVal());
-        if(pr.sizeOfUArray() > 0) {
-            STUnderlineValues.Enum u1 = pr.getUArray(0).getVal();
-            if(u1 == STUnderlineValues.SINGLE) rPr.setU(STTextUnderlineType.SNG);
-            else if(u1 == STUnderlineValues.DOUBLE) rPr.setU(STTextUnderlineType.DBL);
-            else if(u1 == STUnderlineValues.NONE) rPr.setU(STTextUnderlineType.NONE);
-        }
+        //if(pr.sizeOfUArray() > 0) rPr.setU(pr.getUArray(0).getVal());
         if(pr.sizeOfIArray() > 0) rPr.setI(pr.getIArray(0).getVal());
 
-        if(pr.sizeOfFamilyArray() > 0) {
-            CTTextFont rFont = rPr.addNewLatin();
-            rFont.setTypeface(pr.getRFontArray(0).getVal());
-        }
-
-        if(pr.sizeOfSzArray() > 0) {
-            int sz = (int)(pr.getSzArray(0).getVal()*100);
-            rPr.setSz(sz);
-        }
-        
-        if(pr.sizeOfColorArray() > 0) {
-            CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
-            org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor xlsColor = pr.getColorArray(0);
-            if(xlsColor.isSetRgb()) {
-                CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
-                clr.setVal(xlsColor.getRgb());
-            }
-            else if(xlsColor.isSetIndexed()) {
-                HSSFColor indexed = HSSFColor.getIndexHash().get((int) xlsColor.getIndexed());
-                if (indexed != null) {
-                    byte[] rgb = new byte[3];
-                    rgb[0] = (byte) indexed.getTriplet()[0];
-                    rgb[1] = (byte) indexed.getTriplet()[1];
-                    rgb[2] = (byte) indexed.getTriplet()[2];
-                    CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
-                    clr.setVal(rgb);
-                }
-            }
-        }
+        CTTextFont rFont = rPr.addNewLatin();
+        rFont.setTypeface(pr.sizeOfRFontArray() > 0 ? pr.getRFontArray(0).getVal() : "Arial");
     }
 }

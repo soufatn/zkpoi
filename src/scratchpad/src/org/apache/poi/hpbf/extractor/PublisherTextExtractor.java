@@ -15,48 +15,40 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpbf.extractor;
+package org.zkoss.poi.hpbf.extractor;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hpbf.HPBFDocument;
-import org.apache.poi.hpbf.model.qcbits.QCBit;
-import org.apache.poi.hpbf.model.qcbits.QCTextBit;
-import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.POIOLE2TextExtractor;
+import org.zkoss.poi.hpbf.HPBFDocument;
+import org.zkoss.poi.hpbf.model.qcbits.QCBit;
+import org.zkoss.poi.hpbf.model.qcbits.QCTextBit;
+import org.zkoss.poi.hpbf.model.qcbits.QCPLCBit.Type12;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Extract text from HPBF Publisher files
  */
 public final class PublisherTextExtractor extends POIOLE2TextExtractor {
-   private HPBFDocument doc;
-   private boolean hyperlinksByDefault = false;
+	private HPBFDocument doc;
+	private boolean hyperlinksByDefault = false;
 
-   public PublisherTextExtractor(HPBFDocument doc) {
-      super(doc);
-      this.doc = doc;
-   }
-   public PublisherTextExtractor(DirectoryNode dir) throws IOException {
-      this(new HPBFDocument(dir));
-   }
-   public PublisherTextExtractor(POIFSFileSystem fs) throws IOException {
-      this(new HPBFDocument(fs));
-   }
-   public PublisherTextExtractor(NPOIFSFileSystem fs) throws IOException {
-      this(new HPBFDocument(fs));
-   }
-   public PublisherTextExtractor(InputStream is) throws IOException {
-      this(new POIFSFileSystem(is));
-   }
-   @Deprecated
+	public PublisherTextExtractor(HPBFDocument doc) {
+		super(doc);
+		this.doc = doc;
+	}
    public PublisherTextExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
       this(new HPBFDocument(dir, fs));
    }
+	public PublisherTextExtractor(POIFSFileSystem fs) throws IOException {
+		this(new HPBFDocument(fs));
+	}
+	public PublisherTextExtractor(InputStream is) throws IOException {
+		this(new POIFSFileSystem(is));
+	}
 
 	/**
 	 * Should a call to getText() return hyperlinks inline

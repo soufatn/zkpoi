@@ -14,14 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.util.AreaReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.zkoss.poi.hssf.record.formula.Ptg;
+import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.usermodel.Name;
+import org.zkoss.poi.ss.util.AreaReference;
 
 /**
  * Represents a defined named range in a SpreadsheetML workbook.
@@ -85,7 +85,7 @@ public final class XSSFName implements Name {
      * <li> This defined name refers to a range to which an AutoFilter has been
      * applied
      */
-    public final static String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase";
+    public final static String BUILTIN_FILTER_DB = "_xlnm._FilterDatabase:";
 
     /**
      * A built-in defined name that refers to a consolidation area
@@ -110,7 +110,7 @@ public final class XSSFName implements Name {
      *
      * @param name - the xml bean that holds data represenring this defined name.
      * @param workbook - the workbook object associated with the name
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createName()
+     * @see org.zkoss.poi.xssf.usermodel.XSSFWorkbook#createName()
      */
     protected XSSFName(CTDefinedName name, XSSFWorkbook workbook) {
         _workbook = workbook;

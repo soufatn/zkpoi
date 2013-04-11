@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 
 /**
@@ -70,8 +70,6 @@ public enum FontCharset {
     }
 
     public static FontCharset valueOf(int value){
-        if(value >= _table.length)
-           return null;
         return _table[value];
     }
 }

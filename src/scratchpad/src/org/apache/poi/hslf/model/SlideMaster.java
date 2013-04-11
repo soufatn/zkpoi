@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.zkoss.poi.hslf.model;
 
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.zkoss.poi.hslf.model.textproperties.TextProp;
+import org.zkoss.poi.hslf.model.textproperties.TextPropCollection;
+import org.zkoss.poi.hslf.record.*;
+import org.zkoss.poi.hslf.usermodel.SlideShow;
 
 /**
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
@@ -124,8 +124,7 @@ public final class SlideMaster extends MasterSheet {
 
             TxMasterStyleAtom[] txrec = ((MainMaster)getSheetContainer()).getTxMasterStyleAtoms();
             for (int i = 0; i < txrec.length; i++) {
-                int txType = txrec[i].getTextType();
-                if(_txmaster[txType] == null) _txmaster[txType] = txrec[i];
+                _txmaster[txrec[i].getTextType()] = txrec[i];
             }
         }
     }

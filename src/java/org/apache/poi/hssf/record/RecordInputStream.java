@@ -15,17 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.dev.BiffViewer;
-import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianInputStream;
+import org.zkoss.poi.hssf.dev.BiffViewer;
+import org.zkoss.poi.hssf.record.crypto.Biff8DecryptingStream;
+import org.zkoss.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianInputStream;
 
 /**
  * Title:  Record Input Stream<P>
@@ -273,10 +273,7 @@ public final class RecordInputStream implements LittleEndianInput {
 		long valueLongBits = readLong();
 		double result = Double.longBitsToDouble(valueLongBits);
 		if (Double.isNaN(result)) {
-            // YK: Excel doesn't write NaN but instead converts the cell type into CELL_TYPE_ERROR.
-            // HSSF prior to version 3.7 had a bug: it could write Double.NaN but could not read such a file back.
-            // This behavior was fixed in POI-3.7.
-            //throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN
+			throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN
 		}
 		return result;
 	}

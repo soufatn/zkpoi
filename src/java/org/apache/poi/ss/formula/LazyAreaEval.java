@@ -15,20 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.AreaEvalBase;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.util.CellReference;
+import org.zkoss.poi.hssf.record.formula.AreaI;
+import org.zkoss.poi.hssf.record.formula.AreaI.OffsetArea;
+import org.zkoss.poi.hssf.record.formula.eval.AreaEval;
+import org.zkoss.poi.hssf.record.formula.eval.AreaEvalBase;
+import org.zkoss.poi.hssf.record.formula.eval.HyperlinkEval;
+import org.zkoss.poi.hssf.record.formula.eval.ValueEval;
+import org.zkoss.poi.hssf.util.CellReference;
+import org.zkoss.poi.ss.usermodel.Hyperlink;
 
 /**
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference, HYPERLINK function
  */
-final class LazyAreaEval extends AreaEvalBase {
+final class LazyAreaEval extends AreaEvalBase implements HyperlinkEval {
 
 	private final SheetRefEvaluator _evaluator;
 
@@ -45,8 +48,11 @@ final class LazyAreaEval extends AreaEvalBase {
 
 	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 
-		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
+		//20100915, henrichen@zkoss.org: will not work in Excel 2007 with larger rows and columns
+		//int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
+		//int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
+		int rowIx = (relativeRowIndex + getFirstRow() );
+		int colIx = (relativeColumnIndex + getFirstColumn() );
 
 		return _evaluator.getEvalForCell(rowIx, colIx);
 	}
@@ -74,12 +80,31 @@ final class LazyAreaEval extends AreaEvalBase {
 		return new LazyAreaEval(getFirstRow(), absColIx, getLastRow(), absColIx, _evaluator);
 	}
 
+	public String getSheetName() {
+		return _evaluator.getSheetName();
+	}
+	
+	public String getLastSheetName() {
+		return _evaluator.getLastSheetName();
+	}
+	
+	public String getBookName() {
+		return _evaluator.getBookName();
+	}
+	
 	public String toString() {
 		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
+		final String bookName = _evaluator.getBookName();
+		if (bookName != null) {
+			sb.append('[').append(bookName).append(']');
+		}
 		sb.append(_evaluator.getSheetName());
+		if (!_evaluator.getSheetName().equals(_evaluator.getLastSheetName())) {
+			sb.append(':').append(_evaluator.getLastSheetName());
+		}
 		sb.append('!');
 		sb.append(crA.formatAsString());
 		sb.append(':');
@@ -87,12 +112,14 @@ final class LazyAreaEval extends AreaEvalBase {
 		sb.append("]");
 		return sb.toString();
 	}
-
-    /**
-     * @return  whether cell at rowIndex and columnIndex is a subtotal
-    */
-    public boolean isSubTotal(int rowIndex, int columnIndex){
-        // delegate the query to the sheet evaluator which has access to internal ptgs
-        return _evaluator.isSubTotal(rowIndex, columnIndex);
-    }
+	
+	//20100720, henrichen@zkoss.org: handle HYPERLINK function
+	private Hyperlink _hyperlink;
+	public void setHyperlink(Hyperlink hyperlink) {
+		_hyperlink = hyperlink;
+	}
+	
+	public Hyperlink getHyperlink() {
+		return _hyperlink;
+	}
 }

@@ -15,15 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
+import org.zkoss.poi.util.*;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.StringUtil;
+import java.util.Arrays;
 
 /**
  * Represents an Ole10Native record which is wrapped around certain binary
@@ -58,37 +57,23 @@ public class Ole10Native {
    * @throws Ole10NativeException on invalid or unexcepted data format
    */
   public static Ole10Native createFromEmbeddedOleObject(POIFSFileSystem poifs) throws IOException, Ole10NativeException {
-     return createFromEmbeddedOleObject(poifs.getRoot());
-  }
-  
-  /**
-   * Creates an instance of this class from an embedded OLE Object. The OLE Object is expected
-   * to include a stream &quot;{01}Ole10Native&quot; which contains the actual
-   * data relevant for this class.
-   *
-   * @param directory POI Filesystem object
-   * @return Returns an instance of this class
-   * @throws IOException on IO error
-   * @throws Ole10NativeException on invalid or unexcepted data format
-   */
-  public static Ole10Native createFromEmbeddedOleObject(DirectoryNode directory) throws IOException, Ole10NativeException {
-     boolean plain = false;
+    boolean plain = false;
 
-     try {
-        directory.getEntry("\u0001Ole10ItemName");
-        plain = true;
-     } catch (FileNotFoundException ex) {
-        plain = false;
-     }
-     
-     DocumentEntry nativeEntry = 
-        (DocumentEntry)directory.getEntry(OLE10_NATIVE);
-     byte[] data = new byte[nativeEntry.getSize()];
-     directory.createDocumentInputStream(nativeEntry).read(data);
+    try {
+      poifs.getRoot().getEntry("\u0001Ole10ItemName");
+      plain = true;
+    } catch (FileNotFoundException ex) {
+      plain = false;
+    }
 
-     return new Ole10Native(data, 0, plain);
+    DocumentInputStream dis = poifs.createDocumentInputStream(OLE10_NATIVE);
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    IOUtils.copy(dis, bos);
+    byte[] data = bos.toByteArray();
+
+    return new Ole10Native(data, 0, plain);
   }
-  
+
   /**
    * Creates an instance and fills the fields based on the data in the given buffer.
    *
@@ -138,7 +123,7 @@ public class Ole10Native {
       ofs += len;
       flags2 = LittleEndian.getShort(data, ofs);
       ofs += LittleEndianConsts.SHORT_SIZE;
-      len = LittleEndian.getUByte(data, ofs);
+      len = LittleEndian.getUnsignedByte(data, ofs);
       unknown1 = new byte[len];
       ofs += len;
       len = 3;

@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * This record is used whenever a escher record is encountered that
@@ -135,8 +135,7 @@ public final class UnknownEscherRecord extends EscherRecord {
 
         return getClass().getName() + ":" + '\n' +
                 "  isContainer: " + isContainerRecord() + '\n' +
-                "  version: 0x" + HexDump.toHex( getVersion() ) + '\n' +
-                "  instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
+                "  options: 0x" + HexDump.toHex( getOptions() ) + '\n' +
                 "  recordId: 0x" + HexDump.toHex( getRecordId() ) + '\n' +
                 "  numchildren: " + getChildRecords().size() + '\n' +
                 theDumpHex +

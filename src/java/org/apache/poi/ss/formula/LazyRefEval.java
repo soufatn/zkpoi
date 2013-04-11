@@ -15,20 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.RefEvalBase;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.util.CellReference;
+import org.zkoss.poi.hssf.record.formula.AreaI;
+import org.zkoss.poi.hssf.record.formula.AreaI.OffsetArea;
+import org.zkoss.poi.hssf.record.formula.eval.AreaEval;
+import org.zkoss.poi.hssf.record.formula.eval.HyperlinkEval;
+import org.zkoss.poi.hssf.record.formula.eval.RefEvalBase;
+import org.zkoss.poi.hssf.record.formula.eval.ValueEval;
+import org.zkoss.poi.hssf.util.CellReference;
+import org.zkoss.poi.ss.usermodel.Hyperlink;
 
 /**
 *
 * @author Josh Micich
+* @author henrichen@zkoss.org: HYPERLINK function
 */
-final class LazyRefEval extends RefEvalBase {
+final class LazyRefEval extends RefEvalBase implements HyperlinkEval {
 
 	private final SheetRefEvaluator _evaluator;
 
@@ -39,7 +42,7 @@ final class LazyRefEval extends RefEvalBase {
 		}
 		_evaluator = sre;
 	}
-
+	
 	public ValueEval getInnerValueEval() {
 		return _evaluator.getEvalForCell(getRow(), getColumn());
 	}
@@ -51,15 +54,44 @@ final class LazyRefEval extends RefEvalBase {
 
 		return new LazyAreaEval(area, _evaluator);
 	}
+	
+	public String getSheetName() {
+		return _evaluator.getSheetName();
+	}
+	
+	public String getLastSheetName() {
+		return _evaluator.getLastSheetName();
+	}
+	
+	public String getBookName() {
+		return _evaluator.getBookName();
+	}
 
 	public String toString() {
 		CellReference cr = new CellReference(getRow(), getColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
+		final String bookName = _evaluator.getBookName();
+		if (bookName != null) {
+			sb.append('[').append(bookName).append(']');
+		}
 		sb.append(_evaluator.getSheetName());
+		if (!getSheetName().equals(getLastSheetName())) {
+			sb.append(':').append(_evaluator.getLastSheetName());
+		}
 		sb.append('!');
 		sb.append(cr.formatAsString());
 		sb.append("]");
 		return sb.toString();
+	}
+
+	//20100720, henrichen@zkoss.org: handle HYPERLINK function
+	private Hyperlink _hyperlink;
+	public void setHyperlink(Hyperlink hyperlink) {
+		_hyperlink = hyperlink;
+	}
+	
+	public Hyperlink getHyperlink() {
+		return _hyperlink;
 	}
 }

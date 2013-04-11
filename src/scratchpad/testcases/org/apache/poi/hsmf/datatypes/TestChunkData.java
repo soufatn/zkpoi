@@ -17,6 +17,11 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import org.apache.poi.hsmf.datatypes.Chunk;
+import org.apache.poi.hsmf.datatypes.Chunks;
+import org.apache.poi.hsmf.datatypes.StringChunk;
+import org.apache.poi.hsmf.datatypes.Types;
+
 import junit.framework.TestCase;
 
 /**
@@ -53,28 +58,28 @@ public final class TestChunkData extends TestCase {
 
 	public void testTextBodyChunk() {
 		StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
-		assertEquals(chunk.getChunkId(), MAPIProperty.BODY.id);
+		assertEquals(chunk.getChunkId(), Chunks.TEXT_BODY);
 	}
 
 	public void testDisplayToChunk() {
 		StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_TO.id);
+      assertEquals(chunk.getChunkId(), Chunks.DISPLAY_TO);
 	}
 
 
 	public void testDisplayCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_CC.id);
+      assertEquals(chunk.getChunkId(), Chunks.DISPLAY_CC);
 	}
 
 	public void testDisplayBCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_BCC.id);
+      assertEquals(chunk.getChunkId(), Chunks.DISPLAY_BCC);
 	}
 
 	public void testSubjectChunk() {
 		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
-      assertEquals(chunk.getChunkId(), MAPIProperty.SUBJECT.id);
+      assertEquals(chunk.getChunkId(), Chunks.SUBJECT);
 	}
 
 }

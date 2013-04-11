@@ -15,16 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.io.IOException;
 
-import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.model.io.HWPFFileSystem;
+import org.zkoss.poi.hwpf.model.io.HWPFOutputStream;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * FontTable or in MS terminology sttbfffn is a common data structure written in all
@@ -34,10 +31,8 @@ import org.apache.poi.util.POILogger;
  *
  * @author Praveen Mathew
  */
-@Internal
 public final class FontTable
 {
-  private final static POILogger _logger = POILogFactory.getLogger(FontTable.class);
   private short _stringCount;// how many strings are included in the string table
   private short _extraDataSz;// size in bytes of the extra data
 
@@ -92,7 +87,7 @@ public final class FontTable
   {
     if(chpFtc >= _stringCount)
     {
-      _logger.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+      System.out.println("Mismatch in chpFtc with stringCount");
       return null;
     }
 
@@ -103,7 +98,7 @@ public final class FontTable
   {
     if(chpFtc >= _stringCount)
     {
-      _logger.log(POILogger.INFO, "Mismatch in chpFtc with stringCount");
+      System.out.println("Mismatch in chpFtc with stringCount");
       return null;
     }
 
@@ -115,15 +110,11 @@ public final class FontTable
     this._stringCount = stringCount;
   }
 
-    @Deprecated
-    public void writeTo( HWPFFileSystem sys ) throws IOException
-    {
-        HWPFOutputStream tableStream = sys.getStream( "1Table" );
-        writeTo( tableStream );
-    }
+  public void writeTo(HWPFFileSystem sys)
+	  throws IOException
+  {
+	  HWPFOutputStream tableStream = sys.getStream("1Table");
 
-    public void writeTo( HWPFOutputStream tableStream ) throws IOException
-    {
 	  byte[] buf = new byte[LittleEndian.SHORT_SIZE];
 	  LittleEndian.putShort(buf, _stringCount);
 	  tableStream.write(buf);

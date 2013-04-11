@@ -15,320 +15,307 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.PAPAbstractType;
+import org.zkoss.poi.hwpf.model.types.PAPAbstractType;
 
-public final class ParagraphProperties extends PAPAbstractType implements
-        Cloneable
-{
+public final class ParagraphProperties extends PAPAbstractType implements Cloneable {
 
-    private boolean jcLogical = false;
+  public ParagraphProperties()
+  {
+    field_21_lspd = new LineSpacingDescriptor();
+    field_24_phe = new byte[12];
+    field_46_brcTop = new BorderCode();
+    field_47_brcLeft = new BorderCode();
+    field_48_brcBottom = new BorderCode();
+    field_49_brcRight = new BorderCode();
+    field_50_brcBetween = new BorderCode();
+    field_51_brcBar = new BorderCode();
+    field_60_anld = new byte[84];
+    this.field_17_fWidowControl = 1;
+    this.field_21_lspd.setMultiLinespace((short)1);
+    this.field_21_lspd.setDyaLine((short)240);
+    this.field_58_lvl = (byte)9;
+    this.field_66_rgdxaTab = new int[0];
+    this.field_67_rgtbd = new byte[0];
+    this.field_63_dttmPropRMark = new DateAndTime();
 
-    public ParagraphProperties()
-    {
-        setAnld( new byte[84] );
-        setPhe( new byte[12] );
-    }
+  }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        ParagraphProperties pp = (ParagraphProperties) super.clone();
-        pp.setAnld( getAnld().clone() );
-        pp.setBrcTop( (BorderCode) getBrcTop().clone() );
-        pp.setBrcLeft( (BorderCode) getBrcLeft().clone() );
-        pp.setBrcBottom( (BorderCode) getBrcBottom().clone() );
-        pp.setBrcRight( (BorderCode) getBrcRight().clone() );
-        pp.setBrcBetween( (BorderCode) getBrcBetween().clone() );
-        pp.setBrcBar( (BorderCode) getBrcBar().clone() );
-        pp.setDcs( getDcs().clone() );
-        pp.setLspd( (LineSpacingDescriptor) getLspd().clone() );
-        pp.setShd( (ShadingDescriptor) getShd().clone() );
-        pp.setPhe( getPhe().clone() );
-        return pp;
-    }
+  public int getJustification()
+  {
+    return super.getJc();
+  }
 
-    public BorderCode getBarBorder()
-    {
-        return super.getBrcBar();
-    }
+  public void setJustification(byte jc)
+  {
+    super.setJc(jc);
+  }
 
-    public BorderCode getBottomBorder()
-    {
-        return super.getBrcBottom();
-    }
+  public boolean keepOnPage()
+  {
+    return super.getFKeep() != 0;
+  }
 
-    public DropCapSpecifier getDropCap()
-    {
-        return super.getDcs();
-    }
+  public void setKeepOnPage(boolean fKeep)
+  {
+    super.setFKeep((byte)(fKeep ? 1 : 0));
+  }
 
-    public int getFirstLineIndent()
-    {
-        return super.getDxaLeft1();
-    }
+  public boolean keepWithNext()
+  {
+    return super.getFKeepFollow() != 0;
+  }
 
-    public int getFontAlignment()
-    {
-        return super.getWAlignFont();
-    }
+  public void setKeepWithNext(boolean fKeepFollow)
+  {
+    super.setFKeepFollow((byte)(fKeepFollow ? 1 : 0));
+  }
 
-    public int getIndentFromLeft()
-    {
-        return super.getDxaLeft();
-    }
+  public boolean pageBreakBefore()
+  {
+    return super.getFPageBreakBefore() != 0;
+  }
 
-    public int getIndentFromRight()
-    {
-        return super.getDxaRight();
-    }
+  public void setPageBreakBefore(boolean fPageBreak)
+  {
+    super.setFPageBreakBefore((byte)(fPageBreak ? 1 : 0));
+  }
 
-    public int getJustification()
-    {
-        if ( jcLogical )
-        {
-            if ( !getFBiDi() )
-                return getJc();
+  public boolean isLineNotNumbered()
+  {
+    return super.getFNoLnn() != 0;
+  }
 
-            switch ( getJc() )
-            {
-            case 0:
-                return 2;
-            case 2:
-                return 0;
-            default:
-                return getJc();
-            }
-        }
+  public void setLineNotNumbered(boolean fNoLnn)
+  {
+    super.setFNoLnn((byte)(fNoLnn ? 1 : 0));
+  }
 
-        return getJc();
-    }
+  public boolean isSideBySide()
+  {
+    return super.getFSideBySide() != 0;
+  }
 
-    public BorderCode getLeftBorder()
-    {
-        return super.getBrcLeft();
-    }
+  public void setSideBySide(boolean fSideBySide)
+  {
+    super.setFSideBySide((byte)(fSideBySide ? 1 : 0));
+  }
 
-    public LineSpacingDescriptor getLineSpacing()
-    {
-        return super.getLspd();
-    }
+  public boolean isAutoHyphenated()
+  {
+    return super.getFNoAutoHyph() == 0;
+  }
 
-    public BorderCode getRightBorder()
-    {
-        return super.getBrcRight();
-    }
+  public void setAutoHyphenated(boolean auto)
+  {
+    super.setFNoAutoHyph((byte)(!auto ? 1 : 0));
+  }
 
-    public ShadingDescriptor getShading()
-    {
-        return super.getShd();
-    }
+  public boolean isWidowControlled()
+  {
+    return super.getFWidowControl() != 0;
+  }
 
-    public int getSpacingAfter()
-    {
-        return super.getDyaAfter();
-    }
+  public void setWidowControl(boolean widowControl)
+  {
+    super.setFWidowControl((byte)(widowControl ? 1 : 0));
+  }
 
-    public int getSpacingBefore()
-    {
-        return super.getDyaBefore();
-    }
+  public int getIndentFromRight()
+  {
+    return super.getDxaRight();
+  }
 
-    public BorderCode getTopBorder()
-    {
-        return super.getBrcTop();
-    }
+  public void setIndentFromRight(int dxaRight)
+  {
+    super.setDxaRight(dxaRight);
+  }
 
-    public boolean isAutoHyphenated()
-    {
-        return !super.getFNoAutoHyph();
-    }
+  public int getIndentFromLeft()
+  {
+    return super.getDxaLeft();
+  }
 
-    public boolean isBackward()
-    {
-        return super.isFBackward();
-    }
+  public void setIndentFromLeft(int dxaLeft)
+  {
+    super.setDxaLeft(dxaLeft);
+  }
 
-    public boolean isKinsoku()
-    {
-        return super.getFKinsoku();
-    }
+  public int getFirstLineIndent()
+  {
+    return super.getDxaLeft1();
+  }
 
-    public boolean isLineNotNumbered()
-    {
-        return super.getFNoLnn();
-    }
+  public void setFirstLineIndent(int first)
+  {
+    super.setDxaLeft1(first);
+  }
 
-    public boolean isSideBySide()
-    {
-        return super.getFSideBySide();
-    }
+  public LineSpacingDescriptor getLineSpacing()
+  {
+    return super.getLspd();
+  }
 
-    public boolean isVertical()
-    {
-        return super.isFVertical();
-    }
+  public void setLineSpacing(LineSpacingDescriptor lspd)
+  {
+    super.setLspd(lspd);
+  }
 
-    public boolean isWidowControlled()
-    {
-        return super.getFWidowControl();
-    }
+  public int getSpacingBefore()
+  {
+    return super.getDyaBefore();
+  }
 
-    public boolean isWordWrapped()
-    {
-        return super.getFWordWrap();
-    }
+  public void setSpacingBefore(int before)
+  {
+    super.setDyaBefore(before);
+  }
 
-    public boolean keepOnPage()
-    {
-        return super.getFKeep();
-    }
+  public int getSpacingAfter()
+  {
+    return super.getDyaAfter();
+  }
 
-    public boolean keepWithNext()
-    {
-        return super.getFKeepFollow();
-    }
+  public void setSpacingAfter(int after)
+  {
+    super.setDyaAfter(after);
+  }
 
-    public boolean pageBreakBefore()
-    {
-        return super.getFPageBreakBefore();
-    }
+  public boolean isKinsoku()
+  {
+    return super.getFKinsoku() != 0;
+  }
 
-    public void setAutoHyphenated( boolean auto )
-    {
-        super.setFNoAutoHyph( !auto );
-    }
+  public void setKinsoku(boolean kinsoku)
+  {
+    super.setFKinsoku((byte)(kinsoku ? 1 : 0));
+  }
 
-    public void setBackward( boolean bward )
-    {
-        super.setFBackward( bward );
-    }
+  public boolean isWordWrapped()
+  {
+    return super.getFWordWrap() != 0;
+  }
 
-    public void setBarBorder( BorderCode bar )
-    {
-        super.setBrcBar( bar );
-    }
+  public void setWordWrapped(boolean wrap)
+  {
+    super.setFWordWrap((byte)(wrap ? 1 : 0));
+  }
 
-    public void setBottomBorder( BorderCode bottom )
-    {
-        super.setBrcBottom( bottom );
-    }
+  public int getFontAlignment()
+  {
+    return super.getWAlignFont();
+  }
 
-    public void setDropCap( DropCapSpecifier dcs )
-    {
-        super.setDcs( dcs );
-    }
+  public void setFontAlignment(int align)
+  {
+    super.setWAlignFont(align);
+  }
 
-    public void setFirstLineIndent( int first )
-    {
-        super.setDxaLeft1( first );
-    }
+  public boolean isVertical()
+  {
+    return super.isFVertical();
+  }
 
-    public void setFontAlignment( int align )
-    {
-        super.setWAlignFont( align );
-    }
+  public void setVertical(boolean vertical)
+  {
+    super.setFVertical(vertical);
+  }
 
-    public void setIndentFromLeft( int dxaLeft )
-    {
-        super.setDxaLeft( dxaLeft );
-    }
+  public boolean isBackward()
+  {
+    return super.isFBackward();
+  }
 
-    public void setIndentFromRight( int dxaRight )
-    {
-        super.setDxaRight( dxaRight );
-    }
+  public void setBackward(boolean bward)
+  {
+    super.setFBackward(bward);
+  }
 
-    public void setJustification( byte jc )
-    {
-        super.setJc( jc );
-        this.jcLogical = false;
-    }
+  public BorderCode getTopBorder()
+  {
+    return super.getBrcTop();
+  }
 
-    public void setJustificationLogical( byte jc )
-    {
-        super.setJc( jc );
-        this.jcLogical = true;
-    }
+  public void setTopBorder(BorderCode top)
+  {
+    super.setBrcTop(top);
+  }
 
-    public void setKeepOnPage( boolean fKeep )
-    {
-        super.setFKeep( fKeep );
-    }
+  public BorderCode getLeftBorder()
+  {
+    return super.getBrcLeft();
+  }
 
-    public void setKeepWithNext( boolean fKeepFollow )
-    {
-        super.setFKeepFollow( fKeepFollow );
-    }
+  public void setLeftBorder(BorderCode left)
+  {
+    super.setBrcLeft(left);
+  }
 
-    public void setKinsoku( boolean kinsoku )
-    {
-        super.setFKinsoku( kinsoku );
-    }
+  public BorderCode getBottomBorder()
+  {
+    return super.getBrcBottom();
+  }
 
-    public void setLeftBorder( BorderCode left )
-    {
-        super.setBrcLeft( left );
-    }
+  public void setBottomBorder(BorderCode bottom)
+  {
+    super.setBrcBottom(bottom);
+  }
 
-    public void setLineNotNumbered( boolean fNoLnn )
-    {
-        super.setFNoLnn( fNoLnn );
-    }
+  public BorderCode getRightBorder()
+  {
+    return super.getBrcRight();
+  }
 
-    public void setLineSpacing( LineSpacingDescriptor lspd )
-    {
-        super.setLspd( lspd );
-    }
+  public void setRightBorder(BorderCode right)
+  {
+    super.setBrcRight(right);
+  }
 
-    public void setPageBreakBefore( boolean fPageBreak )
-    {
-        super.setFPageBreakBefore( fPageBreak );
-    }
+  public BorderCode getBarBorder()
+  {
+    return super.getBrcBar();
+  }
 
-    public void setRightBorder( BorderCode right )
-    {
-        super.setBrcRight( right );
-    }
+  public void setBarBorder(BorderCode bar)
+  {
+    super.setBrcBar(bar);
+  }
 
-    public void setShading( ShadingDescriptor shd )
-    {
-        super.setShd( shd );
-    }
+  public ShadingDescriptor getShading()
+  {
+    return super.getShd();
+  }
 
-    public void setSideBySide( boolean fSideBySide )
-    {
-        super.setFSideBySide( fSideBySide );
-    }
+  public void setShading(ShadingDescriptor shd)
+  {
+    super.setShd(shd);
+  }
 
-    public void setSpacingAfter( int after )
-    {
-        super.setDyaAfter( after );
-    }
+  public DropCapSpecifier getDropCap()
+  {
+    return super.getDcs();
+  }
 
-    public void setSpacingBefore( int before )
-    {
-        super.setDyaBefore( before );
-    }
+  public void setDropCap(DropCapSpecifier dcs)
+  {
+    super.setDcs(dcs);
+  }
 
-    public void setTopBorder( BorderCode top )
-    {
-        super.setBrcTop( top );
-    }
-
-    public void setVertical( boolean vertical )
-    {
-        super.setFVertical( vertical );
-    }
-
-    public void setWidowControl( boolean widowControl )
-    {
-        super.setFWidowControl( widowControl );
-    }
-
-    public void setWordWrapped( boolean wrap )
-    {
-        super.setFWordWrap( wrap );
-    }
+  public Object clone()
+    throws CloneNotSupportedException
+  {
+    ParagraphProperties pp = (ParagraphProperties)super.clone();
+    pp.field_21_lspd = (LineSpacingDescriptor)field_21_lspd.clone();
+    pp.field_24_phe = field_24_phe.clone();
+    pp.field_46_brcTop = (BorderCode)field_46_brcTop.clone();
+    pp.field_47_brcLeft = (BorderCode)field_47_brcLeft.clone();
+    pp.field_48_brcBottom = (BorderCode)field_48_brcBottom.clone();
+    pp.field_49_brcRight = (BorderCode)field_49_brcRight.clone();
+    pp.field_50_brcBetween = (BorderCode)field_50_brcBetween.clone();
+    pp.field_51_brcBar = (BorderCode)field_51_brcBar.clone();
+    pp.field_60_anld = field_60_anld.clone();
+    return pp;
+  }
 
 }

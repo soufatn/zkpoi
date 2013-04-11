@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,12 +53,12 @@ public enum ParagraphAlignment {
     private static Map<Integer, ParagraphAlignment> imap = new HashMap<Integer, ParagraphAlignment>();
     static{
         for (ParagraphAlignment p : values()) {
-            imap.put(new Integer(p.getValue()), p);
+            imap.put(p.getValue(), p);
         }
     }
 
     public static ParagraphAlignment valueOf(int type){
-        ParagraphAlignment err = imap.get(new Integer(type));
+        ParagraphAlignment err = imap.get(type);
         if(err == null) throw new IllegalArgumentException("Unknown paragraph alignment: " + type);
         return err;
     }

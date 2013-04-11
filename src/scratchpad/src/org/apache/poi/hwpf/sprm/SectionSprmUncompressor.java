@@ -15,13 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.sprm;
+package org.zkoss.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.SectionProperties;
 
-@Internal
 public final class SectionSprmUncompressor extends SprmUncompressor
 {
   public SectionSprmUncompressor()
@@ -145,7 +143,7 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setPgnStart ((short) sprm.getOperand());
         break;
       case 0x1d:
-        newSEP.setDmOrientPage( sprm.getOperand() != 0 );
+        newSEP.setDmOrientPage ((byte) sprm.getOperand());
         break;
       case 0x1e:
 

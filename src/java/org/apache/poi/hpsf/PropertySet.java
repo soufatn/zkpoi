@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hpsf;
+package org.zkoss.poi.hpsf;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +23,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hpsf.wellknown.SectionIDMap;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * <p>Represents a property set in the Horrible Property Set Format
@@ -185,14 +185,15 @@ public class PropertySet
     /**
      * <p>The sections in this {@link PropertySet}.</p>
      */
-    protected List<Section> sections;
+    protected List sections;
+
 
     /**
      * <p>Returns the {@link Section}s in the property set.</p>
      *
      * @return The {@link Section}s in the property set.
      */
-    public List<Section> getSections()
+    public List getSections()
     {
         return sections;
     }
@@ -369,13 +370,13 @@ public class PropertySet
         final int byteOrder = LittleEndian.getUShort(src, o);
         o += LittleEndian.SHORT_SIZE;
         byte[] temp = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putShort(temp, 0, (short) byteOrder);
+        LittleEndian.putShort(temp, (short) byteOrder);
         if (!Util.equal(temp, BYTE_ORDER_ASSERTION))
             return false;
         final int format = LittleEndian.getUShort(src, o);
         o += LittleEndian.SHORT_SIZE;
         temp = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putShort(temp, 0, (short) format);
+        LittleEndian.putShort(temp, (short) format);
         if (!Util.equal(temp, FORMAT_ASSERTION))
             return false;
         // final long osVersion = LittleEndian.getUInt(src, offset);
@@ -439,7 +440,7 @@ public class PropertySet
          * Summary Information stream has 2. Everything else is a rare
          * exception and is no longer fostered by Microsoft.
          */
-        sections = new ArrayList<Section>( sectionCount );
+        sections = new ArrayList(sectionCount);
 
         /*
          * Loop over the section descriptor array. Each descriptor
@@ -467,7 +468,7 @@ public class PropertySet
     {
         if (sections.size() <= 0)
             return false;
-        return Util.equal(sections.get(0).getFormatID().getBytes(),
+        return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
                           SectionIDMap.SUMMARY_INFORMATION_ID);
     }
 
@@ -484,7 +485,7 @@ public class PropertySet
     {
         if (sections.size() <= 0)
             return false;
-        return Util.equal(sections.get(0).getFormatID().getBytes(),
+        return Util.equal(((Section) sections.get(0)).getFormatID().getBytes(),
                           SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
     }
 
@@ -600,7 +601,7 @@ public class PropertySet
     {
         if (getSectionCount() < 1)
             throw new MissingSectionException("Property set does not contain any sections.");
-        return sections.get(0);
+        return ((Section) sections.get(0));
     }
 
 
@@ -617,7 +618,7 @@ public class PropertySet
         if (sectionCount != 1)
             throw new NoSingleSectionException
                 ("Property set contains " + sectionCount + " sections.");
-        return sections.get(0);
+        return ((Section) sections.get(0));
     }
 
 
@@ -689,8 +690,9 @@ public class PropertySet
         b.append(", sectionCount: ");
         b.append(sectionCount);
         b.append(", sections: [\n");
-        for (Section section: getSections())
-            b.append(section);
+        final List sections = getSections();
+        for (int i = 0; i < sectionCount; i++)
+            b.append(((Section) sections.get(i)).toString());
         b.append(']');
         b.append(']');
         return b.toString();

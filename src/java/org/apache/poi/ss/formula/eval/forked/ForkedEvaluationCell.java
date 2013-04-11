@@ -15,17 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval.forked;
+package org.zkoss.poi.ss.formula.eval.forked;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.usermodel.Cell;
+import org.zkoss.poi.hssf.record.formula.eval.BlankEval;
+import org.zkoss.poi.hssf.record.formula.eval.BoolEval;
+import org.zkoss.poi.hssf.record.formula.eval.ErrorEval;
+import org.zkoss.poi.hssf.record.formula.eval.NumberEval;
+import org.zkoss.poi.hssf.record.formula.eval.StringEval;
+import org.zkoss.poi.hssf.record.formula.eval.ValueEval;
+import org.zkoss.poi.hssf.usermodel.HSSFCell;
+import org.zkoss.poi.ss.formula.EvaluationCell;
+import org.zkoss.poi.ss.formula.EvaluationSheet;
+import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
  * Represents a cell being used for forked evaluation that has had a value set different from the
@@ -59,27 +60,27 @@ final class ForkedEvaluationCell implements EvaluationCell {
 		Class<? extends ValueEval> cls = value.getClass();
 
 		if (cls == NumberEval.class) {
-			_cellType = Cell.CELL_TYPE_NUMERIC;
+			_cellType = HSSFCell.CELL_TYPE_NUMERIC;
 			_numberValue = ((NumberEval)value).getNumberValue();
 			return;
 		}
 		if (cls == StringEval.class) {
-			_cellType = Cell.CELL_TYPE_STRING;
+			_cellType = HSSFCell.CELL_TYPE_STRING;
 			_stringValue = ((StringEval)value).getStringValue();
 			return;
 		}
 		if (cls == BoolEval.class) {
-			_cellType = Cell.CELL_TYPE_BOOLEAN;
+			_cellType = HSSFCell.CELL_TYPE_BOOLEAN;
 			_booleanValue = ((BoolEval)value).getBooleanValue();
 			return;
 		}
 		if (cls == ErrorEval.class) {
-			_cellType = Cell.CELL_TYPE_ERROR;
+			_cellType = HSSFCell.CELL_TYPE_ERROR;
 			_errorValue = ((ErrorEval)value).getErrorCode();
 			return;
 		}
 		if (cls == BlankEval.class) {
-			_cellType = Cell.CELL_TYPE_BLANK;
+			_cellType = HSSFCell.CELL_TYPE_BLANK;
 			return;
 		}
 		throw new IllegalArgumentException("Unexpected value class (" + cls.getName() + ")");
@@ -104,19 +105,19 @@ final class ForkedEvaluationCell implements EvaluationCell {
 		return _cellType;
 	}
 	public boolean getBooleanCellValue() {
-		checkCellType(Cell.CELL_TYPE_BOOLEAN);
+		checkCellType(HSSFCell.CELL_TYPE_BOOLEAN);
 		return _booleanValue;
 	}
 	public int getErrorCellValue() {
-		checkCellType(Cell.CELL_TYPE_ERROR);
+		checkCellType(HSSFCell.CELL_TYPE_ERROR);
 		return _errorValue;
 	}
 	public double getNumericCellValue() {
-		checkCellType(Cell.CELL_TYPE_NUMERIC);
+		checkCellType(HSSFCell.CELL_TYPE_NUMERIC);
 		return _numberValue;
 	}
 	public String getStringCellValue() {
-		checkCellType(Cell.CELL_TYPE_STRING);
+		checkCellType(HSSFCell.CELL_TYPE_STRING);
 		return _stringValue;
 	}
 	public EvaluationSheet getSheet() {
@@ -128,8 +129,4 @@ final class ForkedEvaluationCell implements EvaluationCell {
 	public int getColumnIndex() {
 		return _masterCell.getColumnIndex();
 	}
-    public int getCachedFormulaResultType() {
-        return _masterCell.getCachedFormulaResultType();
-    }
-
 }
