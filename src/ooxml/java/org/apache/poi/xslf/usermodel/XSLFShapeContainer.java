@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 /**
  * Common interface for shape containers, e.g. sheets or groups of shapes

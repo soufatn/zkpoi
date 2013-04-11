@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 /**
- * Should be implemented by any {@link org.apache.poi.ss.formula.ptg.Ptg} subclass that needs a workbook to render its formula.
+ * Should be implemented by any {@link org.zkoss.poi.hssf.record.formula.Ptg} subclass that needs a workbook to render its formula.
  * <br/>
  *
  * For POI internal use only
@@ -27,4 +27,5 @@ package org.apache.poi.ss.formula;
  */
 public interface WorkbookDependentFormula {
 	String toFormulaString(FormulaRenderingWorkbook book);
+	String toInternalFormulaString(FormulaRenderingWorkbook book); //20120117, henrichen@zkoss.org: ZSS-81
 }

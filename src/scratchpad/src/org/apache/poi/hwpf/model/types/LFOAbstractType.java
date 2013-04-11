@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
-import org.apache.poi.hwpf.model.Grfhic;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hwpf.model.Grfhic;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * List Format Override (LFO). <p>Class and fields descriptions are quoted from

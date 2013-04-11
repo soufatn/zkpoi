@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 /**
  * The conditional format operators used for "Highlight Cells That Contain..." rules.

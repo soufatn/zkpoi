@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.charts;
+package org.zkoss.poi.ss.usermodel.charts;
 
 /**
  * Specifies the possible crossing points for an axis.

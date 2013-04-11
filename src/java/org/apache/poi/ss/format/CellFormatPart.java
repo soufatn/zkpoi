@@ -14,19 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.format;
+package org.zkoss.poi.ss.format;
 
-import org.apache.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.util.Locales;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.poi.ss.format.CellFormatter.logger;
-import static org.apache.poi.ss.format.CellFormatter.quote;
+import static org.zkoss.poi.ss.format.CellFormatter.logger;
+import static org.zkoss.poi.ss.format.CellFormatter.quote;
 
 /**
  * Objects of this class represent a single part of a cell format expression.
@@ -45,6 +48,7 @@ import static org.apache.poi.ss.format.CellFormatter.quote;
  * @author Ken Arnold, Industrious Media LLC
  */
 public class CellFormatPart {
+	private final Locale locale;
     private final Color color;
     private CellFormatCondition condition;
     private final CellFormatter format;
@@ -81,7 +85,12 @@ public class CellFormatPart {
     public static final Pattern SPECIFICATION_PAT;
     /** Pattern for an entire cell single part. */
     public static final Pattern FORMAT_PAT;
+    /** Pattern for an i18n part of a cell format. */
+    public static final Pattern LOCALE_PAT; //20100615, Henri Chen
 
+    /** Within {@link #FORMAT_PAT}, the group number for the matched locale code. */
+    public static final int LOCALE_GROUP;
+    
     /** Within {@link #FORMAT_PAT}, the group number for the matched color. */
     public static final int COLOR_GROUP;
     /**
@@ -101,6 +110,8 @@ public class CellFormatPart {
     public static final int SPECIFICATION_GROUP;
 
     static {
+    	// A locale specification
+    	String locale = "\\[\\$\\-([0-9A-F]{2,8})\\]";
         // A condition specification
         String condition = "([<>=]=?|!=|<>)    # The operator\n" +
                 "  \\s*([0-9]+(?:\\.[0-9]*)?)\\s*  # The constant to test against\n";
@@ -130,11 +141,13 @@ public class CellFormatPart {
                 "|\\[s{1,2}\\]                   # Elapsed time: second spec\n" +
                 "|[^;]                           # A character\n" + "";
 
-        String format = "(?:" + color + ")?                  # Text color\n" +
-                "(?:\\[" + condition + "\\])?                # Condition\n" +
-                "((?:" + part + ")+)                        # Format spec\n";
+        String format = "(?:" + locale + ")?     # locale code\n" + 
+        		"(?:" + color + ")?              # Text color\n" +
+                "(?:\\[" + condition + "\\])?    # Condition\n" +
+                "((?:" + part + ")+)             # Format spec\n";
 
         int flags = Pattern.COMMENTS | Pattern.CASE_INSENSITIVE;
+        LOCALE_PAT = Pattern.compile(locale, flags); //20100615, Henri Chen
         COLOR_PAT = Pattern.compile(color, flags);
         CONDITION_PAT = Pattern.compile(condition, flags);
         SPECIFICATION_PAT = Pattern.compile(part, flags);
@@ -144,6 +157,7 @@ public class CellFormatPart {
         // when the pattern is changed; this way we figure out the numbers by
         // experimentation.)
 
+        LOCALE_GROUP = findGroup(FORMAT_PAT, "[$-409]@", "409"); //20100615, Henri Chen
         COLOR_GROUP = findGroup(FORMAT_PAT, "[Blue]@", "Blue");
         CONDITION_OPERATOR_GROUP = findGroup(FORMAT_PAT, "[>=1]@", ">=");
         CONDITION_VALUE_GROUP = findGroup(FORMAT_PAT, "[>=1]@", "1");
@@ -166,6 +180,8 @@ public class CellFormatPart {
             throw new IllegalArgumentException("Unrecognized format: " + quote(
                     desc));
         }
+        Locale locale0 = getLocale(m); //20100616, Henri Chen
+        locale = locale0;
         color = getColor(m);
         condition = getCondition(m);
         type = getCellFormatType(m);
@@ -220,6 +236,29 @@ public class CellFormatPart {
                 "\"" + marker + "\" not found in \"" + pat.pattern() + "\"");
     }
 
+    //20100616, Henri Chen
+    /**
+     * Returns the locale specification from the matcher, or <tt>null</tt> if
+     * there is none.
+     * @param m The matcher for the format part.
+     * @return The locale specification of <tt>null</tt>.
+     */
+    private static Locale getLocale(Matcher m) {
+    	String ldesc = m.group(LOCALE_GROUP);
+   		logger.finer("format locale: "+ldesc);
+    	Locale l = getLocale(ldesc);
+    	if (l == null)
+    		logger.warning("Unknown locale: " + quote(ldesc));
+    	return l;
+    }
+    
+    private static Locale getLocale(String ldesc) {
+    	//ZSS-68
+    	//TODO based on ldesc to return the locale; e.g. [$-409] => en_US
+    	//currently, we always return current locale no matter the format
+    	//return Locale.US;
+        return ZssContext.getCurrent().getLocale();
+    }
     /**
      * Returns the color specification from the matcher, or <tt>null</tt> if
      * there is none.
@@ -277,9 +316,11 @@ public class CellFormatPart {
      */
     private CellFormatter getFormatter(Matcher matcher) {
         String fdesc = matcher.group(SPECIFICATION_GROUP);
-        return type.formatter(fdesc);
+//        type = formatType(fdesc);
+        return type.formatter(fdesc, locale); //ZSS-68
+//        return type.formatter(fdesc);
     }
-
+ 
     /**
      * Returns the type of format.
      *
@@ -295,6 +336,7 @@ public class CellFormatPart {
         Matcher m = SPECIFICATION_PAT.matcher(fdesc);
         boolean couldBeDate = false;
         boolean seenZero = false;
+        boolean couldBeElasped = false;
         while (m.find()) {
             String repl = m.group(0);
             if (repl.length() > 0) {
@@ -414,7 +456,7 @@ public class CellFormatPart {
      *
      * @return The CellFormatType.
      */
-    CellFormatType getCellFormatType() {
+    public CellFormatType getCellFormatType() { //20120402, henrichen@zkoss.org: make public
         return type;
     }
 
@@ -464,7 +506,7 @@ public class CellFormatPart {
                         repl = " ";
                         break;
                     case '*': //!! We don't do this for real, we just put in 3 of them
-                        repl = expandChar(part);
+                        repl = ""; //expandChar(part); //20100924, henrichen@zkoss.org: DON'T expand, just clear it out!
                         break;
                     default:
                         repl = part;

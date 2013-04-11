@@ -15,12 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.util;
+package org.zkoss.poi.hssf.util;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.RegionUtil;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.Region;
+import org.zkoss.poi.ss.util.RegionUtil;
 
 /**
  * Various utility functions that make working with a region of cells easier.
@@ -36,8 +37,8 @@ public final class HSSFRegionUtil {
     /**
      * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
      */
-	private static CellRangeAddress toCRA(org.apache.poi.ss.util.Region region) {
-		return org.apache.poi.ss.util.Region.convertToCellRangeAddress(region);
+	private static CellRangeAddress toCRA(org.zkoss.poi.ss.util.Region region) {
+		return org.zkoss.poi.ss.util.Region.convertToCellRangeAddress(region);
 	}
 
 	/**

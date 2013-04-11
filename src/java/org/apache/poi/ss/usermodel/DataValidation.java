@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
-import org.apache.poi.ss.util.CellRangeAddressList;
+import org.zkoss.poi.ss.util.CellRangeAddressList;
 
 
 public interface DataValidation {
@@ -148,5 +148,5 @@ public interface DataValidation {
 	public abstract String getErrorBoxText();
 
 	public abstract CellRangeAddressList getRegions();
-
+	
 }

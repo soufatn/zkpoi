@@ -15,16 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
-import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
-import org.apache.poi.ss.usermodel.ConditionalFormatting;
-import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
+import org.zkoss.poi.hssf.record.aggregates.CFRecordsAggregate;
+import org.zkoss.poi.hssf.record.aggregates.ConditionalFormattingTable;
+import org.zkoss.poi.ss.usermodel.ConditionalFormatting;
+import org.zkoss.poi.ss.usermodel.ConditionalFormattingRule;
+import org.zkoss.poi.ss.usermodel.SheetConditionalFormatting;
+import org.zkoss.poi.ss.util.Region;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.SpreadsheetVersion;
 
 /**
  * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
@@ -47,7 +48,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 	 * TODO - formulas containing cell references are currently not parsed properly
 	 *
 	 * @param comparisonOperation - a constant value from
-	 *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
+	 *		 <tt>{@link org.zkoss.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
 	 * <ul>
 	 *		 <li>BETWEEN</li>
 	 *		 <li>NOT_BETWEEN</li>
@@ -61,8 +62,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 	 * </p>
 	 * @param formula1 - formula for the valued, compared with the cell
 	 * @param formula2 - second formula (only used with
-	 * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#BETWEEN}) and
-	 * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#NOT_BETWEEN} operations)
+	 * {@link org.zkoss.poi.hssf.record.CFRuleRecord.ComparisonOperator#BETWEEN}) and
+	 * {@link org.zkoss.poi.hssf.record.CFRuleRecord.ComparisonOperator#NOT_BETWEEN} operations)
 	 */
 	public HSSFConditionalFormattingRule createConditionalFormattingRule(
 			byte comparisonOperation,
@@ -121,8 +122,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 	/**
 	 * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
 	 */
-	public int addConditionalFormatting(org.apache.poi.ss.util.Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
-		return addConditionalFormatting(org.apache.poi.ss.util.Region.convertRegionsToCellRanges(regions), cfRules);
+	public int addConditionalFormatting(org.zkoss.poi.ss.util.Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
+		return addConditionalFormatting(org.zkoss.poi.ss.util.Region.convertRegionsToCellRanges(regions), cfRules);
 	}
 	/**
 	 * Allows to add a new Conditional Formatting set to the sheet.

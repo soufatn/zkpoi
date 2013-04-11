@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,16 +26,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.SprmIterator;
-import org.apache.poi.hwpf.sprm.SprmOperation;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.model.io.HWPFFileSystem;
+import org.zkoss.poi.hwpf.model.io.HWPFOutputStream;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.sprm.SprmIterator;
+import org.zkoss.poi.hwpf.sprm.SprmOperation;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * This class represents the bin table of Word document but it also serves as a

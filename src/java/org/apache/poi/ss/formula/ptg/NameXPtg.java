@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.WorkbookDependentFormula;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * 
@@ -89,5 +89,12 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 	}
 	public int getNameIndex() {
 		return _nameNumber - 1;
+	}
+
+	//20120117, henrichen@zkoss.org
+	//ZSS-81 Cannot input formula with proper external book name
+	@Override
+	public String toInternalFormulaString(FormulaRenderingWorkbook book) {
+		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
 }

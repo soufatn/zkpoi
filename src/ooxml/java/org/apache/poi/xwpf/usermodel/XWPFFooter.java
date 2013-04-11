@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,10 +24,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -36,6 +36,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 
 /**
  * Sketch of XWPF footer class
@@ -127,7 +130,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
 
     /**
      * get the PartType of the body
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {
         return BodyType.FOOTER;

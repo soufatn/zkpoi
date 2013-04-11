@@ -15,17 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
 
-import org.apache.poi.hwpf.model.TabDescriptor;
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.DateAndTime;
-import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
-import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.TabDescriptor;
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.DateAndTime;
+import org.zkoss.poi.hwpf.usermodel.DropCapSpecifier;
+import org.zkoss.poi.hwpf.usermodel.LineSpacingDescriptor;
+import org.zkoss.poi.hwpf.usermodel.ShadingDescriptor;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Paragraph Properties.

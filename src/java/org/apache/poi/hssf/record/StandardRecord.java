@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.LittleEndianByteArrayOutputStream;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Subclasses of this class (the majority of BIFF records) are non-continuable.  This allows for

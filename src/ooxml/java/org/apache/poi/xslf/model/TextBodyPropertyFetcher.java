@@ -17,9 +17,9 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.model;
+package org.zkoss.poi.xslf.model;
 
-import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.zkoss.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 

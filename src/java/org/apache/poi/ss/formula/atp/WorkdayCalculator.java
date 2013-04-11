@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.atp;
+package org.zkoss.poi.ss.formula.atp;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.ss.usermodel.DateUtil;
+import org.zkoss.poi.ss.usermodel.DateUtil;
 
 /**
  * A calculator for workdays, considering dates as excel representations.

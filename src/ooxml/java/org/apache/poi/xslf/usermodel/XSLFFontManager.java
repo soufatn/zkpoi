@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 /**
  * Manages fonts when rendering slides.

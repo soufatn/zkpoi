@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;

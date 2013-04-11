@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.ExternSheetReferenceToken;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.formula.ExternSheetReferenceToken;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.WorkbookDependentFormula;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Reference 3D Ptg <P>
@@ -93,4 +93,28 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     public String toFormulaString() {
         throw new RuntimeException("3D references need a workbook to determine formula text");
     }
+    
+	//20110324, henrichen@zkoss.org: override hashCode
+	public int hashCode() {
+		return super.hashCode() ^ field_1_index_extern_sheet;
+	}
+
+	//20110324, henrichen@zkoss.org: override equals
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Ref3DPtg)) {
+			return false;
+		}
+		final Ref3DPtg other = (Ref3DPtg) o;
+		return super.equals(o) && other.field_1_index_extern_sheet == this.field_1_index_extern_sheet;
+	}
+
+	//20120117, henrichen@zkoss.org: return extern book in book index form
+	//ZSS-81 Cannot input formula with proper external book name
+	@Override
+	public String toInternalFormulaString(FormulaRenderingWorkbook book) {
+        return ExternSheetNameResolver.prependInternalSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
+	}
 }

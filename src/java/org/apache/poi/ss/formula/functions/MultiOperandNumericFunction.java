@@ -15,18 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
+import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
+import org.zkoss.poi.ss.formula.eval.RefEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.eval.ValuesEval;
+import org.zkoss.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -196,6 +198,26 @@ public abstract class MultiOperandNumericFunction implements Function {
 		if (ve == BlankEval.instance) {
 			if (_isBlankCounted) {
 				temp.add(0.0);
+			}
+			return;
+		}
+		//henrichen@zkoss.org: handle multiple ValueEval from 3d area references
+		if (ve instanceof ValuesEval) {
+			ValueEval[] ves = ((ValuesEval) ve).getValueEvals();
+			for(ValueEval xve : ves) {
+				collectValue(xve, isViaReference, temp); //recursive
+			}
+			return;
+		}
+		//20111128, henrichen@zkoss.org: handle 2d evaluation
+		if (ve instanceof ArrayEval) {
+			ArrayEval ae = (ArrayEval) ve;
+			final int rows = ae.getHeight();
+			final int cols = ae.getWidth();
+			for (int r = 0; r < rows; ++r) {
+				for (int c = 0; c < cols; ++c) {
+					collectValue(ae.getValue(r, c), isViaReference, temp); //recursive
+				}
 			}
 			return;
 		}

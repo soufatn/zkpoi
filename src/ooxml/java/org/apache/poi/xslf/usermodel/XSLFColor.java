@@ -16,10 +16,10 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;

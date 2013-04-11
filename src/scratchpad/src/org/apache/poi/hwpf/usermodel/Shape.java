@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.GenericPropertyNode;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hwpf.model.GenericPropertyNode;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * @deprecated Use {@link OfficeDrawing} instead

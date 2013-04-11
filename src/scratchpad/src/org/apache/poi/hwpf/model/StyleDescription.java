@@ -15,17 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.usermodel.CharacterProperties;
+import org.zkoss.poi.hwpf.usermodel.ParagraphProperties;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Comment me

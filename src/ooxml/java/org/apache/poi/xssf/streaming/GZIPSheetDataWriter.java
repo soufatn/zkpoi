@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
 import java.io.*;
 import java.util.zip.GZIPInputStream;

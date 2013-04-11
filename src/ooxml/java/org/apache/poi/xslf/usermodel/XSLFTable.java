@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,9 +26,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;

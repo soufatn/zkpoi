@@ -16,7 +16,7 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 /**
  * Specifies a list of available anchoring types for text

@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.CreationHelper;
+import org.zkoss.poi.ss.usermodel.CreationHelper;
 
 public class XSSFCreationHelper implements CreationHelper {
 	private XSSFWorkbook workbook;
@@ -56,7 +56,7 @@ public class XSSFCreationHelper implements CreationHelper {
 	 * a sheet
 	 *
 	 * @return a XSSFClientAnchor instance
-	 * @see org.apache.poi.ss.usermodel.Drawing
+	 * @see org.zkoss.poi.ss.usermodel.Drawing
 	 */
 	public XSSFClientAnchor createClientAnchor() {
 		return new XSSFClientAnchor();

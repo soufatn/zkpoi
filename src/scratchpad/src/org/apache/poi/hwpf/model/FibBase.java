@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.FibBaseAbstractType;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.types.FibBaseAbstractType;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Base part of the File information Block (FibBase). Holds the core part of the

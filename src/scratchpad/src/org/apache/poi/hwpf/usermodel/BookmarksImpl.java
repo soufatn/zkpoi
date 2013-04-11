@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,9 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.BookmarksTables;
-import org.apache.poi.hwpf.model.GenericPropertyNode;
-import org.apache.poi.hwpf.model.PropertyNode;
+import org.zkoss.poi.hwpf.model.BookmarksTables;
+import org.zkoss.poi.hwpf.model.GenericPropertyNode;
+import org.zkoss.poi.hwpf.model.PropertyNode;
 
 /**
  * Implementation of user-friendly interface for document bookmarks

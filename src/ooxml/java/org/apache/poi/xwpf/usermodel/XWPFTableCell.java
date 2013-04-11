@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,8 +22,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -35,6 +35,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+import org.zkoss.poi.util.Internal;
 
 /**
  * XWPFTableCell class.
@@ -112,7 +113,7 @@ public class XWPFTableCell implements IBody {
 
     /**
      * returns an Iterator with paragraphs and tables
-     * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getBodyElements()
      */
     public List<IBodyElement> getBodyElements(){
       return Collections.unmodifiableList(bodyElements);
@@ -328,7 +329,7 @@ public class XWPFTableCell implements IBody {
 	
 
 	/**
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getParagraphArray(int)
 	 */
 	public XWPFParagraph getParagraphArray(int pos) {
 		if(pos > 0 && pos < paragraphs.size()){
@@ -340,7 +341,7 @@ public class XWPFTableCell implements IBody {
     /**
      * get the to which the TableCell belongs
      * 
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPart()
      */
     public POIXMLDocumentPart getPart() {
         return tableRow.getTable().getPart();
@@ -348,7 +349,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getPartType()
 	 */
 	public BodyType getPartType() {
 		return BodyType.TABLECELL;
@@ -357,7 +358,7 @@ public class XWPFTableCell implements IBody {
 
 	/**
 	 * get a table by its CTTbl-Object
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
 	 */
 	public XWPFTable getTable(CTTbl ctTable) {
 		for(int i=0; i<tables.size(); i++){
@@ -368,7 +369,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTableArray(int)
 	 */
 	public XWPFTable getTableArray(int pos) {
 		if(pos > 0 && pos < tables.size()){
@@ -379,7 +380,7 @@ public class XWPFTableCell implements IBody {
 
 
 	/** 
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#getTables()
 	 */
 	public List<XWPFTable> getTables() {
 		return Collections.unmodifiableList(tables);
@@ -388,7 +389,7 @@ public class XWPFTableCell implements IBody {
 
 	/**
 	 * inserts an existing XWPFTable to the arrays bodyElements and tables
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int, org.apache.poi.xwpf.usermodel.XWPFTable)
+	 * @see org.zkoss.poi.xwpf.usermodel.IBody#insertTable(int, org.zkoss.poi.xwpf.usermodel.XWPFTable)
 	 */
 	public void insertTable(int pos, XWPFTable table) {
 		bodyElements.add(pos, table);

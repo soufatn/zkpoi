@@ -17,9 +17,9 @@
  * ====================================================================
  */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * The 'Conditional Formatting' facet of <tt>Sheet</tt>

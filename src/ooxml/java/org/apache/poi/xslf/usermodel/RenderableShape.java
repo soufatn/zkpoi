@@ -17,19 +17,19 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
-import org.apache.poi.xslf.model.PropertyFetcher;
-import org.apache.poi.xslf.model.geom.Context;
-import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Guide;
-import org.apache.poi.xslf.model.geom.IAdjustableShape;
-import org.apache.poi.xslf.model.geom.Outline;
-import org.apache.poi.xslf.model.geom.Path;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.Units;
+import org.zkoss.poi.xslf.model.PropertyFetcher;
+import org.zkoss.poi.xslf.model.geom.Context;
+import org.zkoss.poi.xslf.model.geom.CustomGeometry;
+import org.zkoss.poi.xslf.model.geom.Guide;
+import org.zkoss.poi.xslf.model.geom.IAdjustableShape;
+import org.zkoss.poi.xslf.model.geom.Outline;
+import org.zkoss.poi.xslf.model.geom.Path;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;

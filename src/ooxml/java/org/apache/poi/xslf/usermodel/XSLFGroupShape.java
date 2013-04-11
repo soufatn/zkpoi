@@ -17,13 +17,13 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Units;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;

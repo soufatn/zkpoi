@@ -15,21 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.record;
+package org.zkoss.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
 
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
+import org.zkoss.poi.ss.formula.ptg.RefPtg;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianInputStream;
+import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * ftPictFmla (0x0009)<br/>

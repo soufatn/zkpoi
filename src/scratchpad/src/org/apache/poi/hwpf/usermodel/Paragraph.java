@@ -15,19 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.zkoss.poi.hwpf.HWPFDocumentCore;
 
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
-import org.apache.poi.hwpf.model.PAPX;
-import org.apache.poi.hwpf.model.StyleSheet;
-import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.hwpf.sprm.TableSprmCompressor;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.ListFormatOverride;
+import org.zkoss.poi.hwpf.model.ListLevel;
+import org.zkoss.poi.hwpf.model.ListTables;
+import org.zkoss.poi.hwpf.model.PAPX;
+import org.zkoss.poi.hwpf.model.StyleSheet;
+import org.zkoss.poi.hwpf.sprm.ParagraphSprmUncompressor;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.hwpf.sprm.TableSprmCompressor;
+import org.zkoss.poi.util.Internal;
 
 public class Paragraph extends Range implements Cloneable {
   public final static short SPRM_JC = 0x2403;

@@ -14,15 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hpsf;
+package org.zkoss.poi.hpsf;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 @Internal
 class ClipboardData

@@ -17,14 +17,14 @@
 ==================================================================== */
 
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import org.apache.poi.hpsf.ClassID;
+import org.zkoss.poi.hpsf.ClassID;
 
 /**
  * This interface defines methods specific to Directory objects

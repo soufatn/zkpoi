@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.WorkbookDependentFormula;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.usermodel.ErrorConstants;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.WorkbookDependentFormula;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Deleted Reference 3D Ptg <P>
@@ -64,5 +64,12 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
 		out.writeByte(sid + getPtgClass());
 		out.writeShort(field_1_index_extern_sheet);
 		out.writeInt(unused1);
+	}
+	//20120117, henrichen@zkoss.org: return extern book in book index
+	//ZSS-81 Cannot input formula with proper external book name
+	@Override
+	public String toInternalFormulaString(FormulaRenderingWorkbook book) {
+		return ExternSheetNameResolver.prependInternalSheetName(book, field_1_index_extern_sheet, 
+				ErrorConstants.getText(ErrorConstants.ERROR_REF));
 	}
 }

@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.poifs.filesystem.Entry;
+import org.zkoss.poi.poifs.filesystem.Entry;
 
 public interface ObjectsPool
 {

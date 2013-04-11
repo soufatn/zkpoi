@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.apache.poi.ss.formula.functions;
+package org.zkoss.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
+import org.zkoss.poi.ss.formula.OperationEvaluationContext;
+import org.zkoss.poi.ss.formula.eval.*;
+import org.zkoss.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
 
 /**
  * Implementation for the Excel function SUMIFS<p>

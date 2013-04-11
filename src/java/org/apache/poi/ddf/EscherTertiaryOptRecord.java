@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
 /**
  * "The OfficeArtTertiaryFOPT record specifies a table of OfficeArtRGFOPTE properties, as defined in section 2.3.1."

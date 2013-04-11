@@ -17,9 +17,12 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.xslf.model.geom.Outline;
+import org.zkoss.poi.xslf.model.geom.Path;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;

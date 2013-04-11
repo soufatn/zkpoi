@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.poifs.crypt;
+package org.zkoss.poi.poifs.crypt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +22,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.EncryptedDocumentException;
+import org.zkoss.poi.util.LittleEndian;
 
 public abstract class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";

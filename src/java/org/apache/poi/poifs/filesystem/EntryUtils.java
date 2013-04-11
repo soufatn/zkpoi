@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public class EntryUtils

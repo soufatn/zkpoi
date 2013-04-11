@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +23,9 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+
+import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
 
 
 /**
@@ -61,6 +64,15 @@ public final class CollaboratingWorkbooksEnvironment {
 			throw new IllegalArgumentException("Must provide at least one collaborating worbook");
 		}
 		new CollaboratingWorkbooksEnvironment(workbookNames, evaluators, nItems);
+	}
+	
+	public static void setup(String[] workbookNames, FormulaEvaluator[] evaluators) {
+		final int len = evaluators.length;
+		final WorkbookEvaluator[] workbookEvaluators = new WorkbookEvaluator[len];
+		for (int j = 0; j < len; ++j){
+			workbookEvaluators[j] = evaluators[j].getWorkbookEvaluator();
+		}
+		setup(workbookNames, workbookEvaluators);
 	}
 
 	private CollaboratingWorkbooksEnvironment(String[] workbookNames, WorkbookEvaluator[] evaluators, int nItems) {
@@ -136,6 +148,15 @@ public final class CollaboratingWorkbooksEnvironment {
 		_unhooked = true;
 	}
 
+	public String getBookName(WorkbookEvaluator evaluator) {
+		for(Entry<String, WorkbookEvaluator> entry : _evaluatorsByName.entrySet()) {
+			if (entry.getValue() == evaluator) { //yes, ==
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
 	public WorkbookEvaluator getWorkbookEvaluator(String workbookName) throws WorkbookNotFoundException {
 		if (_unhooked) {
 			throw new IllegalStateException("This environment has been unhooked");

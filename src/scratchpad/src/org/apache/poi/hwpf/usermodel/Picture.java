@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,13 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hwpf.model.PICF;
-import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.hwpf.model.PICF;
+import org.zkoss.poi.hwpf.model.PICFAndOfficeArtData;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Represents embedded picture extracted from Word Document

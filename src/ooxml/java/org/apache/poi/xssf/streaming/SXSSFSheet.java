@@ -15,21 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
 
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.util.CellReference;
 
-import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.zkoss.poi.ss.util.SheetUtil;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 
-import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
@@ -759,7 +762,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     /**
      * Control if Excel should be asked to recalculate all formulas when the
      *  workbook is opened, via the "sheetCalcPr fullCalcOnLoad" option.
-     *  Calculating the formula values with {@link org.apache.poi.ss.usermodel.FormulaEvaluator} is the
+     *  Calculating the formula values with {@link org.zkoss.poi.ss.usermodel.FormulaEvaluator} is the
      *  recommended solution, but this may be used for certain cases where
      *  evaluation in POI is not possible.
      */
@@ -1333,4 +1336,40 @@ public class SXSSFSheet implements Sheet, Cloneable
         assert false;
         return -1;
     }
+    //20111124, henrichen@zkoss.org
+	@Override
+	public boolean isAutoFilterMode() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+    //20111124, henrichen@zkoss.org
+	@Override
+	public CellRangeAddress removeAutoFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    //20111124, henrichen@zkoss.org
+	@Override
+	public AutoFilter getAutoFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    //20111124, henrichen@zkoss.org
+	@Override
+	public void removeValidationData(DataValidation dataValidation) {
+		// TODO Auto-generated method stub
+		
+	}
+    //20111124, henrichen@zkoss.org
+	@Override
+	public List<DataValidation> getDataValidations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    //20111124, henrichen@zkoss.org
+	@Override
+	public DataValidation getDataValidation(int row, int col) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

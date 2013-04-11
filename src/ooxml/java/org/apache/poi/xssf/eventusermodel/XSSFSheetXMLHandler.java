@@ -14,13 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.eventusermodel;
+package org.zkoss.poi.xssf.eventusermodel;
 
-import org.apache.poi.ss.usermodel.BuiltinFormats;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
+import org.zkoss.poi.ss.usermodel.DataFormatter;
+import org.zkoss.poi.ss.usermodel.ZssContext;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
+import org.zkoss.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -112,7 +113,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            ReadOnlySharedStringsTable strings,
            SheetContentsHandler sheetContentsHandler,
            boolean formulasNotResults) {
-       this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
+       this(styles, strings, sheetContentsHandler, new DataFormatter(ZssContext.getCurrent().getLocale(), false), formulasNotResults); //20111227, henrichen@zkoss.org: ZSS-68
    }
 
    private boolean isTextTag(String name) {

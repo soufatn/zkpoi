@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.eval;
+package org.zkoss.poi.ss.formula.eval;
 
-import org.apache.poi.ss.formula.atp.AnalysisToolPak;
-import org.apache.poi.ss.formula.function.FunctionMetadata;
-import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.*;
+import org.zkoss.poi.ss.formula.atp.AnalysisToolPak;
+import org.zkoss.poi.ss.formula.function.FunctionMetadata;
+import org.zkoss.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.zkoss.poi.ss.formula.functions.*;
 
 import java.util.Collection;
 import java.util.Collections;

@@ -15,7 +15,7 @@
    limitations under the License.
    ==================================================================== */
 
-package org.apache.poi.ss.util.cellwalk;
+package org.zkoss.poi.ss.util.cellwalk;
 
 /**
  * @author Roman Kashitsyn

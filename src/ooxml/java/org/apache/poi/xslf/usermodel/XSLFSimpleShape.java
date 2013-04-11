@@ -17,15 +17,23 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Units;
-import org.apache.poi.xslf.model.PropertyFetcher;
-import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Outline;
-import org.apache.poi.xslf.model.geom.Path;
-import org.apache.poi.xslf.model.geom.PresetGeometries;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Units;
+import org.zkoss.poi.xslf.model.PropertyFetcher;
+import org.zkoss.poi.xslf.model.geom.Context;
+import org.zkoss.poi.xslf.model.geom.CustomGeometry;
+import org.zkoss.poi.xslf.model.geom.Guide;
+import org.zkoss.poi.xslf.model.geom.IAdjustableShape;
+import org.zkoss.poi.xslf.model.geom.Outline;
+import org.zkoss.poi.xslf.model.geom.Path;
+import org.zkoss.poi.xslf.model.geom.PresetGeometries;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;

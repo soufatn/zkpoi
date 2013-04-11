@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -23,11 +23,11 @@ import java.util.regex.Matcher;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.RichTextString;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.model.ThemesTable;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
@@ -346,10 +346,16 @@ public class XSSFRichTextString implements RichTextString {
 
         for(int i = 0; i < st.sizeOfRArray(); i++){
             CTRElt r = st.getRArray(i);
+            //20100927, henrichen@zkoss.org: must check property of the text run
+//          if(i == index) return new XSSFFont(toCTFont(r.getRPr()));
             if(i == index) {
-               XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
-               fnt.setThemesTable(getThemesTable());
-               return fnt;
+            	final CTRPrElt rpr =  r.getRPr(); //20100927, henrichen@zkoss.org: property of the text run
+				if (rpr != null) {
+					XSSFFont fnt = new XSSFFont(toCTFont(rpr));
+					fnt.setThemesTable(getThemesTable());
+					return fnt;
+				}
+           		return null;
             }
         }
         return null;

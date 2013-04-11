@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -37,6 +37,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Sketch of XWPFTable class. Only table's text is being hold.
@@ -591,7 +592,7 @@ public class XWPFTable implements IBodyElement{
 
 	/**
 	 * returns the type of the BodyElement Table
-	 * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
+	 * @see org.zkoss.poi.xwpf.usermodel.IBodyElement#getElementType()
 	 */
 	public BodyElementType getElementType() {
 		return BodyElementType.TABLE;
@@ -604,7 +605,7 @@ public class XWPFTable implements IBodyElement{
 
     /**
      * returns the part of the bodyElement
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPart()
      */
     public POIXMLDocumentPart getPart() {
         if(part != null){
@@ -615,7 +616,7 @@ public class XWPFTable implements IBodyElement{
 
     /**
      * returns the partType of the bodyPart which owns the bodyElement
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     * @see org.zkoss.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {
         return part.getPartType();

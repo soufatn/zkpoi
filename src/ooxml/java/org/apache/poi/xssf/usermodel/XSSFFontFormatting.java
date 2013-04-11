@@ -16,9 +16,11 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;

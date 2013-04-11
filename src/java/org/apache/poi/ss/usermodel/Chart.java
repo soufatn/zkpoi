@@ -15,16 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.ManuallyPositionable;
-import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
-import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
+import org.zkoss.poi.ss.usermodel.charts.ChartData;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
+import org.zkoss.poi.ss.usermodel.charts.ChartLegend;
+import org.zkoss.poi.ss.usermodel.charts.ManualLayout;
+import org.zkoss.poi.ss.usermodel.charts.ManuallyPositionable;
+import org.zkoss.poi.ss.usermodel.charts.ChartDataFactory;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxisFactory;
+import org.zkoss.poi.ss.usermodel.charts.View3D;
 
 /**
  * High level representation of a chart.
@@ -64,4 +66,27 @@ public interface Chart extends ManuallyPositionable {
 	 * @param data a data to plot
 	 */
 	void plot(ChartData data, ChartAxis... axis);
+	
+	/**
+	 * @return chart legend instance
+	 */
+	View3D getOrCreateView3D();
+
+	/**
+	 * Delete current chart legend.
+	 */
+	void deleteView3D();
+
+	
+	//20111007, henrichen@zkoss.org: rename sheet could affect the reference
+	void renameSheet(String oldname, String newname);
+	
+	//20111111, henrichen@zkoss.org: chart poistion anchor
+    ClientAnchor getPreferredSize();
+
+	//20111111, henrichen@zkoss.org: chart poistion anchor
+	void setClientAnchor(ClientAnchor anchor);
+
+	//20111111, henrichen@zkoss.org: chart id
+	String getChartId();
 }

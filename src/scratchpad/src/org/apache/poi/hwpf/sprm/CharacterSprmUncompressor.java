@@ -15,18 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.sprm;
+package org.zkoss.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.model.Colorref;
-import org.apache.poi.hwpf.model.Hyphenation;
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.hwpf.usermodel.DateAndTime;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.hwpf.model.Colorref;
+import org.zkoss.poi.hwpf.model.Hyphenation;
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.CharacterProperties;
+import org.zkoss.poi.hwpf.usermodel.DateAndTime;
+import org.zkoss.poi.hwpf.usermodel.ShadingDescriptor;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 @Internal
 public final class CharacterSprmUncompressor extends SprmUncompressor

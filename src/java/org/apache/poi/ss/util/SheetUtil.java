@@ -15,9 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.util;
+package org.zkoss.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.formula.WorkbookEvaluator;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.usermodel.*;
 
 import java.text.AttributedString;
 import java.awt.font.TextLayout;
@@ -49,7 +51,7 @@ public class SheetUtil {
     /**
      *  Dummy formula evaluator that does nothing.
      *  YK: The only reason of having this class is that
-     *  {@link org.apache.poi.ss.usermodel.DataFormatter#formatCellValue(org.apache.poi.ss.usermodel.Cell)}
+     *  {@link org.zkoss.poi.ss.usermodel.DataFormatter#formatCellValue(org.zkoss.poi.ss.usermodel.Cell)}
      *  returns formula string for formula cells. Dummy evaluator makes it to format the cached formula result.
      *
      *  See Bugzilla #50021
@@ -66,7 +68,10 @@ public class SheetUtil {
         public int evaluateFormulaCell(Cell cell) {
             return cell.getCachedFormulaResultType();
         }
-
+		public WorkbookEvaluator getWorkbookEvaluator() {return null;}
+		public CellValue evaluateFormula(int sheetIndex, String formula) {return null;} //20111124, henrichen@zkoss.org
+		public ValueEval evaluateFormulaValueEval(int sheetIndex, String formula, boolean ignoreDereference) {return null;} //20111128, henrichen@zkoss.org
+		public CellValue getCellValueByValueEval(ValueEval eval) {return null;} //20111128, henrichen@zkoss.org
     };
 
     /**
@@ -198,7 +203,7 @@ public class SheetUtil {
         TextLayout layout;
 
         Workbook wb = sheet.getWorkbook();
-        DataFormatter formatter = new DataFormatter();
+        DataFormatter formatter = new DataFormatter(ZssContext.getCurrent().getLocale(), false); //20111227, henrichen@zkoss.org
         Font defaultFont = wb.getFontAt((short) 0);
 
         str = new AttributedString(String.valueOf(defaultChar));
@@ -235,7 +240,7 @@ public class SheetUtil {
         TextLayout layout;
 
         Workbook wb = sheet.getWorkbook();
-        DataFormatter formatter = new DataFormatter();
+        DataFormatter formatter = new DataFormatter(ZssContext.getCurrent().getLocale(), false); //20111227, henrichen@zkoss.org: ZSS-68
         Font defaultFont = wb.getFontAt((short) 0);
 
         str = new AttributedString(String.valueOf(defaultChar));

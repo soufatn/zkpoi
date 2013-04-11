@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
-import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hdf.model.hdftypes.HDFType;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Field Descriptor (FLD).

@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.util.Collection;
 
-import org.apache.poi.hwpf.model.FieldsDocumentPart;
+import org.zkoss.poi.hwpf.model.FieldsDocumentPart;
 
 /**
  * User-friendly interface to access document {@link Field}s

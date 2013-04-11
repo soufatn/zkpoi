@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.record;
+package org.zkoss.poi.hslf.record;
 
 import java.io.*;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.Hashtable;
 
-import org.apache.poi.util.BoundedInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.BoundedInputStream;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Storage for embedded OLE objects.

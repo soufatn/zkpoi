@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public final class GenericPropertyNode

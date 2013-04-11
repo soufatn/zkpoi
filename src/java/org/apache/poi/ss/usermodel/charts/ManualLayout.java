@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel.charts;
+package org.zkoss.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 
 /**
  * High level representation of chart element manual layout.

@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
 import java.awt.Color;
 
-import org.apache.poi.util.Units;
+import org.zkoss.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;

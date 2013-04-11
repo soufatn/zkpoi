@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Represents a lightweight node in the Trees used to store content

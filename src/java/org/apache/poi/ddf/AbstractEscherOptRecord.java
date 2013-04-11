@@ -14,15 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Common abstract class for {@link EscherOptRecord} and

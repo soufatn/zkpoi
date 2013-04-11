@@ -14,20 +14,20 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.converter;
+package org.zkoss.poi.hssf.converter;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.hwpf.converter.AbstractWordUtils;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
+import org.zkoss.poi.hssf.usermodel.HSSFCellStyle;
+import org.zkoss.poi.hssf.usermodel.HSSFSheet;
+import org.zkoss.poi.hssf.usermodel.HSSFWorkbook;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.hwpf.converter.AbstractWordUtils;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.IOUtils;
 
 /**
  * Common class for {@link ExcelToFoUtils} and {@link ExcelToHtmlUtils}

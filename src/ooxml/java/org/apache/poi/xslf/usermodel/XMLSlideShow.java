@@ -14,16 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLRelation;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.util.*;
-import org.apache.poi.xslf.XSLFSlideShow;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.POIXMLRelation;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.PackageHelper;
+import org.zkoss.poi.util.Units;
+import org.zkoss.poi.xslf.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;

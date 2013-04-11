@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * DataFormatter contains methods for formatting the value stored in an
@@ -161,6 +161,7 @@ public class DataFormatter {
     private final Map<String,Format> formats;
 
     private boolean emulateCsv = false;
+    private Locale locale = Locale.getDefault();
 
     /**
      * Creates a formatter using the {@link Locale#getDefault() default locale}.
@@ -193,6 +194,7 @@ public class DataFormatter {
      * Creates a formatter using the given locale.
      */
     public DataFormatter(Locale locale) {
+    	this.locale= locale; //20111229, henrichen@zkoss.org: ZSS-68
         dateSymbols = new DateFormatSymbols(locale);
         decimalSymbols = new DecimalFormatSymbols(locale);
         generalWholeNumFormat = new DecimalFormat("#", decimalSymbols);
@@ -481,7 +483,11 @@ public class DataFormatter {
         formatStr = sb.toString();
 
         try {
-            return new ExcelStyleDateFormatter(formatStr, dateSymbols);
+        	//20111229, henrichen@zkoss.org: ZSS-68
+            //return new ExcelStyleDateFormatter(formatStr, dateSymbols);
+        	ExcelStyleDateFormatter dateFormat = new ExcelStyleDateFormatter(formatStr, locale);
+        	dateFormat.setDateFormatSymbols(dateSymbols);
+        	return dateFormat;
         } catch(IllegalArgumentException iae) {
 
             // the pattern could not be parsed correctly,
@@ -769,7 +775,26 @@ public class DataFormatter {
         throw new RuntimeException("Unexpected celltype (" + cellType + ")");
     }
 
-
+    //Henri
+    public String formatCellValue(Cell cell, int cellType) {
+        switch (cellType) {
+        case Cell.CELL_TYPE_NUMERIC :
+            if (DateUtil.isCellDateFormatted(cell)) {
+                return getFormattedDateString(cell);
+            }
+            return getFormattedNumberString(cell);
+		case Cell.CELL_TYPE_ERROR:
+			return ErrorConstants.getText(cell.getErrorCellValue());
+        case Cell.CELL_TYPE_STRING :
+            return cell.getRichStringCellValue().getString();
+        case Cell.CELL_TYPE_BOOLEAN :
+            return String.valueOf(cell.getBooleanCellValue());
+        case Cell.CELL_TYPE_BLANK :
+            return "";
+	    }
+	    throw new RuntimeException("Unexpected celltype (" + cellType + ")");
+    }
+    
     /**
      * <p>
      * Sets a default number format to be used when the Excel format cannot be
@@ -1063,5 +1088,10 @@ public class DataFormatter {
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
         }
+    }
+    
+    //20110330, henrichen@zkoss.org:
+    public static final Format getJavaFormat(Cell cell, Locale locale) { //ZSS-68
+    	return new DataFormatter(locale, false).getFormat(cell);
     }
 }

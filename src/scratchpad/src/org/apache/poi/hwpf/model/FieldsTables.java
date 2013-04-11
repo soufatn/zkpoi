@@ -17,15 +17,15 @@
  * ====================================================================
  */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.io.HWPFOutputStream;
+import org.zkoss.poi.util.Internal;
 
 /**
  * This class provides access to all the fields Plex.

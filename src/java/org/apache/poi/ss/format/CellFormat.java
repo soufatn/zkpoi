@@ -15,16 +15,20 @@
   limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.format;
+package org.zkoss.poi.ss.format;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.DataFormatter;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.util.CacheMap;
+import org.zkoss.util.Pair;
+import org.zkoss.poi.ss.usermodel.DateUtil;
+import org.zkoss.poi.ss.usermodel.DataFormatter;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
@@ -46,18 +50,18 @@ import java.util.regex.Pattern;
  * text, with up to two decimal points); if it is a negative number, display
  * according to the second part (example: red text, with up to two decimal
  * points). If the value is text, display it as is. <dt>Three parts (example:
- * <tt>[Green]#.##;[Black]#.##;[Red]#.##</tt>) <dd>If the value is a positive
+ * <tt>[Green]#.##;[Red]#.##;[Black]#.##</tt>) <dd>If the value is a positive
  * number, display according to the first part (example: green text, with up to
- * two decimal points); if it is zero, display according to the second part
- * (example: black text, with up to two decimal points); if it is a negative
- * number, display according to the third part (example: red text, with up to
- * two decimal points). If the value is text, display it as is. <dt>Four parts
- * (example: <tt>[Green]#.##;[Black]#.##;[Red]#.##;[@]</tt>) <dd>If the value is
+ * two decimal points); if it is a negative
+ * number, display according to the second part (example: red text, with up to
+ * two decimal points); if it is zero, display according to the third part
+ * (example: black text, with up to two decimal points). If the value is text, display it as is. <dt>Four parts
+ * (example: <tt>[Green]#.##;[Red]#.##;[Black]#.##;[@]</tt>) <dd>If the value is
  * a positive number, display according to the first part (example: green text,
- * with up to two decimal points); if it is zero, display according to the
- * second part (example: black text, with up to two decimal points); if it is a
- * negative number, display according to the third part (example: red text, with
- * up to two decimal points). If the value is text, display according to the
+ * with up to two decimal points); if it is a
+ * negative number, display according to the second part (example: red text, with
+ * up to two decimal points); if it is zero, display according to the
+ * third part (example: black text, with up to two decimal points). If the value is text, display according to the
  * fourth part (example: text in the cell's usual color, with the text value
  * surround by brackets). </dl>
  * <p/>
@@ -100,21 +104,54 @@ public class CellFormat {
 
     private static String QUOTE = "\"";
 
+    //20111229, henrichen@zkoss.org: ZSS-68
+	public static final CellFormat getGeneralFormat(final Locale locale) {
+		return new CellFormat("General") {
+	        @Override
+	        public CellFormatResult apply(Object value) {
+	            String text;
+	            if (value == null) {
+	                text = "";
+	            } else if (value instanceof Byte){ //20100616, Henri Chen
+	            	text = ErrorEval.getText(((Byte)value).intValue());
+	            } else if (value instanceof Number) {
+	                text = CellNumberFormatter.getFormatter(CellNumberFormatter.FormatterType.SIMPLE_NUMBER, locale).format(value);
+	            } else if (value instanceof Boolean) { //20100616, Henri Chen
+	            	text = ((Boolean)value).booleanValue() ? "TRUE" : "FALSE";
+	            } else {
+	                text = value.toString();
+	            }
+	            return new CellFormatResult(true, text, null);
+	        }
+	    };
+	}
     /**
      * Format a value as it would be were no format specified.  This is also
      * used when the format specified is <tt>General</tt>.
      */
-    public static final CellFormat GENERAL_FORMAT = new CellFormat("General") {
+/*    public static final CellFormat GENERAL_FORMAT = new CellFormat("General") {
         @Override
         public CellFormatResult apply(Object value) {
             String text = (new CellGeneralFormatter()).format(value);
+//            String text;
+//            if (value == null) {
+//                text = "";
+//            } else if (value instanceof Byte){ //20100616, Henri Chen
+//            	text = ErrorEval.getText(((Byte)value).intValue());
+//            } else if (value instanceof Number) {
+//                text = CellNumberFormatter.SIMPLE_NUMBER.format(value);
+//            } else if (value instanceof Boolean) { //20100616, Henri Chen
+//            	text = ((Boolean)value).booleanValue() ? "TRUE" : "FALSE";
+//            } else {
+//                text = value.toString();
+//            }
             return new CellFormatResult(true, text, null);
         }
     };
-
+*/
     /** Maps a format string to its parsed version for efficiencies sake. */
-    private static final Map<String, CellFormat> formatCache =
-            new WeakHashMap<String, CellFormat>();
+    private static final Map<Object, CellFormat> formatCache = //ZSS-68
+            new WeakHashMap<Object, CellFormat>();
 
     /**
      * Returns a {@link CellFormat} that applies the given format.  Two calls
@@ -124,14 +161,15 @@ public class CellFormat {
      *
      * @return A {@link CellFormat} that applies the given format.
      */
-    public static CellFormat getInstance(String format) {
-        CellFormat fmt = formatCache.get(format);
+    public static CellFormat getInstance(String format, Locale locale) { //20111229, henrichen@zkoss.org: ZSS-68
+    	final Pair key = new Pair(format, locale);
+        CellFormat fmt = formatCache.get(key);
         if (fmt == null) {
             if (format.equals("General") || format.equals("@"))
-                fmt = GENERAL_FORMAT;
+                fmt = getGeneralFormat(locale);
             else
                 fmt = new CellFormat(format);
-            formatCache.put(format, fmt);
+            formatCache.put(key, fmt);
         }
         return fmt;
     }
@@ -169,7 +207,8 @@ public class CellFormat {
             posNumFmt = parts.get(0);
             negNumFmt = null;
             zeroNumFmt = null;
-            textFmt = DEFAULT_TEXT_FORMAT;
+            textFmt = posNumFmt.getCellFormatType() == CellFormatType.TEXT ? posNumFmt : DEFAULT_TEXT_FORMAT;
+            _implicit = true; //implicit negative
             break;
         case 2:
             posNumFmt = parts.get(0);
@@ -203,7 +242,9 @@ public class CellFormat {
      * @return The result, in a {@link CellFormatResult}.
      */
     public CellFormatResult apply(Object value) {
-        if (value instanceof Number) {
+    	if (value instanceof Byte){ //20100616, Henri Chen
+    		return new CellFormatResult(false, ErrorEval.getText(((Byte)value).intValue()), null);
+    	} else if (value instanceof Number) {
             Number num = (Number) value;
             double val = num.doubleValue();
             if (val < 0 &&
@@ -214,7 +255,7 @@ public class CellFormat {
                 // The negative number format has the negative formatting required,
                 // e.g. minus sign or brackets, so pass a positive value so that
                 // the default leading minus sign is not also output
-                return negNumFmt.apply(-val);
+                return _implicit ? negNumFmt.apply(value) : negNumFmt.apply(-val); //20100615, Henri Chen
             } else {
                 return getApplicableFormatPart(val).apply(val);
             }
@@ -227,6 +268,9 @@ public class CellFormat {
             } else {
                 throw new IllegalArgumentException("value not a valid Excel date");
             }
+//marked out after upgrade to POI 3.8-Final            
+//        } else if (value instanceof Date) { //20100615, Henri Chen.
+//        	return posNumFmt.apply(value);
         } else {
             return textFmt.apply(value);
         }
@@ -256,7 +300,7 @@ public class CellFormat {
     public CellFormatResult apply(Cell c) {
         switch (ultimateType(c)) {
         case Cell.CELL_TYPE_BLANK:
-            return apply("");
+            return EMPTY_CELL_FORMAT_RESULT;
         case Cell.CELL_TYPE_BOOLEAN:
             return apply(c.getBooleanCellValue());
         case Cell.CELL_TYPE_NUMERIC:
@@ -270,12 +314,17 @@ public class CellFormat {
             } else {
                 return apply(value);
             }
+//            return apply(posNumFmt.getCellFormatType() == CellFormatType.DATE ? c.getDateCellValue() : c.getNumericCellValue()); //20100615, Henri Chen
         case Cell.CELL_TYPE_STRING:
-            return apply(c.getStringCellValue());
+        	final String str = c.getStringCellValue();
+            return str == null ? EMPTY_CELL_FORMAT_RESULT : apply(str);
+        case Cell.CELL_TYPE_ERROR:
+        	return apply(c.getErrorCellValue()); //20100616, Henri Chen
         default:
             return apply("?");
         }
     }
+    private static final CellFormatResult EMPTY_CELL_FORMAT_RESULT = new CellFormatResult(false, "", null); 
 
     /**
      * Uses the result of applying this format to the value, setting the text
@@ -443,4 +492,7 @@ public class CellFormat {
     public int hashCode() {
         return format.hashCode();
     }
+    
+    //20100615, Henri Chen: patch to distinguish implicit negative number format
+    private boolean _implicit;
 }

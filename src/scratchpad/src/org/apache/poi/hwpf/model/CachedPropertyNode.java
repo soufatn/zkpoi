@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.lang.ref.SoftReference;
 
-import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.sprm.SprmBuffer;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public final class CachedPropertyNode

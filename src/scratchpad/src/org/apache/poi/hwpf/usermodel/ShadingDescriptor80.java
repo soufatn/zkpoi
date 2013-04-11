@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.Colorref;
+import org.zkoss.poi.hwpf.model.Colorref;
 
-import org.apache.poi.hwpf.model.types.SHD80AbstractType;
+import org.zkoss.poi.hwpf.model.types.SHD80AbstractType;
 
 /**
  * The SHD80 is a substructure of the CHP and PAP, and TC for Word 97.

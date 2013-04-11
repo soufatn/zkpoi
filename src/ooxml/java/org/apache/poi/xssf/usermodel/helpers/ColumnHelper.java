@@ -15,16 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.helpers;
+package org.zkoss.poi.xssf.usermodel.helpers;
 
 import java.util.Arrays;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.xssf.util.CTColComparator;
-import org.apache.poi.xssf.util.NumericRanges;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.xssf.util.CTColComparator;
+import org.zkoss.poi.xssf.util.NumericRanges;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.xssf.usermodel.*;
+
+
 
 /**
  * Helper class for dealing with the Column settings on
@@ -90,7 +94,11 @@ public class ColumnHelper {
      *  as 1 based.
      */
     public CTCol getColumn1Based(long index1, boolean splitColumns) {
-        CTCols colsArray = worksheet.getColsArray(0);
+    	//20111016, henrichen@zkoss.org: colsArrays sometimes is null; have to check first
+    	CTCols[] colsArrays = worksheet.getColsArray(); //might be null sometimes
+    	if (colsArrays.length == 0) return null;
+    	CTCols colsArray = colsArrays[0];
+//        CTCols colsArray = worksheet.getColsArray(0);
 		for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
             CTCol colArray = colsArray.getColArray(i);
 			if (colArray.getMin() <= index1 && colArray.getMax() >= index1) {

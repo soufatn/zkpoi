@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hssf.converter;
+package org.zkoss.poi.hssf.converter;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 
 @Beta
 public class ExcelToFoUtils extends AbstractExcelUtils

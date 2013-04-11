@@ -15,18 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 import java.util.Arrays;
 
-import org.apache.poi.ss.formula.ptg.ExpPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.TblPtg;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
+import org.zkoss.poi.ss.formula.ptg.ExpPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.TblPtg;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianByteArrayInputStream;
+import org.zkoss.poi.util.LittleEndianInput;
+import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Encapsulates an encoded formula token array.

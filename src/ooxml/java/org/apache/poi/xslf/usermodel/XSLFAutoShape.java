@@ -17,9 +17,9 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;

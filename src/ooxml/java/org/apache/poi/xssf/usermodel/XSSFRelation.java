@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,25 +22,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLRelation;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.MapInfo;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.SingleXmlCells;
-import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.ThemesTable;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLRelation;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.xssf.model.CalculationChain;
+import org.zkoss.poi.xssf.model.CommentsTable;
+import org.zkoss.poi.xssf.model.MapInfo;
+import org.zkoss.poi.xssf.model.SharedStringsTable;
+import org.zkoss.poi.xssf.model.SingleXmlCells;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.model.ThemesTable;
 
+import org.zkoss.poi.xssf.model.ExternalLink;
 /**
  *
  */
@@ -284,8 +285,14 @@ public final class XSSFRelation extends POIXMLRelation {
           "/xl/printerSettings/printerSettings#.bin",
           null
    );
-
-
+    //20101018, henrichen@zkoss.org
+    public static final XSSFRelation EXTERNAL_LINK = new XSSFRelation(
+    		"application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml",
+    		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink",
+    		"/x1/externalLinks/externalLink#.xml",
+    		ExternalLink.class
+    );
+    
 	private XSSFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
 

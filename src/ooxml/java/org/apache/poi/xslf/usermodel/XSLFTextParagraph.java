@@ -14,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
-import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.Units;
+import org.zkoss.poi.xslf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
@@ -174,7 +174,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     /**
      * Specifies the alignment that is to be applied to the paragraph.
      * Possible values for this include left, right, centered, justified and distributed,
-     * see {@link org.apache.poi.xslf.usermodel.TextAlign}.
+     * see {@link org.zkoss.poi.xslf.usermodel.TextAlign}.
      *
      * @param align text align
      */

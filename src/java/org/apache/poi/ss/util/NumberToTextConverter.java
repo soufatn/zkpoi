@@ -15,7 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.util;
+package org.zkoss.poi.ss.util;
+
+import java.util.Locale;
+
+import org.zkoss.poi.ss.format.Formatters;
+import org.zkoss.poi.ss.usermodel.ZssContext;
 
 
 /**
@@ -126,9 +131,9 @@ public final class NumberToTextConverter {
 	 * those results.
 	 */
 	public static String toText(double value) {
-		return rawDoubleBitsToText(Double.doubleToLongBits(value));
+		return rawDoubleBitsToText(Double.doubleToLongBits(value), ZssContext.getCurrent().getLocale()); //20111230, henrichen@zkoss.org: ZSS-68
 	}
-	/* package */ static String rawDoubleBitsToText(long pRawBits) {
+	/* package */ static String rawDoubleBitsToText(long pRawBits, Locale locale) { //20111230, henrichen@zkoss.org: ZSS-68
 
 		long rawBits = pRawBits;
 		boolean isNegative = rawBits < 0; // sign bit is in the same place for long and double
@@ -149,7 +154,9 @@ public final class NumberToTextConverter {
 			// Normally one would not create HybridDecimal objects from these values
 			// except in these cases Excel really tries to render them as if they were normal numbers
 			if(rawBits == EXCEL_NAN_BITS) {
-				return "3.484840871308E+308";
+				//20110322, henrichen@zkoss.org: respect current locale
+				//return "3.484840871308E+308";
+				return "3"+Formatters.getDecimalSeparator(locale)+"484840871308E+308"; //20111230, henrichen@zkoss.org: ZSS-68
 			}
 			// This is where excel really gets it wrong
 			// Special numbers like Infinity and NaN are interpreted according to
@@ -161,10 +168,10 @@ public final class NumberToTextConverter {
 		if (isNegative) {
 			sb.append('-');
 		}
-		convertToText(sb, nd);
+		convertToText(sb, nd, locale); //20111230, henrichen@zkoss.org: ZSS-68
 		return sb.toString();
 	}
-	private static void convertToText(StringBuilder sb, NormalisedDecimal pnd) {
+	private static void convertToText(StringBuilder sb, NormalisedDecimal pnd, Locale locale) { //20111230, henrichen@zkoss.org: ZSS-68
 		NormalisedDecimal rnd = pnd.roundUnits();
 		int decExponent = rnd.getDecimalExponent();
 		String decimalDigits;
@@ -179,41 +186,49 @@ public final class NumberToTextConverter {
 		}
 		int countSigDigits = countSignifantDigits(decimalDigits);
 		if (decExponent < 0) {
-			formatLessThanOne(sb, decimalDigits, decExponent, countSigDigits);
+			formatLessThanOne(sb, decimalDigits, decExponent, countSigDigits, locale); //20111230, henrichen@zkoss.org: ZSS-68
 		} else {
-			formatGreaterThanOne(sb, decimalDigits, decExponent, countSigDigits);
+			formatGreaterThanOne(sb, decimalDigits, decExponent, countSigDigits, locale); //20111230, henrichen@zkoss.org: ZSS-68
 		}
 	}
 
 	private static void formatLessThanOne(StringBuilder sb, String decimalDigits, int decExponent,
-			int countSigDigits) {
+			int countSigDigits, Locale locale) { //20111230, henrichen@zkoss.org: ZSS-68
 		int nLeadingZeros = -decExponent - 1;
 		int normalLength = 2 + nLeadingZeros + countSigDigits; // 2 == "0.".length()
 
+		final char dot = Formatters.getDecimalSeparator(locale); //20110322, henrichen@zkoss.org: ZSS-68
 		if (needsScientificNotation(normalLength)) {
 			sb.append(decimalDigits.charAt(0));
 			if (countSigDigits > 1) {
-    			sb.append('.');
+				//20110322, henrichen@zkoss.org: respect current locale
+    			//sb.append('.');
+				sb.append(dot);
     			sb.append(decimalDigits.subSequence(1, countSigDigits));
 			}
 			sb.append("E-");
 			appendExp(sb, -decExponent);
 			return;
 		}
-		sb.append("0.");
+		//20110322, henrichen@zkoss.org: respect current locale
+		//sb.append("0.");
+		sb.append("0").append(dot);
 		for (int i=nLeadingZeros; i>0; i--) {
 			sb.append('0');
 		}
 		sb.append(decimalDigits.subSequence(0, countSigDigits));
 	}
 
-	private static void formatGreaterThanOne(StringBuilder sb, String decimalDigits, int decExponent, int countSigDigits) {
+	private static void formatGreaterThanOne(StringBuilder sb, String decimalDigits, int decExponent, int countSigDigits, Locale locale) { //20111230, henrichen@zkoss.org: ZSS-68
 
+		final char dot = Formatters.getDecimalSeparator(locale); //20110322, henrichen@zkoss.org: ZSS-68
 		if (decExponent > 19) {
 			// scientific notation
 			sb.append(decimalDigits.charAt(0));
 			if (countSigDigits>1) {
-				sb.append('.');
+				//20110322, henrichen@zkoss.org: respect current locale
+    			//sb.append('.');
+				sb.append(dot);
 				sb.append(decimalDigits.subSequence(1, countSigDigits));
 			}
 			sb.append("E+");
@@ -223,7 +238,9 @@ public final class NumberToTextConverter {
 		int nFractionalDigits = countSigDigits - decExponent-1;
 		if (nFractionalDigits > 0) {
 			sb.append(decimalDigits.subSequence(0, decExponent+1));
-			sb.append('.');
+			//20110322, henrichen@zkoss.org: respect current locale
+			//sb.append('.');
+			sb.append(dot);
 			sb.append(decimalDigits.subSequence(decExponent+1, countSigDigits));
 			return;
 		}
@@ -255,5 +272,10 @@ public final class NumberToTextConverter {
 			return;
 		}
 		sb.append(val);
+	}
+	
+	//20111229, henrichen@zkoss.org: ZSS-68. @see CellNubmerFormatter
+	public static String toText(double value, Locale locale) {  
+		return rawDoubleBitsToText(Double.doubleToLongBits(value), locale); 
 	}
 }

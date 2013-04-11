@@ -14,28 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherTertiaryOptRecord;
+import org.zkoss.poi.ddf.EscherTertiaryOptRecord;
 
-import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherRecordFactory;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hwpf.model.EscherRecordHolder;
-import org.apache.poi.hwpf.model.FSPA;
-import org.apache.poi.hwpf.model.FSPATable;
+import org.zkoss.poi.ddf.DefaultEscherRecordFactory;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ddf.EscherContainerRecord;
+import org.zkoss.poi.ddf.EscherOptRecord;
+import org.zkoss.poi.ddf.EscherProperties;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.ddf.EscherRecordFactory;
+import org.zkoss.poi.ddf.EscherSimpleProperty;
+import org.zkoss.poi.ddf.EscherSpRecord;
+import org.zkoss.poi.hwpf.model.EscherRecordHolder;
+import org.zkoss.poi.hwpf.model.FSPA;
+import org.zkoss.poi.hwpf.model.FSPATable;
 
 public class OfficeDrawingsImpl implements OfficeDrawings
 {

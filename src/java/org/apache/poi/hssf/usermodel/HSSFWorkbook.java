@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -29,36 +29,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.poi.POIDocument;
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBitmapBlip;
-import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
-import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.POIDocument;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.ddf.EscherBitmapBlip;
+import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ddf.EscherRecord;
+import org.zkoss.poi.hssf.OldExcelFormatException;
+import org.zkoss.poi.hssf.model.HSSFFormulaParser;
+import org.zkoss.poi.hssf.model.InternalSheet;
+import org.zkoss.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.hssf.model.RecordStream;
+import org.zkoss.poi.hssf.model.DrawingManager2;
+import org.zkoss.poi.hssf.record.*;
+import org.zkoss.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.zkoss.poi.hssf.record.common.UnicodeString;
+import org.zkoss.poi.hssf.util.CellReference;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.ss.formula.ptg.MemFuncPtg;
+import org.zkoss.poi.ss.formula.ptg.OperandPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
+import org.zkoss.poi.ss.formula.ptg.UnionPtg;
+import org.zkoss.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.zkoss.poi.ss.util.WorkbookUtil;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import org.apache.commons.codec.digest.DigestUtils;
 
 
@@ -67,13 +70,14 @@ import org.apache.commons.codec.digest.DigestUtils;
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
  *
- * @see org.apache.poi.hssf.model.InternalWorkbook
- * @see org.apache.poi.hssf.usermodel.HSSFSheet
+ * @see org.zkoss.poi.hssf.model.InternalWorkbook
+ * @see org.zkoss.poi.hssf.usermodel.HSSFSheet
  * @author  Andrew C. Oliver (acoliver at apache dot org)
  * @author  Glen Stampoultzis (glens at apache.org)
  * @author  Shawn Laubach (slaubach at apache dot org)
+ * @author	Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
-public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
+public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final int MAX_ROW = 0xFFFF;
     private static final short MAX_COLUMN = (short)0x00FF;
@@ -137,6 +141,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     private HSSFDataFormat formatter;
 
+    
     /**
      * The policy to apply in the event of missing or
      *  blank cells when fetching from a row.
@@ -183,7 +188,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem
      *        in memory
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @see org.zkoss.poi.poifs.filesystem.POIFSFileSystem
      * @exception IOException if the stream cannot be read
      */
     public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
@@ -239,7 +244,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem
      *        in memory
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @see org.zkoss.poi.poifs.filesystem.POIFSFileSystem
      * @exception IOException if the stream cannot be read
      */
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
@@ -258,7 +263,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem
      *        in memory
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @see org.zkoss.poi.poifs.filesystem.POIFSFileSystem
      * @exception IOException if the stream cannot be read
      */
     public HSSFWorkbook(DirectoryNode directory, boolean preserveNodes)
@@ -294,7 +299,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         RecordStream rs = new RecordStream(records, recOffset);
         while (rs.hasNext()) {
             InternalSheet sheet = InternalSheet.createSheet(rs);
-            _sheets.add(new HSSFSheet(this, sheet));
+            //20100903, henrichen@zkoss.org: allow customize creating HSSFSheet 
+            //_sheets.add(new HSSFSheet(this, sheet));
+            _sheets.add(createHSSFSheet(this, sheet));
         }
 
         for (int i = 0 ; i < workbook.getNumNames() ; ++i){
@@ -316,7 +323,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param preserveNodes whether to preseve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to.
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @see org.zkoss.poi.poifs.filesystem.POIFSFileSystem
      * @see #HSSFWorkbook(POIFSFileSystem)
      * @exception IOException if the stream cannot be read
      */
@@ -350,9 +357,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
       *
       * @param records a collection of sheet's records.
       * @param offset the offset to search at 
-      * @see org.apache.poi.hssf.record.LabelRecord
-      * @see org.apache.poi.hssf.record.LabelSSTRecord
-      * @see org.apache.poi.hssf.record.SSTRecord
+      * @see org.zkoss.poi.hssf.record.LabelRecord
+      * @see org.zkoss.poi.hssf.record.LabelSSTRecord
+      * @see org.zkoss.poi.hssf.record.SSTRecord
       */
 
      private void convertLabelRecords(List records, int offset)
@@ -495,7 +502,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * This may be different from the "selected sheet" since excel seems to
      * allow you to show the data of one sheet when another is seen "selected"
      * in the tabs (at the bottom).
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#setSelected(boolean)
      */
     public int getActiveSheetIndex() {
         return workbook.getWindowOne().getActiveSheetIndex();
@@ -610,7 +617,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based). <tt>-1</tt> if not found
      */
-    public int getSheetIndex(org.apache.poi.ss.usermodel.Sheet sheet) {
+    public int getSheetIndex(org.zkoss.poi.ss.usermodel.Sheet sheet) {
         for(int i=0; i<_sheets.size(); i++) {
             if(_sheets.get(i) == sheet) {
                 return i;
@@ -629,7 +636,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * be removed in future versions of POI.
      */
     public int getExternalSheetIndex(int internalSheetIndex) {
-        return workbook.checkExternSheet(internalSheetIndex);
+        return workbook.checkExternSheet(internalSheetIndex, internalSheetIndex);
     }
     /**
      * @deprecated for POI internal use only (formula rendering).  This method is likely to
@@ -664,7 +671,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public HSSFSheet createSheet()
     {
-        HSSFSheet sheet = new HSSFSheet(this);
+        //20100903, henrichen@zkoss.org: allow customize creating HSSFSheet 
+        //HSSFSheet sheet = new HSSFSheet(this);
+        HSSFSheet sheet = createHSSFSheet(this);
 
         _sheets.add(sheet);
         workbook.setSheetName(_sheets.size() - 1, "Sheet" + (_sheets.size() - 1));
@@ -789,8 +798,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (workbook.doesContainsSheetName( sheetname, _sheets.size() ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
-        HSSFSheet sheet = new HSSFSheet(this);
-
+        //20100903, henrichen@zkoss.org: allow customize creating HSSFSheet 
+        //HSSFSheet sheet = new HSSFSheet(this);
+        HSSFSheet sheet = createHSSFSheet(this);
+        
         workbook.setSheetName(_sheets.size(), sheetname);
         _sheets.add(sheet);
         boolean isOnlySheet = _sheets.size() == 1;
@@ -973,7 +984,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (startRow > endRow) throw new IllegalArgumentException("Invalid row range specification");
 
         HSSFSheet sheet = getSheetAt(sheetIndex);
-        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex, sheetIndex);
 
         boolean settingRowAndColumn =
                 startColumn != -1 && endColumn != -1 && startRow != -1 && endRow != -1;
@@ -1134,6 +1145,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return retval;
     }
 
+    
     /**
      * Reset the fonts cache, causing all new calls
      *  to getFontAt() to create new objects.
@@ -1161,7 +1173,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         ExtendedFormatRecord xfr = workbook.createCellXF();
         short index = (short) (getNumCellStyles() - 1);
         HSSFCellStyle style = new HSSFCellStyle(index, xfr, this);
-
+        
+        //20110119, henrichen@zkoss.org: whenever we create a XF(ExtendedFormatRecord), we shall create an associated XFExt
+        workbook.createCellXFExt(index); 
         return style;
     }
 
@@ -1196,7 +1210,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param stream - the java OutputStream you wish to write the XLS to
      *
      * @exception IOException if anything can't be written.
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @see org.zkoss.poi.poifs.filesystem.POIFSFileSystem
      */
 
     public void write(OutputStream stream)
@@ -1485,8 +1499,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Returns the instance of HSSFDataFormat for this workbook.
      * @return the HSSFDataFormat object
-     * @see org.apache.poi.hssf.record.FormatRecord
-     * @see org.apache.poi.hssf.record.Record
+     * @see org.zkoss.poi.hssf.record.FormatRecord
+     * @see org.zkoss.poi.hssf.record.Record
      */
     public HSSFDataFormat createDataFormat() {
     if (formatter == null)
@@ -1644,6 +1658,25 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return pictures;
     }
 
+    
+    //TODO, get all autofilter info
+    public List<NameRecord> getAllAutofilters(){
+    	List<NameRecord> records = new ArrayList<NameRecord>();
+        Iterator<Record> recordIter = workbook.getRecords().iterator();
+        while (recordIter.hasNext())
+        {
+            Record r = recordIter.next();
+            if (r instanceof NameRecord)
+            {	
+            	NameRecord nameRecord = (NameRecord)r;
+                if(nameRecord.getNameText().equals("_FilterDatabase")){
+                	records.add(nameRecord);
+                }
+            }
+        }
+        return records;
+    }
+    
     /**
      * Performs a recursive search for pictures in the given list of escher records.
      *
@@ -1656,6 +1689,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
             if (escherRecord instanceof EscherBSERecord)
             {
+            	//20111110, henrichen@zkoss.org: shall handle bse record
+                HSSFPictureData picture = new HSSFPictureData((EscherBSERecord) escherRecord);
+				pictures.add(picture);
+/*            	
                 EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
                 if (blip != null)
                 {
@@ -1663,8 +1700,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                     HSSFPictureData picture = new HSSFPictureData(blip);
 					pictures.add(picture);
                 }
-                
-                
+*/                
             }
 
             // Recursive call.
@@ -1808,4 +1844,53 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return workbook.changeExternalReference(oldUrl, newUrl);
     }
+    
+    //20100903, henrichen@zkoss.org: create sheet indirectly to allow extension
+    protected HSSFSheet createHSSFSheet(HSSFWorkbook workbook, InternalSheet sheet) {
+    	return new HSSFSheet(workbook, sheet);
+    }
+    
+    //20100903, henrichen@zkoss.org: create sheet indirectly to allow extension
+    protected HSSFSheet createHSSFSheet(HSSFWorkbook workbook) {
+    	return new HSSFSheet(workbook);
+    }
+    
+    //20111110, henrichen@zkoss.org: remove bse record
+	protected void deletePictureData(PictureData img) {
+		HSSFPictureData data = (HSSFPictureData) img;
+		removeBSERecord(data.getBSERecord());
+	}
+
+	//locate the bse and remove it
+	private void removeBSERecord(EscherBSERecord bse) {
+	    Iterator<Record> recordIter = workbook.getRecords().iterator();
+	    while (recordIter.hasNext())
+	    {
+	        Record r = recordIter.next();
+	        if (r instanceof AbstractEscherHolderRecord)
+	        {
+	            ((AbstractEscherHolderRecord) r).decode();
+	            List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
+	            if (removeBSERecord1(escherRecords, bse)) {
+	            	break;
+	            }
+	        }
+	    }
+	}
+
+	//locate the bse and remove it
+	private boolean removeBSERecord1(List<EscherRecord> escherRecords, EscherBSERecord bse) {
+		for (Iterator<EscherRecord> it = escherRecords.iterator(); it.hasNext();) {
+			final EscherRecord escherRecord = it.next();
+            if (escherRecord.equals(bse)) {
+            	it.remove();
+            	return true;
+            }
+            // Recursive call.
+            if (removeBSERecord1(escherRecord.getChildRecords(), bse)) {
+            	return true;
+            }
+        }
+		return false;
+	}
 }

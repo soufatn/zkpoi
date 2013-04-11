@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
-import org.apache.poi.xssf.model.StylesTable;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.xssf.usermodel.XSSFFontFormatting;
+import org.zkoss.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
@@ -171,7 +171,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
      * The comparison function used when the type of conditional formatting is set to
      * {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS}
      * <p>
-     *     MUST be a constant from {@link org.apache.poi.ss.usermodel.ComparisonOperator}
+     *     MUST be a constant from {@link org.zkoss.poi.ss.usermodel.ComparisonOperator}
      * </p>
      *
      * @return the conditional format operator
@@ -214,7 +214,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     /**
      * The formula used to evaluate the second operand of the comparison when
      * comparison type is  {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS} and operator
-     * is either {@link org.apache.poi.ss.usermodel.ComparisonOperator#BETWEEN} or {@link org.apache.poi.ss.usermodel.ComparisonOperator#NOT_BETWEEN}
+     * is either {@link org.zkoss.poi.ss.usermodel.ComparisonOperator#BETWEEN} or {@link org.zkoss.poi.ss.usermodel.ComparisonOperator#NOT_BETWEEN}
      *
      * @return  the second formula
      */

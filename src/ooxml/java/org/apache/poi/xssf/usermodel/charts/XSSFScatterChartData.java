@@ -15,15 +15,15 @@
    limitations under the License.
    ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.charts;
+package org.zkoss.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartDataSource;
-import org.apache.poi.ss.usermodel.charts.ScatterChartData;
-import org.apache.poi.ss.usermodel.charts.ScatterChartSerie;
-import org.apache.poi.util.Beta;
-import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.ss.usermodel.charts.ChartAxis;
+import org.zkoss.poi.ss.usermodel.charts.ChartDataSource;
+import org.zkoss.poi.ss.usermodel.charts.ScatterChartData;
+import org.zkoss.poi.ss.usermodel.charts.ScatterChartSerie;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 
 import java.util.ArrayList;

@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.util;
+package org.zkoss.poi.xslf.util;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.xslf.usermodel.XMLSlideShow;
+import org.zkoss.poi.xslf.usermodel.XSLFSlide;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;

@@ -15,22 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherComplexProperty;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperty;
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.Internal;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ddf.EscherComplexProperty;
+import org.zkoss.poi.ddf.EscherOptRecord;
+import org.zkoss.poi.ddf.EscherProperty;
+import org.zkoss.poi.ddf.EscherBSERecord;
+import org.zkoss.poi.hssf.record.EscherAggregate;
+import org.zkoss.poi.ss.usermodel.Chart;
+import org.zkoss.poi.util.StringUtil;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.ss.usermodel.Drawing;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.ZssChartX;
 
 /**
  * The patriarch is the toplevel container for shapes in a sheet.  It does
@@ -166,7 +168,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * YK: used to create autofilters
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#setAutoFilter(org.apache.poi.ss.util.CellRangeAddress)
+     * @see org.zkoss.poi.hssf.usermodel.HSSFSheet#setAutoFilter(org.zkoss.poi.ss.util.CellRangeAddress)
      */
      HSSFSimpleShape createComboBox(HSSFAnchor anchor)
      {
@@ -314,4 +316,44 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 		throw new RuntimeException("NotImplemented");
 	}
 
+    //20101014, henrichen@zkoss.org: handle chart creation
+    public HSSFChartX createChart(HSSFAnchor anchor, HSSFChart chart)
+    {
+        HSSFChartX shape = new HSSFChartX(null, anchor);
+        shape.setChart(chart);
+        shape.anchor = anchor;
+        shape._patriarch = this;
+        _shapes.add(shape);
+        return shape;
+    }
+
+    //20111109, henrichen@zkoss.org: currently support XSSFPicture only
+	@Override
+	public void deletePicture(Picture picture) {
+		int pictureIndex = ((HSSFPicture)picture).getPictureIndex();
+        EscherBSERecord bse = _sheet.getWorkbook().getWorkbook().getBSERecord(pictureIndex);
+        bse.setRef(bse.getRef() - 1);
+        _shapes.remove(picture);
+	}
+
+	//20111110, henrichen@zkoss.org: update picture anchor place
+	@Override
+	public void movePicture(Picture pic, ClientAnchor anchor) {
+		pic.setClientAnchor(anchor);
+	}
+
+	//20111111, henrichen@zkoss.org: update chart anchor place
+	@Override
+	public void moveChart(ZssChartX chart, ClientAnchor anchor) {
+		chart.setClientAnchor(anchor);
+	}
+
+	@Override
+	public void deleteChart(ZssChartX chartX) {
+		//TODO: remove chart record from sheet
+		//TODO: remove anchor record from sheet
+		//TODO: remove chart record from workbook
+		_shapes.remove(chartX);
+	}
 }
+

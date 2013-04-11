@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.storage;
+package org.zkoss.poi.poifs.storage;
 
 import java.io.IOException;
 
 import java.util.*;
 
-import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.*;
+import org.zkoss.poi.poifs.common.POIFSBigBlockSize;
+import org.zkoss.poi.poifs.common.POIFSConstants;
+import org.zkoss.poi.util.*;
 
 /**
  * This class manages and creates the Block Allocation Table, which is

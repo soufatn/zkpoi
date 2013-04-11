@@ -16,10 +16,10 @@
 ==================================================================== */
 
 
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * The FibRgLw95 structure is the third section of the FIB for Word95.

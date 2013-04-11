@@ -14,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.util.Arrays;
 
-import org.apache.poi.hwpf.model.types.PICFAbstractType;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.types.PICFAbstractType;
+import org.zkoss.poi.util.Internal;
 
 /**
  * The PICF structure specifies the type of a picture, as well as the size of

@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.FLDAbstractType;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.types.FLDAbstractType;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Class for the FLD structure.

@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.HRESIAbstractType;
-import org.apache.poi.hwpf.usermodel.CharacterProperties;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hwpf.model.types.HRESIAbstractType;
+import org.zkoss.poi.hwpf.usermodel.CharacterProperties;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * Hyphenation. Substructure of the {@link CharacterProperties}.

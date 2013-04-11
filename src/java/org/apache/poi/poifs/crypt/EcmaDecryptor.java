@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.poifs.crypt;
+package org.zkoss.poi.poifs.crypt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,9 +28,10 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.poifs.filesystem.DirectoryNode;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  *  @author Maxim Valyanskiy

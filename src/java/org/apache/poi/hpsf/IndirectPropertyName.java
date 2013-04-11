@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hpsf;
+package org.zkoss.poi.hpsf;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 class IndirectPropertyName

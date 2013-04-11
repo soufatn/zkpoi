@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.LittleEndian;
 
 /**
  * The LFOLVL structure contains information that is used to override the formatting

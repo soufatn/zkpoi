@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.usermodel;
+package org.zkoss.poi.ss.usermodel;
 
 public interface CellStyle {
 
@@ -113,7 +113,7 @@ public interface CellStyle {
      * dot border
      */
 
-    public final static short BORDER_HAIR = 0x4;
+    public final static short BORDER_DOTTED = 0x4;
 
     /**
      * Thick border
@@ -131,7 +131,7 @@ public interface CellStyle {
      * hair-line border
      */
 
-    public final static short BORDER_DOTTED = 0x7;
+    public final static short BORDER_HAIR = 0x7;
 
     /**
      * Medium dashed border
@@ -701,4 +701,11 @@ public interface CellStyle {
      *  XSSFCellStyle)
      */
     public void cloneStyleFrom(CellStyle source);
+
+    //20100921, henrichen@zkoss.org: fetch boarder color object
+    public Color getTopBorderColorColor();
+    public Color getBottomBorderColorColor();
+    public Color getRightBorderColorColor();
+    public Color getLeftBorderColorColor();
+    public void setFontColorColor(Color fontColor);
 }

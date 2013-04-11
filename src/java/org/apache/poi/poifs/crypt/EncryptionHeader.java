@@ -14,17 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.poifs.crypt;
+package org.zkoss.poi.poifs.crypt;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.zkoss.poi.poifs.filesystem.DocumentInputStream;
 
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 
 import org.w3c.dom.NamedNodeMap;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.poi.EncryptedDocumentException;
+import org.zkoss.poi.EncryptedDocumentException;
 
 /**
  *  @author Maxim Valyanskiy

@@ -16,10 +16,11 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
 
-import org.apache.poi.util.*;
+import org.zkoss.poi.hwpf.usermodel.*;
+import org.zkoss.poi.util.*;
 
 /**
  * The PICF structure specifies the type of a picture, as well as the size of the

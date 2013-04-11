@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
 import java.net.URI;

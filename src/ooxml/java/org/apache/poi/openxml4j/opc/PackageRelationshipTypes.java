@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc;
+package org.zkoss.poi.openxml4j.opc;
 
 /**
  * Relationship types.
@@ -99,4 +99,14 @@ public interface PackageRelationshipTypes {
 	 * Style type.
 	 */
 	String STYLE_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles";
+	
+	/**
+	 * External Links
+	 */
+	String EXTERNALLINK_PART = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink";
+	
+	/**
+	 * External Link Path
+	 */
+	String EXTERNALLINK_PATH = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
 }

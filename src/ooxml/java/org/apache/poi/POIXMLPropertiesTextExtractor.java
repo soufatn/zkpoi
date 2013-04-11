@@ -15,14 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi;
+package org.zkoss.poi;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.zkoss.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
+import org.zkoss.poi.POITextExtractor;
+import org.zkoss.poi.openxml4j.opc.internal.PackagePropertiesPart;
 
 /**
  * A {@link POITextExtractor} for returning the textual

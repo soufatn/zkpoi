@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,39 +33,48 @@ import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLProperties;
-import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.util.*;
-import org.apache.poi.xssf.model.*;
-import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
+import org.zkoss.poi.POIXMLDocument;
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.POIXMLProperties;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.opc.OPCPackage;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackagePartName;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
+import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.WorkbookUtil;
+import org.zkoss.poi.util.*;
+import org.zkoss.poi.xssf.model.*;
+import org.zkoss.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.zkoss.poi.xssf.model.CalculationChain;
+import org.zkoss.poi.xssf.model.ExternalLink;
+import org.zkoss.poi.xssf.model.MapInfo;
+import org.zkoss.poi.xssf.model.SharedStringsTable;
+import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.xssf.model.ThemesTable;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
+ * 
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<XSSFSheet> {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
@@ -145,7 +154,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * The policy to apply in the event of missing or
      *  blank cells when fetching from a row.
-     * See {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     * See {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy}
      */
     private MissingCellPolicy _missingCellPolicy = Row.RETURN_NULL_AND_BLANK;
 
@@ -161,6 +170,51 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @see {@link #getCreationHelper()}
      */
     private XSSFCreationHelper _creationHelper;
+
+    /**
+     * List of Array of external sheet references.
+     * String[0]: book name.
+     * String[1]: first sheet name
+     * String[2]: last sheet name
+     */
+	private List<String[]> _externalSheetRefs = new ArrayList<String[]>(4);
+
+	/**
+	 * Map from external link index to target book name (for evaluation)
+	 */
+	private Map<String, String> linkIndexToBookName = new HashMap<String, String>(4);
+	
+	/**
+	 * Map from target book name to external link index (for formula parsing)
+	 */
+	private Map<String, String> bookNameToLinkIndex = new HashMap<String, String>(4);
+	
+	/**
+	 * @return  the external sheet index with the given book name and 
+	 * sheet names; create if not exists.
+	 */
+	/*package*/ int getOrCreateExternalSheetIndex(String bookName, String sheetName1, String sheetName2) {
+		synchronized(_externalSheetRefs) {
+			final int len = _externalSheetRefs.size();
+			for(int j = 0; j < len; ++j) {
+				final String jbookName = _externalSheetRefs.get(j)[0];
+				if ((bookName == jbookName || (bookName != null && bookName.equalsIgnoreCase(jbookName))) 
+					&& _externalSheetRefs.get(j)[1].equalsIgnoreCase(sheetName1) 
+					&& _externalSheetRefs.get(j)[2].equalsIgnoreCase(sheetName2)) {
+					return j;
+				}
+			}
+			_externalSheetRefs.add(new String[] {bookName, sheetName1, sheetName2});
+			return len;
+		}
+	}
+	
+	/*package*/ String[] convertFromExternSheetIndex(int externSheetIndex) {
+		if (_externalSheetRefs.size() <= externSheetIndex) {
+			return null;
+		}
+		return _externalSheetRefs.get(externSheetIndex);
+	}
 
     /**
      * Create a new SpreadsheetML workbook.
@@ -214,7 +268,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * </p>
      * <p>
      *   To construct a workbook from file use the
-     *   {@link #XSSFWorkbook(org.apache.poi.openxml4j.opc.OPCPackage)}  constructor:
+     *   {@link #XSSFWorkbook(org.zkoss.poi.openxml4j.opc.OPCPackage)}  constructor:
      *   <pre><code>
      *       OPCPackage pkg = OPCPackage.open(path);
      *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
@@ -248,6 +302,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 else if(p instanceof MapInfo) mapInfo = (MapInfo)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
+                } else if (p instanceof ExternalLink) {
+                	final ExternalLink el = (ExternalLink) p;
+                	linkIndexToBookName.put(el.getLinkIndex(), el.getBookName());
+                	bookNameToLinkIndex.put(el.getBookName(), el.getLinkIndex());
                 }
             }
             stylesSource.setTheme(theme);
@@ -520,7 +578,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Returns the instance of XSSFDataFormat for this workbook.
      *
      * @return the XSSFDataFormat object
-     * @see org.apache.poi.ss.usermodel.DataFormat
+     * @see org.zkoss.poi.ss.usermodel.DataFormat
      */
     public XSSFDataFormat createDataFormat() {
         if (formatter == null)
@@ -601,14 +659,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * </p>
      *
      * <p>
-     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     * See {@link org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
      *      for a safe way to create valid names
      * </p>
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     public XSSFSheet createSheet(String sheetname) {
         if (sheetname == null) {
@@ -1183,7 +1241,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return "$" + colRef.getCellRefParts()[2] + "$" + colRef.getCellRefParts()[1] + ":$" + colRef2.getCellRefParts()[2] + "$" + colRef2.getCellRefParts()[1];
     }
 
-    XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
+    public XSSFName getBuiltInName(String builtInCode, int sheetNumber) {
         for (XSSFName name : namedRanges) {
             if (name.getNameName().equalsIgnoreCase(builtInCode) && name.getSheetIndex() == sheetNumber) {
                 return name;
@@ -1236,7 +1294,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
      * @see #createSheet(String)
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     public void setSheetName(int sheetIndex, String sheetname) {
         validateSheetIndex(sheetIndex);
@@ -1248,9 +1306,39 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         if (containsSheet(sheetname, sheetIndex ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
-        XSSFFormulaUtils utils = new XSSFFormulaUtils(this);
+/*        XSSFFormulaUtils utils = new XSSFFormulaUtils(this);
         utils.updateSheetName(sheetIndex, sheetname);
 
+        workbook.getSheets().getSheetArray(sheetIndex).setName(sheetname);
+*/        
+        //20110106, henrichen@zkoss.org: handle the externsheet reference
+        final Sheet wsheet = getSheetAt(sheetIndex);
+        if (wsheet != null) {
+	        final String oldname = wsheet.getSheetName();
+	        for(String[] names : _externalSheetRefs) {
+	        	final String sheetname1 = names[1];
+	        	final String sheetname2 = names[2];
+	        	if (oldname.equals(sheetname1)) {
+	        		names[1] = sheetname;
+	        	}
+	        	if (oldname.equals(sheetname2)) {
+	        		names[2] = sheetname;
+	        	}
+	        }
+	        //20110112, henrichen@zkoss.org: adjust sheet name of the named range
+			final String o = SheetNameFormatter.format(oldname);
+			final String n = SheetNameFormatter.format(sheetname);
+	        for (XSSFName nm : namedRanges) {
+	            final CTDefinedName ct = nm.getCTName();
+	            if(ct.isSetLocalSheetId()) {
+		            if (ct.getLocalSheetId() == sheetIndex) {
+		            	final String ref = ct.getStringValue();
+		            	final String newref = ref.replaceAll(o+"!", n+"!");
+		            	ct.setStringValue(newref);
+		            }
+	            }
+	        }
+        }
         workbook.getSheets().getSheetArray(sheetIndex).setName(sheetname);
     }
 
@@ -1290,7 +1378,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 i++;
             }
             names.setDefinedNameArray(nr);
-            workbook.setDefinedNames(names);
+            workbook.setDefinedNames(names); 
+            
+            //bug#ZSS-36: Exception when exporting excel twice.
+            //20110818, henrichen: names.setDefinedNameArray() will instantiate new CTDefinedNames 
+            // and those in namedRanged is orphaned. Have to sync back CTDefinedName into namedRanges
+            syncNamedRange();
         } else {
             if(workbook.isSetDefinedNames()) {
                 workbook.unsetDefinedNames();
@@ -1693,4 +1786,29 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return calcPr != null && calcPr.getCalcId() != 0;
     }
 
+
+	/*package*/ String getBookNameFromExternalLinkIndex(String externalLinkIndex) {
+		return linkIndexToBookName.get(externalLinkIndex);
+	}
+	
+	//20110818, henrichen@zkoss.org: sync CTDefinedName and namedRanges
+	private void syncNamedRange() {
+        namedRanges = new ArrayList<XSSFName>();
+        if(workbook.isSetDefinedNames()) {
+            for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
+                namedRanges.add(new XSSFName(ctName, this));
+            }
+        }
+	}
+
+	//20111109, henrichen@zkoss.org: reset XSSFPictureData
+	/*package*/ void setPictureData(int pictureIndex, XSSFPictureData img) {
+		pictures.set(pictureIndex, img);
+	}
+	
+	//20110117, henrichen@zkoss.org: get book index
+	//ZSS-81 Cannot input formula with proper external book name
+	/*package*/ String getExternalLinkIndexFromBookName(String bookname) {
+		return bookNameToLinkIndex.get(bookname);
+	}
 }

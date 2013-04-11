@@ -17,12 +17,12 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;

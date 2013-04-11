@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel;
+package org.zkoss.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
+import org.zkoss.poi.hssf.record.cf.FontFormatting;
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
  * @author Dmitriy Kumshayev
  *
  */
-public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.FontFormatting
+public final class HSSFFontFormatting implements org.zkoss.poi.ss.usermodel.FontFormatting
 {
 
 	/** Underline type - None */
@@ -96,7 +96,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 	}
 
 	/**
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#getRawRecord()
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#getRawRecord()
 	 */
 	protected byte[] getRawRecord()
 	{
@@ -268,7 +268,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setEscapementTypeModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setEscapementTypeModified(boolean)
 	 */
 	public void setEscapementTypeModified(boolean modified)
 	{
@@ -277,7 +277,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontCancellationModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontCancellationModified(boolean)
 	 */
 	public void setFontCancellationModified(boolean modified)
 	{
@@ -286,7 +286,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param fci
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontColorIndex(short)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontColorIndex(short)
 	 */
 	public void setFontColorIndex(short fci)
 	{
@@ -295,7 +295,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param height
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontHeight(int)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontHeight(int)
 	 */
 	public void setFontHeight(int height)
 	{
@@ -304,7 +304,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontOutlineModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontOutlineModified(boolean)
 	 */
 	public void setFontOutlineModified(boolean modified)
 	{
@@ -313,7 +313,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontShadowModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontShadowModified(boolean)
 	 */
 	public void setFontShadowModified(boolean modified)
 	{
@@ -322,7 +322,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setFontStyleModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setFontStyleModified(boolean)
 	 */
 	public void setFontStyleModified(boolean modified)
 	{
@@ -331,7 +331,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param on
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setOutline(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setOutline(boolean)
 	 */
 	public void setOutline(boolean on)
 	{
@@ -341,7 +341,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param on
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setShadow(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setShadow(boolean)
 	 */
 	public void setShadow(boolean on)
 	{
@@ -351,7 +351,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param strike
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setStrikeout(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setStrikeout(boolean)
 	 */
 	public void setStrikeout(boolean strike)
 	{
@@ -392,7 +392,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	/**
 	 * @param modified
-	 * @see org.apache.poi.hssf.record.cf.FontFormatting#setUnderlineTypeModified(boolean)
+	 * @see org.zkoss.poi.hssf.record.cf.FontFormatting#setUnderlineTypeModified(boolean)
 	 */
 	public void setUnderlineTypeModified(boolean modified)
 	{

@@ -15,16 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.xssf.usermodel.XSSFCellStyle;
 
 /**
  * Streaming version of XSSFRow implementing the "BigGridDemo" strategy.
@@ -174,7 +175,7 @@ public class SXSSFRow implements Row
      *
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
-     * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
+     * @see #getCell(int, org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy)
      */
     public Cell getCell(int cellnum) {
         if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
@@ -202,7 +203,7 @@ public class SXSSFRow implements Row
     }
 
     /**
-     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
+     * Returns the cell at the given (0 based) index, with the specified {@link org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
      * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
@@ -471,5 +472,12 @@ public class SXSSFRow implements Row
             throw new UnsupportedOperationException();
         }
     }
+	@Override
+	public boolean isCustomHeight() {
+		return false;
+	}
+	@Override
+	public void setCustomHeight(boolean b) {
+	}
 }
 

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,9 +24,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.POIXMLException;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -646,12 +646,12 @@ public class XWPFRun {
      * Adds a picture to the run. This method handles
      *  attaching the picture data to the overall file.
      *  
-     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
-     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
-     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
-     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
-     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
-     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     * @see org.zkoss.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
+     * @see org.zkoss.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
+     * @see org.zkoss.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
+     * @see org.zkoss.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
+     * @see org.zkoss.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
+     * @see org.zkoss.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
      *  
      * @param pictureData The raw picture data
      * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
@@ -659,6 +659,7 @@ public class XWPFRun {
      * @param image height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
      * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
      * @throws IOException
+     * @throws org.zkoss.poi.openxml4j.exceptions.InvalidFormatException 
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
     throws InvalidFormatException, IOException {

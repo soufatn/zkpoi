@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.ptg;
+package org.zkoss.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
-import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
+import org.zkoss.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
 
 /**
  * @author Josh Micich
@@ -41,12 +41,31 @@ final class ExternSheetNameResolver {
 		} else {
 			String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
 			sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
-			if (sheetName.length() < 1) {
-				// What excel does if sheet has been deleted
-				sb.append("#REF"); // note - '!' added just once below
-			} else {
-				SheetNameFormatter.appendFormat(sb, sheetName);
+			SheetNameFormatter.appendFormat(sb, sheetName);
+		}
+   		sb.append('!');
+		sb.append(cellRefText);
+		return sb.toString();
+	}
+
+	//20120117, henrichen@zkoss.org: prepare sheet name in  internal form
+	//ZSS-81 Cannot input formula with proper external book name
+	public static String prependInternalSheetName(FormulaRenderingWorkbook book, int field_1_index_extern_sheet, String cellRefText) {
+		ExternalSheet externalSheet = book.getExternalSheet(field_1_index_extern_sheet);
+		StringBuffer sb;
+		if (externalSheet != null) {
+			String wbName = externalSheet.getWorkbookName();
+			String wbIndex = book.getExternalLinkIndexFromBookName(wbName);
+			if (wbIndex == null) {
+				wbIndex = wbName;
 			}
+			String sheetName = externalSheet.getSheetName();
+			sb = new StringBuffer(wbIndex.length() + sheetName.length() + cellRefText.length() + 4);
+			SheetNameFormatter.appendFormat(sb, wbIndex, sheetName);
+		} else {
+			String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
+			sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
+			SheetNameFormatter.appendFormat(sb, sheetName);
 		}
    		sb.append('!');
 		sb.append(cellRefText);

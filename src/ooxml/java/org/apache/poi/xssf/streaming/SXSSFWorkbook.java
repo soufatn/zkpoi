@@ -15,18 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.PictureData;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.Font;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Name;
+import org.zkoss.poi.ss.usermodel.DataFormat;
+import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.ss.usermodel.CreationHelper;
+import org.zkoss.poi.xssf.usermodel.XSSFWorkbook;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,8 +40,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
 
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
  * Streaming version of XSSFWorkbook implementing the "BigGridDemo" strategy.
@@ -903,7 +903,7 @@ public class SXSSFWorkbook implements Workbook
      *  getting missing or blank cells from a row.
      *
      * This will then apply to all calls to
-     *  {@link org.apache.poi.ss.usermodel.Row#getCell(int)}. See
+     *  {@link org.zkoss.poi.ss.usermodel.Row#getCell(int)}. See
      *  {@link MissingCellPolicy}
      */
     public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy)

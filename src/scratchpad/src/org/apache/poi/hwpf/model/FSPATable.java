@@ -15,14 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 
 /**
  * This class holds all the FSPA (File Shape Address) structures.

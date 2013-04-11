@@ -14,12 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hwpf.model.NotesTables;
+import org.zkoss.poi.hwpf.model.NotesTables;
 
 /**
  * Default implementation of {@link Notes} interface

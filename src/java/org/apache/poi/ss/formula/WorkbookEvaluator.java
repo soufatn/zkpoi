@@ -15,50 +15,69 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula;
+package org.zkoss.poi.ss.formula;
 
 import java.util.*;
 
-import org.apache.poi.ss.formula.atp.AnalysisToolPak;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.BoolPtg;
-import org.apache.poi.ss.formula.ptg.ControlPtg;
-import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
-import org.apache.poi.ss.formula.ptg.DeletedRef3DPtg;
-import org.apache.poi.ss.formula.ptg.ErrPtg;
-import org.apache.poi.ss.formula.ptg.ExpPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
-import org.apache.poi.ss.formula.ptg.MemErrPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.MissingArgPtg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.NumberPtg;
-import org.apache.poi.ss.formula.ptg.OperationPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.RefErrorPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.formula.ptg.StringPtg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
-import org.apache.poi.ss.formula.ptg.UnknownPtg;
-import org.apache.poi.ss.formula.functions.Choose;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.IfFunc;
-import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaErrPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaPtg;
+import org.zkoss.poi.ss.formula.ptg.ArrayPtg;
+import org.zkoss.poi.ss.formula.ptg.AttrPtg;
+import org.zkoss.poi.ss.formula.ptg.BoolPtg;
+import org.zkoss.poi.ss.formula.ptg.ControlPtg;
+import org.zkoss.poi.ss.formula.ptg.DeletedArea3DPtg;
+import org.zkoss.poi.ss.formula.ptg.DeletedRef3DPtg;
+import org.zkoss.poi.ss.formula.ptg.ErrPtg;
+import org.zkoss.poi.ss.formula.ptg.ExpPtg;
+import org.zkoss.poi.ss.formula.ptg.FuncVarPtg;
+import org.zkoss.poi.ss.formula.ptg.IntPtg;
+import org.zkoss.poi.ss.formula.ptg.MemAreaPtg;
+import org.zkoss.poi.ss.formula.ptg.MemErrPtg;
+import org.zkoss.poi.ss.formula.ptg.MemFuncPtg;
+import org.zkoss.poi.ss.formula.ptg.MissingArgPtg;
+import org.zkoss.poi.ss.formula.ptg.NamePtg;
+import org.zkoss.poi.ss.formula.ptg.NameXPtg;
+import org.zkoss.poi.ss.formula.ptg.NumberPtg;
+import org.zkoss.poi.ss.formula.ptg.OperationPtg;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
+import org.zkoss.poi.ss.formula.ptg.RefErrorPtg;
+import org.zkoss.poi.ss.formula.ptg.RefPtg;
+import org.zkoss.poi.ss.formula.ptg.StringPtg;
+import org.zkoss.poi.ss.formula.ptg.UnionPtg;
+import org.zkoss.poi.ss.formula.ptg.UnknownPtg;
+import org.zkoss.poi.ss.formula.atp.AnalysisToolPak;
+import org.zkoss.poi.ss.formula.eval.AreaEval;
+import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
+import org.zkoss.poi.ss.formula.eval.BoolEval;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
+import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.FunctionEval;
+import org.zkoss.poi.ss.formula.eval.MissingArgEval;
+import org.zkoss.poi.ss.formula.eval.NameEval;
+import org.zkoss.poi.ss.formula.eval.NameXEval;
+import org.zkoss.poi.ss.formula.eval.NumberEval;
+import org.zkoss.poi.ss.formula.eval.OperandResolver;
+import org.zkoss.poi.ss.formula.eval.RefEval;
+import org.zkoss.poi.ss.formula.eval.StringEval;
+import org.zkoss.poi.ss.formula.eval.ValueEval;
+import org.zkoss.poi.ss.formula.eval.ValuesEval;
+import org.zkoss.poi.ss.formula.functions.Choose;
+import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
+import org.zkoss.poi.ss.formula.functions.Function;
+import org.zkoss.poi.ss.formula.functions.IfFunc;
+import org.zkoss.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.zkoss.poi.hssf.util.CellReference;
+import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
+import org.zkoss.poi.ss.formula.eval.NotImplementedException;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Evaluates formula cells.<p/>
@@ -70,6 +89,7 @@ import org.apache.poi.util.POILogger;
  * For POI internal use only
  *
  * @author Josh Micich
+ * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference, dependency tracking
  */
 public final class WorkbookEvaluator {
 	
@@ -86,6 +106,8 @@ public final class WorkbookEvaluator {
 	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
 	private final IStabilityClassifier _stabilityClassifier;
 	private final AggregatingUDFFinder _udfFinder;
+	
+	private DependencyTracker _dependencyTracker;
 
     private boolean _ignoreMissingWorkbooks = false;
 
@@ -113,7 +135,11 @@ public final class WorkbookEvaluator {
         }
         _udfFinder = defaultToolkit;
 	}
-
+	
+	public void setDependencyTracker(DependencyTracker tracker) {
+		_dependencyTracker = tracker;
+	}
+	
 	/**
 	 * also for debug use. Used in toString methods
 	 */
@@ -250,6 +276,9 @@ public final class WorkbookEvaluator {
 	   return _workbook.convertFromExternSheetIndex(externSheetIndex);
 	}
 
+	/* package */ int getLastSheetIndexByExternIndex(int externSheetIndex) {
+		   return _workbook.convertLastIndexFromExternSheetIndex(externSheetIndex);
+		}
 
 	/**
 	 * @return never <code>null</code>, never {@link BlankEval}
@@ -284,10 +313,10 @@ public final class WorkbookEvaluator {
 
 				Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
 				if (evalListener == null) {
-					result = evaluateFormula(ec, ptgs);
+					result = evaluateFormula(ec, ptgs, false, false);
 				} else {
 					evalListener.onStartEvaluate(srcCell, cce);
-					result = evaluateFormula(ec, ptgs);
+					result = evaluateFormula(ec, ptgs, false, false);
 					evalListener.onEndEvaluate(cce, result);
 				}
 
@@ -384,9 +413,25 @@ public final class WorkbookEvaluator {
 		}
 		throw new RuntimeException("Unexpected cell type (" + cellType + ")");
 	}
-	// visibility raised for testing
-	/* package */ ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs) {
+	//20110324, henrichen@zkoss.org: after process the ValueEval 
+	private ValueEval postProcessValueEval(OperationEvaluationContext ec, ValueEval opResult, boolean eval) {
+		if (_dependencyTracker != null) {
+			opResult = _dependencyTracker.postProcessValueEval(ec, opResult, eval);
+		}
+		return opResult;
+	}
 
+	//20110324, henrichen@zkoss.org: constructs the dependency DAG per the given formula
+	private void addDependency(OperationEvaluationContext ec, Ptg[] ptgs) {
+		if (_dependencyTracker != null) {
+			_dependencyTracker.addDependency(ec, ptgs);
+		}
+	}
+	// visibility raised for testing
+	/* package */ ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs, boolean ignoreDependency, boolean ignoreDereference) {
+		if (!ignoreDependency)
+			addDependency(ec, ptgs); //20110324, henrichen@zkoss.org: construct the dependency DAG per this formula (bug#290)
+		
 		Stack<ValueEval> stack = new Stack<ValueEval>();
 		for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
 
@@ -485,12 +530,17 @@ public final class WorkbookEvaluator {
 				// storing the ops in reverse order since they are popping
 				for (int j = numops - 1; j >= 0; j--) {
 					ValueEval p = stack.pop();
+					//20101115, henrichen@zkoss.org: add dependency before operation
+					//FuncVarPtg, the NamePtg(functionname) should be as is
+					p = postProcessValueEval(ec, p, !(optg instanceof FuncVarPtg) || j > 0); 
 					ops[j] = p;
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
 				opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
+				opResult = postProcessValueEval(ec, opResult, true);
 			} else {
 				opResult = getEvalForPtg(ptg, ec);
+				opResult = postProcessValueEval(ec, opResult, false);
 			}
 			if (opResult == null) {
 				throw new RuntimeException("Evaluation result must not be null");
@@ -503,9 +553,9 @@ public final class WorkbookEvaluator {
 		if (!stack.isEmpty()) {
 			throw new IllegalStateException("evaluation stack not empty");
 		}
-		return dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
+		value = postProcessValueEval(ec, value, true); //20101115, henrichen@zkoss.org: might be simple one operand formula
+		return ignoreDereference ? value : dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
 	}
-
 	/**
 	 * Calculates the number of tokens that the evaluator should skip upon reaching a tAttrSkip.
 	 *
@@ -540,7 +590,8 @@ public final class WorkbookEvaluator {
 	public static ValueEval dereferenceResult(ValueEval evaluationResult, int srcRowNum, int srcColNum) {
 		ValueEval value;
 		try {
-			value = OperandResolver.getSingleValue(evaluationResult, srcRowNum, srcColNum);
+			value = OperandResolver.getMultipleValue(evaluationResult, srcRowNum, srcColNum); //20111125, henrichen@zkoss.org: handle array value  
+				//OperandResolver.getSingleValue(evaluationResult, srcRowNum, srcColNum);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
@@ -560,7 +611,7 @@ public final class WorkbookEvaluator {
 	 * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
 	 * passed here!
 	 */
-	private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {
+	/*package*/ ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) { //20110324, henrichen@zkoss.org: raise access right
 		//  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
 		if (ptg instanceof NamePtg) {
@@ -574,7 +625,9 @@ public final class WorkbookEvaluator {
 				return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
 			}
 
-			throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
+			return new NameEval(nameRecord.getNameText());
+			//shall be #NAME? error
+			//throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
 		}
 		if (ptg instanceof NameXPtg) {
 		   return ec.getNameXEval(((NameXPtg) ptg));
@@ -630,7 +683,11 @@ public final class WorkbookEvaluator {
 			// it is currently unsupported, and may not even get implemented here
 			throw new RuntimeException("ExpPtg currently not supported");
 		}
-
+		//20101014, henrichen@zkoss.org. bug #139: Unexpected ptg class RuntimeException when loading Excel file with special formula
+		if (ptg instanceof ArrayPtg) {
+			return new ArrayEval((ArrayPtg) ptg);
+		}
+		
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
 	}
     /**
@@ -646,12 +703,25 @@ public final class WorkbookEvaluator {
 	/**
 	 * Used by the lazy ref evals whenever they need to get the value of a contained cell.
 	 */
-	/* package */ ValueEval evaluateReference(EvaluationSheet sheet, int sheetIndex, int rowIndex,
+	/* package */ ValueEval evaluateReference(String sheetname1, String sheetname2, int rowIndex,
 			int columnIndex, EvaluationTracker tracker) {
-
-		EvaluationCell cell = sheet.getCell(rowIndex, columnIndex);
-		return evaluateAny(cell, sheetIndex, rowIndex, columnIndex, tracker);
+		if ("#REF".equals(sheetname1)) { //20101213, henrichen@zkoss.org: handle reference to deleted sheet
+			return ErrorEval.REF_INVALID;
+		}
+		final int i1 = getSheetIndex(sheetname1);
+		final int i2 = getSheetIndex(sheetname2);
+		final int sheetIndex1 = Math.min(i1, i2);
+		final int sheetIndex2 = Math.max(i1, i2);
+		final int size = sheetIndex2 - sheetIndex1 + 1;
+		ValueEval[] results = new ValueEval[size];
+		for(int j = sheetIndex1, k=0; j <= sheetIndex2; ++j, ++k) {
+			final EvaluationSheet sheet = getSheet(j);
+			EvaluationCell cell = sheet.getCell(rowIndex, columnIndex);
+			results[k] = evaluateAny(cell, j, rowIndex, columnIndex, tracker);
+		}
+		return size > 1 ? new ValuesEval(results) : results[0];
 	}
+	
 	public FreeRefFunction findUserDefinedFunction(String functionName) {
 		return _udfFinder.findFunction(functionName);
 	}
@@ -723,4 +793,108 @@ public final class WorkbookEvaluator {
     public static void registerFunction(String name, Function func){
         FunctionEval.registerFunction(name, func);
     }
+
+	//20111124, henrichen@zkoss.org: given sheet index, formula text, return evaluated results
+	public ValueEval evaluate(int sheetIndex, String formula, boolean ignoreDereference) {
+		return evaluateAny(formula, sheetIndex, 0, 0, new EvaluationTracker(_cache), ignoreDereference);
+	}
+
+	//20111124, henrichen@zkoss.org: given sheet index
+	/**
+	 * @return never <code>null</code>, never {@link BlankEval}
+	 */
+	private ValueEval evaluateAny(String formula, int sheetIndex,
+				int rowIndex, int columnIndex, EvaluationTracker tracker, boolean ignoreDeference) {
+		final EvaluationCell virtualCell = new EvaluationCell() { //virtual EvaluationCell, it is used as a key only
+			@Override
+			public Object getIdentityKey() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public EvaluationSheet getSheet() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public int getRowIndex() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public int getColumnIndex() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public int getCellType() {
+				return Cell.CELL_TYPE_FORMULA;
+			}
+
+			@Override
+			public double getNumericCellValue() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public String getStringCellValue() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public boolean getBooleanCellValue() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public int getErrorCellValue() {
+				// TODO Auto-generated method stub
+				return 0;
+			} //virtual cell
+
+			@Override
+			public int getCachedFormulaResultType() {
+				// TODO Auto-generated method stub
+				return Cell.CELL_TYPE_BLANK;
+			}
+			
+		};
+		FormulaCellCacheEntry cce = _cache.getOrCreateFormulaCellEntry(virtualCell);
+		ValueEval result;
+		if (cce.getValue() == null) {
+			if (!tracker.startEvaluate(cce)) {
+				return ErrorEval.CIRCULAR_REF_ERROR;
+			}
+			OperationEvaluationContext ec = new OperationEvaluationContext(this, _workbook, sheetIndex, rowIndex, columnIndex, tracker);
+			try {
+				Ptg[] ptgs = _workbook.getFormulaTokens(sheetIndex, formula);
+				result = evaluateFormula(ec, ptgs, true, ignoreDeference);
+				tracker.updateCacheResult(result);
+			} catch (NotImplementedException e) {
+				throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
+			} finally {
+				tracker.endEvaluate(cce);
+				_cache.notifyDeleteCell(0, sheetIndex, virtualCell); //clear the cache since it is for temporary use only
+			}
+		} else {
+			return cce.getValue();
+		}
+		if (isDebugLogEnabled()) {
+			String sheetName = getSheetName(sheetIndex);
+			CellReference cr = new CellReference(rowIndex, columnIndex);
+			logDebug("Evaluated " + sheetName + "!" + cr.formatAsString() + " to " + result.toString());
+		}
+		// Usually (result === cce.getValue())
+		// But sometimes: (result==ErrorEval.CIRCULAR_REF_ERROR, cce.getValue()==null)
+		// When circular references are detected, the cache entry is only updated for
+		// the top evaluation frame
+		return result;
+	}
 }

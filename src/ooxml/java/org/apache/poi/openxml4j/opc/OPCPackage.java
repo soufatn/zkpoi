@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc;
+package org.zkoss.poi.openxml4j.opc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -36,24 +36,24 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
-import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.apache.poi.openxml4j.opc.internal.ContentType;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
-import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
-import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.marshallers.DefaultMarshaller;
-import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMarshaller;
-import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
-import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
-import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import org.zkoss.poi.openxml4j.exceptions.InvalidFormatException;
+import org.zkoss.poi.openxml4j.exceptions.InvalidOperationException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
+import org.zkoss.poi.openxml4j.opc.internal.ContentType;
+import org.zkoss.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.zkoss.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.zkoss.poi.openxml4j.opc.internal.PartMarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.PartUnmarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.ZipContentTypeManager;
+import org.zkoss.poi.openxml4j.opc.internal.marshallers.DefaultMarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
+import org.zkoss.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
+import org.zkoss.poi.openxml4j.util.Nullable;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.POILogFactory;
 
 /**
  * Represents a container that can store multiple data objects.
@@ -458,7 +458,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *
 	 * @throws InvalidOperationException
 	 *             Throws if a writing operation is done on a read only package.
-	 * @see org.apache.poi.openxml4j.opc.PackageAccess
+	 * @see org.zkoss.poi.openxml4j.opc.PackageAccess
 	 */
 	void throwExceptionIfReadOnly() throws InvalidOperationException {
 		if (packageAccess == PackageAccess.READ)
@@ -473,7 +473,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *
 	 * @throws InvalidOperationException
 	 *             Throws if a read operation is done on a write only package.
-	 * @see org.apache.poi.openxml4j.opc.PackageAccess
+	 * @see org.zkoss.poi.openxml4j.opc.PackageAccess
 	 */
 	void throwExceptionIfWriteOnly() throws InvalidOperationException {
 		if (packageAccess == PackageAccess.WRITE)
@@ -1103,7 +1103,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param relationshipType
 	 *            Type of relationship.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
 	 *      java.lang.String)
 	 */
 	public PackageRelationship addExternalRelationship(String target,
@@ -1125,7 +1125,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param id
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#addExternalRelationship(java.lang.String,
 	 *      java.lang.String)
 	 */
 	public PackageRelationship addExternalRelationship(String target,
@@ -1228,21 +1228,21 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
 	 */
 	public PackageRelationship getRelationship(String id) {
 		return this.relationships.getRelationshipByID(id);
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#hasRelationships()
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#hasRelationships()
 	 */
 	public boolean hasRelationships() {
 		return (relationships.size() > 0);
 	}
 
 	/**
-	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
+	 * @see org.zkoss.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.zkoss.poi.openxml4j.opc.PackageRelationship)
 	 */
 	public boolean isRelationshipExists(PackageRelationship rel) {
         for (PackageRelationship r : this.getRelationships()) {

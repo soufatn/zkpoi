@@ -16,9 +16,9 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.PatternFormatting;
+import org.zkoss.poi.ss.usermodel.PatternFormatting;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;

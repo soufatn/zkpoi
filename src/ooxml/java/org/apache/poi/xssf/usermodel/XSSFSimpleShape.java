@@ -15,20 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel;
+package org.zkoss.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.hssf.util.HSSFColor;
+import org.zkoss.poi.ss.usermodel.IndexedColors;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 
 /**
  * Represents a shape with a predefined geometry in a SpreadsheetML drawing.
- * Possible shape types are defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}
+ * Possible shape types are defined in {@link org.zkoss.poi.ss.usermodel.ShapeTypes}
  *
  * @author Yegor Kozlov
  */
@@ -115,10 +116,10 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
     }
 
     /**
-     * Gets the shape type, one of the constants defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}.
+     * Gets the shape type, one of the constants defined in {@link org.zkoss.poi.ss.usermodel.ShapeTypes}.
      *
      * @return the shape type
-     * @see org.apache.poi.ss.usermodel.ShapeTypes
+     * @see org.zkoss.poi.ss.usermodel.ShapeTypes
      */
     public int getShapeType() {
         return ctShape.getSpPr().getPrstGeom().getPrst().intValue();
@@ -127,8 +128,8 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
     /**
      * Sets the shape types.
      *
-     * @param type the shape type, one of the constants defined in {@link org.apache.poi.ss.usermodel.ShapeTypes}.
-     * @see org.apache.poi.ss.usermodel.ShapeTypes
+     * @param type the shape type, one of the constants defined in {@link org.zkoss.poi.ss.usermodel.ShapeTypes}.
+     * @see org.zkoss.poi.ss.usermodel.ShapeTypes
      */
     public void setShapeType(int type) {
         ctShape.getSpPr().getPrstGeom().setPrst(STShapeType.Enum.forInt(type));

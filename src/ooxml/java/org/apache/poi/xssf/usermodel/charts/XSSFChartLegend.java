@@ -15,13 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.charts;
+package org.zkoss.poi.xssf.usermodel.charts;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.LegendPosition;
-import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.ss.usermodel.charts.ChartLegend;
+import org.zkoss.poi.ss.usermodel.charts.LegendPosition;
+import org.zkoss.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegend;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegendPos;
@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
 public final class XSSFChartLegend implements ChartLegend {
 
 	/**
-	 * Underlaying CTLagend bean
+	 * Underlying CTLagend bean
 	 */
 	private CTLegend legend;
 

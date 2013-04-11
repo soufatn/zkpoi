@@ -17,12 +17,12 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.streaming;
+package org.zkoss.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.FormulaError;
+import org.zkoss.poi.ss.util.CellReference;
 
 import java.io.*;
 import java.util.Iterator;

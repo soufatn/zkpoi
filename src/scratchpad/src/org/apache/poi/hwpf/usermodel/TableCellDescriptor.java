@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.types.TCAbstractType;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.hwpf.model.types.TCAbstractType;
+import org.zkoss.poi.util.LittleEndian;
 
 public final class TableCellDescriptor extends TCAbstractType implements
         Cloneable

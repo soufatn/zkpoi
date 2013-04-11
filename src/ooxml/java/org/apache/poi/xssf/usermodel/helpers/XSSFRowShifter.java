@@ -15,19 +15,19 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.helpers;
+package org.zkoss.poi.xssf.usermodel.helpers;
 
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.FormulaRenderer;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.AreaErrPtg;
+import org.zkoss.poi.xssf.usermodel.*;
+import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.formula.FormulaParser;
+import org.zkoss.poi.ss.formula.FormulaType;
+import org.zkoss.poi.ss.formula.FormulaRenderer;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.formula.FormulaShifter;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.ptg.AreaPtg;
+import org.zkoss.poi.ss.formula.ptg.AreaErrPtg;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;

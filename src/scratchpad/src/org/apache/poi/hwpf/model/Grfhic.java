@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.GrfhicAbstractType;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.model.types.GrfhicAbstractType;
+import org.zkoss.poi.util.Internal;
 
 /**
  * The grfhic structure is a set of HTML incompatibility flags that specify the

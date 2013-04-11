@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.sprm;
+package org.zkoss.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.SectionProperties;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.SectionProperties;
+import org.zkoss.poi.util.Internal;
 
 @Internal
 public final class SectionSprmUncompressor extends SprmUncompressor

@@ -15,11 +15,11 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xwpf.usermodel;
+package org.zkoss.poi.xwpf.usermodel;
 
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.zkoss.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;

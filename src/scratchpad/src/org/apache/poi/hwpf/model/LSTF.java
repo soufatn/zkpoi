@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model;
+package org.zkoss.poi.hwpf.model;
 
-import org.apache.poi.hwpf.model.types.LSTFAbstractType;
+import org.zkoss.poi.hwpf.model.types.LSTFAbstractType;
 
 /**
  * The LSTF structure contains formatting properties that apply to an entire

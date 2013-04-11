@@ -16,16 +16,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ddf;
+package org.zkoss.poi.ddf;
+
+import org.zkoss.poi.util.LittleEndian;
 
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.zkoss.poi.util.BitField;
+import org.zkoss.poi.util.BitFieldFactory;
+import org.zkoss.poi.util.Internal;
 
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
@@ -50,7 +51,7 @@ public abstract class EscherRecord {
     /**
      * Delegates to fillFields(byte[], int, EscherRecordFactory)
      *
-     * @see #fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)
+     * @see #fillFields(byte[], int, org.zkoss.poi.ddf.EscherRecordFactory)
      */
     protected int fillFields( byte[] data, EscherRecordFactory f )
     {
@@ -160,7 +161,7 @@ public abstract class EscherRecord {
      * @param data      the data array to serialize to.
      * @return          The number of bytes written.
      *
-     * @see #serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)
+     * @see #serialize(int, byte[], org.zkoss.poi.ddf.EscherSerializationListener)
      */
     public int serialize( int offset, byte[] data)
     {

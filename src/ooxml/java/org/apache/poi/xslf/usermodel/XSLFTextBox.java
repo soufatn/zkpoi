@@ -17,9 +17,9 @@
  * ====================================================================
  */
 
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
+import org.zkoss.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;

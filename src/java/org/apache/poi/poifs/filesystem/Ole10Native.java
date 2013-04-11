@@ -15,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.filesystem;
+package org.zkoss.poi.poifs.filesystem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.StringUtil;
+import org.zkoss.poi.util.HexDump;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.LittleEndianConsts;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * Represents an Ole10Native record which is wrapped around certain binary

@@ -15,12 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.model.types;
+package org.zkoss.poi.hwpf.model.types;
 
 
-import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.DateAndTime;
-import org.apache.poi.util.Internal;
+import org.zkoss.poi.hwpf.usermodel.BorderCode;
+import org.zkoss.poi.hwpf.usermodel.DateAndTime;
+import org.zkoss.poi.util.Internal;
 
 /**
  * Section Properties.

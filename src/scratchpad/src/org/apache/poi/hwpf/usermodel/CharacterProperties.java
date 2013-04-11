@@ -15,10 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwpf.usermodel;
+package org.zkoss.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.model.Colorref;
-import org.apache.poi.hwpf.model.types.CHPAbstractType;
+import org.zkoss.poi.hwpf.model.Colorref;
+import org.zkoss.poi.hwpf.model.types.CHPAbstractType;
 
 /**
  * @author Ryan Ackley

@@ -14,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xslf.usermodel;
+package org.zkoss.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.xslf.model.CharacterPropertyFetcher;
+import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.xslf.model.CharacterPropertyFetcher;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
