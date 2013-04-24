@@ -158,7 +158,8 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private UDFFinder _udfFinder = UDFFinder.DEFAULT;
+    //20130424, dennischen@zkoss.org, shouldn't use the default directly, user is possible to add or insert more other finder
+    private UDFFinder _udfFinder = new AggregatingUDFFinder(UDFFinder.DEFAULT);
 
     public static HSSFWorkbook create(InternalWorkbook book) {
     	return new HSSFWorkbook(book);
@@ -1794,6 +1795,15 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     /*package*/ UDFFinder getUDFFinder(){
         return _udfFinder;
     }
+    
+    //20130424, dennischen@zkoss.org, provide the chance to override default UDFFinder
+    /**
+     * Inserts the locator of user-defined functions
+     */
+    public void insertToolPack(int index,UDFFinder udfFinder){
+    	 ((AggregatingUDFFinder)_udfFinder).insert(index, udfFinder);
+    }
+    
 
     /**
      * Register a new toolpack in this workbook.
