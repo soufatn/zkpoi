@@ -63,4 +63,14 @@ public class AggregatingUDFFinder implements UDFFinder {
     public void add(UDFFinder toolPack){
         _usedToolPacks.add(toolPack);
     }
+    
+    //20130424, dennischen@zkoss.org
+    /**
+     * Insert a toolpack
+     * @param index the index to insert
+     * @param toolPack the UDF toolpack to insert
+     */
+    public void insert(int index,UDFFinder toolPack){
+    	((ArrayList)_usedToolPacks).add(index, toolPack);
+    }
 }

@@ -69,6 +69,7 @@ import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
 import org.zkoss.poi.openxml4j.opc.TargetMode;
 import org.zkoss.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.usermodel.PivotTable;
@@ -1768,6 +1769,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     /*package*/ UDFFinder getUDFFinder() {
         return _udfFinder;
+    }
+    
+    //20130424, dennischen@zkoss.org, provide the chance to override default UDFFinder
+    /**
+     * Inserts the locator of user-defined functions
+     */
+    public void insertToolPack(int index,UDFFinder udfFinder){
+    	 ((AggregatingUDFFinder)_udfFinder).insert(index, udfFinder);
     }
 
     /**
