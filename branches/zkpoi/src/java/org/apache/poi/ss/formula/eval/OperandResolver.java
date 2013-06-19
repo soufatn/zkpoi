@@ -230,7 +230,8 @@ public final class OperandResolver {
 			}
 			return dd.doubleValue();
 		}
-		throw new RuntimeException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
+		//ZSS-269 error evaluating some financial formulas, hawk, it should throw EvaluationException
+		throw new EvaluationException(ErrorEval.VALUE_INVALID,"Unexpected arg eval type (" + ev.getClass().getName() + ")");
 	}
 
 	/**

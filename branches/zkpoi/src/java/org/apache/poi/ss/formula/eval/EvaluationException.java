@@ -113,6 +113,10 @@ public final class EvaluationException extends Exception {
 	public EvaluationException(ErrorEval errorEval) {
 		_errorEval = errorEval;
 	}
+	public EvaluationException(ErrorEval errorEval,String message) {
+		super(message);
+		_errorEval = errorEval;
+	}
 	// some convenience factory methods
 
     /** <b>#VALUE!</b> - Wrong type of operand */
