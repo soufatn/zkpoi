@@ -21,6 +21,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.zkoss.poi.ss.formula.IStabilityClassifier;
 import org.zkoss.poi.ss.formula.WorkbookEvaluator;
 import org.zkoss.poi.ss.formula.eval.ArrayEval;
+import org.zkoss.poi.ss.formula.eval.BlankEval;
 import org.zkoss.poi.ss.formula.eval.BoolEval;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.NumberEval;
@@ -295,6 +296,10 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 			//20110407, henrichne@zkoss.org: degenerate CIRCULAR_REF_ERROR to REF_INVALID
 			cv = CellValue.getError(((ErrorEval)eval).getErrorCode() == ErrorEval.CIRCULAR_REF_ERROR.getErrorCode() ? 
 					ErrorEval.REF_INVALID.getErrorCode() : ((ErrorEval)eval).getErrorCode());
+		}
+		// 20130619, paowang@potix.org: needs to handle blank cell (ZSS-255) 
+		if(eval instanceof BlankEval) {
+			cv = new CellValue(""); // blank cell is equaled to empty string here
 		}
 		if (cv != null) {
 			if (eval instanceof HyperlinkEval) {
