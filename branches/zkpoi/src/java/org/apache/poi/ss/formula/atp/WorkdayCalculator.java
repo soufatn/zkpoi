@@ -62,22 +62,56 @@ public class WorkdayCalculator {
      * @return date past x workdays.
      */
     public Date calculateWorkdays(double start, int workdays, double[] holidays) {
-        Date startDate = DateUtil.getJavaDate(start);
-        Calendar endDate = Calendar.getInstance();
-        endDate.setTime(startDate);
-        endDate.add(Calendar.DAY_OF_YEAR, workdays);
-        int skippedDays = 0;
-        do {
-            double end = DateUtil.getExcelDate(endDate.getTime());
-            int saturdaysPast = this.pastDaysOfWeek(start, end, Calendar.SATURDAY);
-            int sundaysPast = this.pastDaysOfWeek(start, end, Calendar.SUNDAY);
-            int nonWeekendHolidays = this.calculateNonWeekendHolidays(start, end, holidays);
-            skippedDays = saturdaysPast + sundaysPast + nonWeekendHolidays;
-            endDate.add(Calendar.DAY_OF_YEAR, skippedDays);
-            start = end + isNonWorkday(end, holidays);
-        } while (skippedDays != 0);
-        return endDate.getTime();
+    	if (workdays == 0){
+    		return DateUtil.getJavaDate(start);
+    	}
+        double targetDay = start + workdays; //final result
+        double durationStart = getDurationNextStart(start, workdays); //the start day of the duration to count holidays 
+        
+        while(true) {
+        	double durationEnd = targetDay;   //the end day of the duration to count holidays
+            int holidays2Skip = countHolidaysInDuration(durationStart, durationEnd, holidays);
+            if (holidays2Skip == 0){
+            	break;
+            }else{
+            	targetDay = calculateTargetDay(targetDay, holidays2Skip, workdays);
+            	//count holidays in next duration
+            	durationStart = getDurationNextStart(durationEnd, workdays);
+            }
+        }
+        
+        return DateUtil.getJavaDate(targetDay);
     }
+    
+    /*
+     * calculate next start day of the duration to count holidays
+     */
+    private double getDurationNextStart(double end, double workdays){
+    	return workdays >= 0 ? end+1 : end-1;
+    }
+    
+    /*
+     * move target day by bypassing holidays. 
+     */
+    private double calculateTargetDay(double targetDay, int holidays2Skip, double workdays){
+    	if (workdays >= 0){
+    		return targetDay + holidays2Skip;
+    	}else{
+    		return targetDay - holidays2Skip;
+    	}
+    }
+
+    /*
+     * count holidays including Saturday, Monday, and specified non-weekend holidays between 
+     * start day and end day.
+     * */
+	private int countHolidaysInDuration(double start, double end, double[] holidays) {
+		int saturdaysPast = this.pastDaysOfWeek(start, end, Calendar.SATURDAY);
+		int sundaysPast = this.pastDaysOfWeek(start, end, Calendar.SUNDAY);
+		int nonWeekendHolidays = this.calculateNonWeekendHolidays(start, end, holidays);
+
+		return saturdaysPast + sundaysPast + nonWeekendHolidays;
+	}
 
     /**
      * Calculates how many days of week past between a start and an end date.
@@ -98,7 +132,7 @@ public class WorkdayCalculator {
                 pastDaysOfWeek++;
             }
         }
-        return start < end ? pastDaysOfWeek : -pastDaysOfWeek;
+        return pastDaysOfWeek ;
     }
 
     /**
@@ -120,7 +154,7 @@ public class WorkdayCalculator {
                 }
             }
         }
-        return start < end ? nonWeekendHolidays : -nonWeekendHolidays;
+        return nonWeekendHolidays;
     }
 
     /**
