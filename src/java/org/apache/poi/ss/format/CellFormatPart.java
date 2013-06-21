@@ -336,7 +336,6 @@ public class CellFormatPart {
         Matcher m = SPECIFICATION_PAT.matcher(fdesc);
         boolean couldBeDate = false;
         boolean seenZero = false;
-        boolean couldBeElasped = false;
         while (m.find()) {
             String repl = m.group(0);
             if (repl.length() > 0) {
@@ -361,9 +360,17 @@ public class CellFormatPart {
                     // This can be part of date, elapsed, or number
                     seenZero = true;
                     break;
-                //TODO 20120726: samchuang@zkoss.org: could be currency format, for example [$IDR]
                 case '[':
-                    return CellFormatType.ELAPSED;
+                	// 20130620, paowang@potix.com: if token starts with "[", it could be "international number formats", "conditions" or any other
+                	if(repl.length() >= 2) {
+                		switch(repl.charAt(1)) { //20130620, paowang@potix.com: if and only if token's 2nd char. is 'h', 'm' or 's', this is a elapsed time format.
+                			case 'h':
+                			case 'm':
+                			case 's':
+                				return CellFormatType.ELAPSED;
+                		}
+                	}
+                    break; // 20130620, paowang@potix.com: just break. it still could be any type.
                 case '#':
                 case '?':
                     return CellFormatType.NUMBER;
