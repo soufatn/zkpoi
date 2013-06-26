@@ -31,6 +31,7 @@ import org.zkoss.poi.openxml4j.opc.PackagePart;
 import org.zkoss.poi.openxml4j.opc.PackagePartName;
 import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.zkoss.poi.ss.usermodel.ClientAnchor;
 import org.zkoss.poi.ss.usermodel.Drawing;
 import org.zkoss.poi.ss.usermodel.Picture;
@@ -130,9 +131,17 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         xmlOptions.setSaveSuggestedPrefixes(map);
 
         PackagePart part = getPackagePart();
+        clearMemoryPackagePart(part); // 20130626, paowang@potix.com: (ZSS-317) clear package part before saving, the package part is for temporary data (RAW to XML)  
         OutputStream out = part.getOutputStream();
         drawing.save(out, xmlOptions);
         out.close();
+    }
+
+    // 20130626, paowang@potix.com: (ZSS-317) clear memory package part, or it will keep old data.    
+    private void clearMemoryPackagePart(PackagePart part) {
+        if (part instanceof MemoryPackagePart) {
+        	((MemoryPackagePart)part).clear();
+        }
     }
 
 	public XSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2,
