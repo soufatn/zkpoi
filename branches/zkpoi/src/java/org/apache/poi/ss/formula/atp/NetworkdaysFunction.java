@@ -55,7 +55,8 @@ final class NetworkdaysFunction implements FreeRefFunction {
     /**
      * Evaluate for NETWORKDAYS. Given two dates and a optional date or interval of holidays, determines how many working days are there
      * between those dates.
-     * 
+     * When start date is later than end date, it returns an invalid result. (In Excel, the result is negative number.)
+     * The formula treats empty cell as 0. (In Excel, empty cell is 1.)
      * @return {@link ValueEval} for the number of days between two dates.
      */
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
@@ -72,7 +73,7 @@ final class NetworkdaysFunction implements FreeRefFunction {
             start = this.evaluator.evaluateDateArg(args[0], srcCellRow, srcCellCol);
             end = this.evaluator.evaluateDateArg(args[1], srcCellRow, srcCellCol);
             if (start > end) {
-                return ErrorEval.NAME_INVALID;
+                return ErrorEval.VALUE_INVALID;
             }
             ValueEval holidaysCell = args.length == 3 ? args[2] : null;
             holidays = this.evaluator.evaluateDatesArg(holidaysCell, srcCellRow, srcCellCol);
