@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.zkoss.poi.openxml4j.opc.PackagePart;
 import org.zkoss.poi.openxml4j.opc.PackagePartName;
 import org.zkoss.poi.openxml4j.opc.PackageRelationship;
@@ -209,8 +210,17 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         int chartNumber = getPackagePart().getPackage().
             getPartsByContentType(XSSFRelation.CHART.getContentType()).size() + 1;
 
-        XSSFChart chart = (XSSFChart) createRelationship(
-                XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber);
+        // 20130628, paowang@potix.com: (ZSS-326) must handle PartAlreadyExistsException and try next number
+        // the number will be convert to an ID. and POI won't covert back
+        // if user delete a chart in front of other charts, the generated number might be duplicated 
+        XSSFChart chart = null;
+        while(chart == null) {
+        	try {
+				chart = (XSSFChart)createRelationship(XSSFRelation.CHART, XSSFFactory.getInstance(), chartNumber++);
+			} catch(PartAlreadyExistsException e) {
+				// re-try
+			}
+        }
         String chartRelId = chart.getPackageRelationship().getId();
 
         XSSFGraphicFrame frame = createGraphicFrame(anchor);

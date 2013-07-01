@@ -421,7 +421,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if(ctDrawing == null) {
             //drawingNumber = #drawings.size() + 1
             int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
-            drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
+            // 20130628, paowang@potix.com: (ZSS-326) must handle PartAlreadyExistsException and try next number
+            while(drawing == null) {
+            	try {
+					drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber++);
+    			} catch(PartAlreadyExistsException e) {
+    				// re-try
+    			}
+            }
             String relId = drawing.getPackageRelationship().getId();
 
             //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
@@ -462,7 +469,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             if(autoCreate) {
                 //drawingNumber = #drawings.size() + 1
                 int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size() + 1;
-                drawing = (XSSFVMLDrawing)createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
+                // 20130628, paowang@potix.com: (ZSS-326) must handle PartAlreadyExistsException and try next number
+                while(drawing == null) {
+                	try {
+						drawing = (XSSFVMLDrawing)createRelationship(XSSFRelation.VML_DRAWINGS, XSSFFactory.getInstance(), drawingNumber++);
+        			} catch(PartAlreadyExistsException e) {
+        				// re-try
+        			}
+                }
                 String relId = drawing.getPackageRelationship().getId();
 
                 //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
@@ -3222,7 +3236,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
        // Table numbers need to be unique in the file, not just
        //  unique within the sheet. Find the next one
        int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
-       XSSFTable table = (XSSFTable)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
+       // 20130628, paowang@potix.com: (ZSS-326) must handle PartAlreadyExistsException and try next number
+       XSSFTable table = null;
+       while(table == null) {
+			try {
+				table = (XSSFTable)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber++);
+			} catch(PartAlreadyExistsException e) {
+				// re-try
+			}
+       }
        tbl.setId(table.getPackageRelationship().getId());
        
        tables.put(tbl.getId(), table);
