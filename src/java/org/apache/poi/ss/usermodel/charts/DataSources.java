@@ -19,9 +19,15 @@
 
 package org.zkoss.poi.ss.usermodel.charts;
 
-import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellValue;
+import org.zkoss.poi.ss.usermodel.FormulaEvaluator;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.util.Beta;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Class {@code DataSources} is a factory for {@link ChartDataSource} instances.
@@ -30,7 +36,9 @@ import org.zkoss.poi.util.Beta;
  */
 @Beta
 public class DataSources {
-
+	// 20130703, paowang@potix.com: (ZSS-349) add logger
+	private final static POILogger logger = POILogFactory.getLogger(DataSources.class);
+	
     private DataSources() {
     }
 
@@ -44,7 +52,9 @@ public class DataSources {
                 CellValue cellValue = getCellValueAt(index);
                 if (cellValue != null && cellValue.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                     return Double.valueOf(cellValue.getNumberValue());
-                } else {
+				} else if(cellValue != null && cellValue.getCellType() == Cell.CELL_TYPE_ERROR) { // 20130703, paowang@potix.com: (ZSS-349) in Excel, the error cell will be converted to zero and still can be drawing
+					return Double.valueOf(0.0);
+				} else {
                     return null;
                 }
             }
@@ -61,7 +71,9 @@ public class DataSources {
                 CellValue cellValue = getCellValueAt(index);
                 if (cellValue != null && cellValue.getCellType() == Cell.CELL_TYPE_STRING) {
                     return cellValue.getStringValue();
-                } else {
+				} else if(cellValue != null && cellValue.getCellType() == Cell.CELL_TYPE_ERROR) { // 20130703, paowang@potix.com: (ZSS-349) in Excel, the error cell will be converted to error string and still can be drawing
+					return cellValue.formatAsString();
+				} else {
                     return null;
                 }
             }
@@ -146,7 +158,14 @@ public class DataSources {
             int rowIndex = firstRow + index / width;
             int cellIndex = firstCol + index % width;
             Row row = sheet.getRow(rowIndex);
-            return (row == null) ? null : evaluator.evaluate(row.getCell(cellIndex));
+            // 20130703, paowang@potix.com: (ZSS-349) handle fail to evaluate case when cell is a formula
+            Cell cell = row.getCell(cellIndex);
+            try {
+				return (row == null) ? null : evaluator.evaluate(cell);
+			} catch(RuntimeException e) {
+				logger.log(POILogger.WARN, e);
+				return CellValue.getError(cell.getErrorCellValue()); 
+			}
         }
         
         //20111007, henrichen@zkoss.org: sheet name change will affect reference
@@ -191,7 +210,14 @@ public class DataSources {
             int rowIndex = firstRow + index / width;
             int cellIndex = firstCol + index % width;
             Row row = sheet.getRow(rowIndex);
-            return (row == null) ? null : evaluator.evaluate(row.getCell(cellIndex));
+            // 20130703, paowang@potix.com: (ZSS-349) handle fail to evaluate case when cell is a formula
+            Cell cell = row.getCell(cellIndex);
+            try {
+				return (row == null) ? null : evaluator.evaluate(cell);
+			} catch(RuntimeException e) {
+				logger.log(POILogger.WARN, e);
+				return CellValue.getError(cell.getErrorCellValue()); 
+			}
         }
         
 		@Override
