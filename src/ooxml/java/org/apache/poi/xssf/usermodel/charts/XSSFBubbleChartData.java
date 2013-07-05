@@ -142,7 +142,8 @@ public class XSSFBubbleChartData implements XYZData {
 			ChartDataSource<? extends Number> ys,
 			ChartDataSource<? extends Number> zs) {
 		if (!xs.isNumeric()) {
-			throw new IllegalArgumentException("X Axis data source must be numeric.");
+			// ZSS-257: convert to default number as Excel does
+			xs = XSSFChartUtil.buildDefaultNumDataSource(xs);
 		}
 		if (!ys.isNumeric()) {
 			throw new IllegalArgumentException("Y Axis data source must be numeric.");
