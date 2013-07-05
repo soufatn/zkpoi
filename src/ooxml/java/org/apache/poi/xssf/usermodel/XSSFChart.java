@@ -309,6 +309,11 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 
 		return new XSSFRichTextString(text.toString());
 	}
+	
+	// 20130705, paowang@potix.com: for testing legend existed or not
+	public boolean hasLegend() {
+		return chart.isSetLegend();  
+	}
 
 	public XSSFChartLegend getOrCreateLegend() {
 		return new XSSFChartLegend(this);
