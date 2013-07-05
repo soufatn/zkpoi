@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.zkoss.poi.hssf.record.BOFRecord;
 import org.zkoss.poi.hssf.record.DimensionsRecord;
 import org.zkoss.poi.hssf.record.EOFRecord;
@@ -1414,6 +1413,11 @@ public final class HSSFChart implements ChartInfo {
 	private Record shapeRecord; //Area, Pie, Bar, Line, Scatter ...
 	public Record getShapeRecord() {
 		return shapeRecord;
+	}
+	
+	// 20130705, paowang@potix.com: for testing legend existed or not
+	public boolean hasLegend() {
+		return legendRecord != null;  
 	}
 	
 	//20101102, henrichen@zkoss.org: explore legend position
