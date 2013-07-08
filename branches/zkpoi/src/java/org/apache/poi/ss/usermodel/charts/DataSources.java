@@ -159,12 +159,18 @@ public class DataSources {
             int cellIndex = firstCol + index % width;
             Row row = sheet.getRow(rowIndex);
             // 20130703, paowang@potix.com: (ZSS-349) handle fail to evaluate case when cell is a formula
+            if(row == null) {
+            	return null;
+            }
             Cell cell = row.getCell(cellIndex);
-            try {
-				return (row == null) ? null : evaluator.evaluate(cell);
+            if(cell == null) {
+            	return null;
+            }
+			try {
+				return evaluator.evaluate(cell);
 			} catch(RuntimeException e) {
 				logger.log(POILogger.WARN, e);
-				return CellValue.getError(cell.getErrorCellValue()); 
+				return CellValue.getError(cell.getErrorCellValue());
 			}
         }
         
