@@ -61,6 +61,7 @@ import org.zkoss.poi.POIXMLException;
 import org.zkoss.poi.POIXMLProperties;
 import org.zkoss.poi.POIXMLProperties.CoreProperties;
 import org.zkoss.poi.openxml4j.exceptions.OpenXML4JException;
+import org.zkoss.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.zkoss.poi.openxml4j.opc.OPCPackage;
 import org.zkoss.poi.openxml4j.opc.PackagePart;
 import org.zkoss.poi.openxml4j.opc.PackagePartName;
@@ -443,17 +444,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @see #getAllPictures()
      */
     public int addPicture(byte[] pictureData, int format) {
-        int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
+    	// 20130722, paowang@potix.com: (ZSS-386) just pass to overloaded method
         try {
-            OutputStream out = img.getPackagePart().getOutputStream();
-            out.write(pictureData);
-            out.close();
+        	return addPicture(new ByteArrayInputStream(pictureData), format);
         } catch (IOException e){
             throw new POIXMLException(e);
         }
-        pictures.add(img);
-        return imageNumber - 1;
     }
 
     /**
@@ -473,12 +469,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
-        XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
+        // 20130722, paowang@potix.com: (ZSS-386) must handle PartAlreadyExistsException and try next number
+        // the number will be convert to an ID. and POI won't covert back
+        // if user delete a picture in front of other pictures, the generated number might be duplicated 
+        XSSFPictureData img = null;
+		while(img == null) {
+			try {
+				img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
+			} catch(PartAlreadyExistsException e) {
+				++imageNumber; // re-try
+			}
+		}
         OutputStream out = img.getPackagePart().getOutputStream();
         IOUtils.copy(is, out);
         out.close();
         pictures.add(img);
-        return imageNumber - 1;
+        return pictures.size() -1; // 20130722, paowang@potix.com: (ZSS-386) should be the index in pictures list.
     }
 
     /**
