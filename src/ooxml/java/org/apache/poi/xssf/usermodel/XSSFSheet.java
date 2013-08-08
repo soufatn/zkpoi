@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -659,6 +660,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         return null;
+    }
+    
+    //20130808 dennis remove hyperlinks
+    public void removeHyperlink(int row,int column){
+    	String ref = new CellReference(row, column).formatAsString();
+    	HashSet remove = new HashSet();
+        for(XSSFHyperlink hyperlink : hyperlinks) {
+            if(hyperlink.getCellRef().equals(ref)) {
+                remove.add(hyperlink);
+            }
+        }
+        hyperlinks.removeAll(remove);
     }
 
     /**
