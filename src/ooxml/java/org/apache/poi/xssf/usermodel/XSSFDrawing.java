@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -43,9 +44,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
@@ -422,6 +421,35 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 		if (img != null) {
 			removeRelation(img);
 		}
+
+		// 20130802, paowang@potix.com, ZSS-397: remove anchor / shape from Drawing part
+		// Otherwise, the remain data will cause Excel must recover the file when loading
+		CTPicture ctpic = ((XSSFPicture)picture).getCTPicture();
+		CTDrawing ctd = getCTDrawing();
+		// two cell anchors
+		ListIterator<CTTwoCellAnchor> iter2 = ctd.getTwoCellAnchorList().listIterator();
+		while(iter2.hasNext()) {
+			if(ctpic.equals(iter2.next().getPic())) {
+				iter2.remove();
+				return;
+			}
+		}
+		// one cell anchors
+		ListIterator<CTOneCellAnchor> iter1 = ctd.getOneCellAnchorList().listIterator();
+		while(iter1.hasNext()) {
+			if(ctpic.equals(iter1.next().getPic())) {
+				iter1.remove();
+				return;
+			}
+		}
+		// absolute anchors
+		ListIterator<CTAbsoluteAnchor> iterA = ctd.getAbsoluteAnchorList().listIterator();
+		while(iterA.hasNext()) {
+			if(ctpic.equals(iterA.next().getPic())) {
+				iterA.remove();
+				return;
+			}
+		}
 	}
 
 	//20111110, henrichen@zkoss.org: change picture anchor position
@@ -471,5 +499,13 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 			}
 		}
 		return null;
+	}
+	
+	// 20130802, paowang@potix.com, ZSS-397: check empty
+	@Override
+	public boolean isEmpty() {
+		CTDrawing ctd = getCTDrawing();
+		int count = ctd.sizeOfAbsoluteAnchorArray() + ctd.sizeOfOneCellAnchorArray() + ctd.sizeOfTwoCellAnchorArray();
+		return count <= 0;
 	}
 }
