@@ -85,4 +85,7 @@ public interface Drawing {
 	 * @param chartX the chart to be removed
 	 */
 	void deleteChart(ZssChartX chartX);
+	
+	//20130802, paowang@potix.com, ZSS-397: check empty
+	boolean isEmpty();
 }

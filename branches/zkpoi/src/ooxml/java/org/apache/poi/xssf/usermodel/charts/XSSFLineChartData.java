@@ -87,7 +87,7 @@ public class XSSFLineChartData implements CategoryData {
             CTLineSer lineSer = ctLineChart.addNewSer();
             lineSer.addNewIdx().setVal(this.id);
             lineSer.addNewOrder().setVal(this.order);
-
+            
             if (title != null) {
 	            CTSerTx tx = lineSer.addNewTx();
 	            XSSFChartUtil.buildSerTx(tx, title);
@@ -130,6 +130,12 @@ public class XSSFLineChartData implements CategoryData {
 	        for (CategoryDataSerie s : series) {
 	            ((Serie)s).addToChart(ctLineChart);
 	        }
+        }
+        
+    	// ZSS-358: chart element should also link to axis through ID
+    	// otherwise, Excel will fail to load this XLSX file
+        for(ChartAxis a : axis) {
+        	ctLineChart.addNewAxId().setVal(a.getId());
         }
     }
 

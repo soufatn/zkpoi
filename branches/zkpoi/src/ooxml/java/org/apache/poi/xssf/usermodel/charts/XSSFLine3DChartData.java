@@ -131,6 +131,12 @@ public class XSSFLine3DChartData implements CategoryData {
 	            ((Serie)s).addToChart(ctLine3DChart);
 	        }
         }
+        
+		// ZSS-358: chart element should also link to axis through ID
+		// otherwise, Excel will fail to load this XLSX file
+		for(ChartAxis a : axis) {
+			ctLine3DChart.addNewAxId().setVal(a.getId());
+		}
     }
 
     public List<? extends CategoryDataSerie> getSeries() {

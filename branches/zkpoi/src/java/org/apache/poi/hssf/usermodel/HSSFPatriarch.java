@@ -355,5 +355,12 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 		//TODO: remove chart record from workbook
 		_shapes.remove(chartX);
 	}
+	
+	// 20130802, paowang@potix.com, ZSS-397: check empty
+	@Override
+	public boolean isEmpty() {
+		// TODO not supported yet, according to ZSS-9
+		return false;
+	}
 }
 
