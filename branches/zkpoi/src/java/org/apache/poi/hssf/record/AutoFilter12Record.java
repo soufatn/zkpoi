@@ -10,6 +10,7 @@ import org.zkoss.poi.util.StringUtil;
  * The AutoFilter record 
  *
  * @author PeterKuo
+ * @deprecated by dennischen@zkoss.org, 2013/8/13, this class doesn't implement well and cause ZSS-408 Cannot save 2003 format if the file contains auto filter configuration.
  */
 
 public final class AutoFilter12Record

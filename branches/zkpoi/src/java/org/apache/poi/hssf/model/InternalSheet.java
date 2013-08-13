@@ -82,7 +82,6 @@ import org.zkoss.poi.util.POILogger;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Library;
 import org.zkoss.poi.hssf.record.AutoFilterInfoRecord;
-import org.zkoss.poi.hssf.record.aggregates.AutoFilterInfoRecordAggregate;
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
  * This file contains the low level binary records starting at the sheets BOF and
@@ -139,7 +138,6 @@ public final class InternalSheet {
     protected final RowRecordsAggregate  _rowsAggregate;
     private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
-    private   AutoFilterInfoRecordAggregate _autofilter; //20111003, henrichen: added by peterkuo?
     
     private   Iterator<RowRecord>        rowRecIterator    =     null;
 
@@ -285,13 +283,6 @@ public final class InternalSheet {
             if (recSid == EOFRecord.sid) {
                 records.add(rec);
                 break;
-            }
-
-            //20110505, peterkuo@potix.com
-            if( recSid == AutoFilterInfoRecord.sid){
-            	_autofilter = new AutoFilterInfoRecordAggregate(rs);
-            	records.add(_autofilter);
-                continue;
             }
             
             if (recSid == DimensionsRecord.sid)
@@ -1718,13 +1709,4 @@ public final class InternalSheet {
 	    }
 	    return false;
     }
-    
-	//20110505, peterkuo@potix.com
-    public AutoFilterInfoRecordAggregate getAutoFilterInfoRecordAggregate() {
-        if (_autofilter == null) {
-        	_autofilter = new AutoFilterInfoRecordAggregate();
-            RecordOrderer.addNewSheetRecord(_records, _autofilter);
-        }
-        return _autofilter;
-    }    
 }

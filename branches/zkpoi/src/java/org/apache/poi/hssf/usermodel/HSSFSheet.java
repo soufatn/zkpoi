@@ -28,7 +28,6 @@ import org.zkoss.poi.hssf.model.HSSFFormulaParser;
 import org.zkoss.poi.hssf.model.InternalSheet;
 import org.zkoss.poi.hssf.model.InternalWorkbook;
 import org.zkoss.poi.hssf.record.*;
-import org.zkoss.poi.hssf.record.aggregates.AutoFilterInfoRecordAggregate;
 import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
 import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.zkoss.poi.hssf.record.aggregates.WorksheetProtectionBlock;
@@ -150,10 +149,6 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
 
             row = sheet.getNextRow();
         }
-
-		//20110505 , peterkuo@potix.com
-        AutoFilterInfoRecordAggregate autofilter = sheet.getAutoFilterInfoRecordAggregate();
-        _autofilter = createAutofilterFromRecord(autofilter);
         
         CellValueRecordInterface[] cvals = sheet.getValueRecords();
         Iterator<CellValueRecordInterface> iter = sheet.getCellValueIterator();
@@ -2001,18 +1996,12 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
                 false, false, false, false, sheetIndex);
         name.setNameDefinition(new Ptg[]{ptg});
 
-//        AutoFilterInfoRecord r = new AutoFilterInfoRecord();
-//        // the number of columns that have AutoFilter enabled.
-//        int numcols = 1 + range.getLastColumn() - range.getFirstColumn();
-//        r.setNumEntries((short)numcols);
-//        int idx = _sheet.findFirstRecordLocBySid(DimensionsRecord.sid);
-//        _sheet.getRecords().add(idx, r);
-        
-		//20110505 , peterkuo@potix.com
-        AutoFilterInfoRecordAggregate r = _sheet.getAutoFilterInfoRecordAggregate();
+        AutoFilterInfoRecord r = new AutoFilterInfoRecord();
+        // the number of columns that have AutoFilter enabled.
         int numcols = 1 + range.getLastColumn() - range.getFirstColumn();
         r.setNumEntries((short)numcols);
-        //TODO: more action about the record ?????
+        int idx = _sheet.findFirstRecordLocBySid(DimensionsRecord.sid);
+        _sheet.getRecords().add(idx, r);
         
         //create a combobox control for each column
         HSSFPatriarch p = createDrawingPatriarch();
@@ -2021,7 +2010,7 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
                     (short)col, range.getFirstRow(), (short)(col+1), range.getFirstRow()+1));
         }
         
-        return new HSSFAutoFilter(this,r);
+        return new HSSFAutoFilter(this);
     }
 
 
@@ -2034,18 +2023,9 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
 		_firstrow = row;
 	}
 	
-	//20110505 , peterkuo@potix.com
-    private HSSFAutoFilter _autofilter;
     @Override
     public AutoFilter getAutoFilter() {
-		return _autofilter;
-	}
-
-	//20110505 , peterkuo@potix.com
-    private HSSFAutoFilter createAutofilterFromRecord(
-			AutoFilterInfoRecordAggregate autofilter) {
-    	HSSFAutoFilter hautofilter = new HSSFAutoFilter(this, autofilter);
-		return hautofilter;
+		return null;
 	}
 
 	@Override

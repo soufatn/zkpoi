@@ -110,11 +110,6 @@ public final class RecordFactory {
 		AreaRecord.class,
 		ArrayRecord.class,
 		
-		//20110429, peterkuo@potix.com
-		AutoFilterRecord.class,
-		AutoFilter12Record.class,
-		ContinueFrt12Record.class,
-		
         AutoFilterInfoRecord.class,
 		AxisLineFormatRecord.class,
 		AxisOptionsRecord.class,
