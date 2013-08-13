@@ -43,6 +43,7 @@ import org.zkoss.poi.hssf.record.IndexRecord;
 import org.zkoss.poi.hssf.record.IterationRecord;
 import org.zkoss.poi.hssf.record.LabelRecord;
 import org.zkoss.poi.hssf.record.LabelSSTRecord;
+import org.zkoss.poi.hssf.record.NoteRecord;
 import org.zkoss.poi.hssf.record.NumberRecord;
 import org.zkoss.poi.hssf.record.ObjRecord;
 import org.zkoss.poi.hssf.record.PaneRecord;
@@ -423,7 +424,8 @@ final class RecordOrderer {
 			case DrawingSelectionRecord.sid:
 			case ObjRecord.sid:
 			case TextObjectRecord.sid:
-
+				// dennischen@zkoss.org 2013/8/13 , ZSS-415, note record should also break row block
+			case NoteRecord.sid: 
             case GutsRecord.sid:   // see Bugzilla 50426
 			case WindowOneRecord.sid:
 				// should really be part of workbook stream, but some apps seem to put this before WINDOW2
