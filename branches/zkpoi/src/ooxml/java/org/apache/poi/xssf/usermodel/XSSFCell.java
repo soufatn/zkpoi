@@ -22,19 +22,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
+import org.zkoss.poi.ss.formula.ptg.Ptg;
+import org.zkoss.poi.ss.formula.SharedFormula;
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaParser;
 import org.zkoss.poi.ss.formula.FormulaRenderer;
 import org.zkoss.poi.ss.formula.FormulaType;
-import org.zkoss.poi.ss.formula.SharedFormula;
 import org.zkoss.poi.ss.formula.SheetNameFormatter;
-import org.zkoss.poi.ss.formula.eval.ErrorEval;
-import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.usermodel.Cell;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Comment;
@@ -45,9 +40,13 @@ import org.zkoss.poi.ss.usermodel.Hyperlink;
 import org.zkoss.poi.ss.usermodel.RichTextString;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.util.Internal;
 import org.zkoss.poi.xssf.model.SharedStringsTable;
 import org.zkoss.poi.xssf.model.StylesTable;
+import org.zkoss.poi.util.Internal;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -72,7 +71,7 @@ public final class XSSFCell implements Cell {
      * the xml bean containing information about the cell's location, value,
      * data type, formatting, and formula
      */
-    private CTCell _cell;
+    private final CTCell _cell;
 
     /**
      * the XSSFRow this cell belongs to
@@ -522,11 +521,12 @@ public final class XSSFCell implements Cell {
      * @see Cell#CELL_TYPE_ERROR
      */
     public int getCellType() {
-	   if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
-		   return CELL_TYPE_FORMULA;
-	   }
 
-       return getBaseCellType(true);
+        if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
+            return CELL_TYPE_FORMULA;
+        }
+
+        return getBaseCellType(true);
     }
 
     /**
@@ -936,12 +936,6 @@ public final class XSSFCell implements Cell {
         return _cell;
     }
     
-    @Internal
-    public void setCTCell(CTCell cell) {
-    	//20121123 samchuang@zkoss.org, ZSS-179: XmlValueDisconnectedException
-    	_cell = cell;
-    }
-
     /**
      * Chooses a new boolean value for the cell when its type is changing.<p/>
      *

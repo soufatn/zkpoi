@@ -2735,14 +2735,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     @Override
     protected void commit() throws IOException {
-    	//20121123 samchuang@zkoss.org, ZSS-179: XmlValueDisconnectedException, TODO: any better solution? 
-    	for (XSSFRow row : _rows.values()) {
-    		for (XSSFCell cell : row.getCells().values()) {
-    			CTCell ctcell = (CTCell)cell.getCTCell().copy();
-    			cell.setCTCell(ctcell);
-    		}
-    	}
-    	
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
         write(out);
