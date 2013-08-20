@@ -473,6 +473,15 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 cArray[i++] = c.getCTCell();
             }
             _row.setCArray(cArray);
+            
+            // 20130820, paowang@potix.com, ZSS-179: after _row.setCArray(), _row creates new instances of CTCell 
+            // But some XSSFCell still keep old instances of CTCell, this causes problems when accessing cell's data
+            // So, re-build the cells mapping. 
+			_cells.clear();
+			for(CTCell c : _row.getCList()) {
+				XSSFCell cell = new XSSFCell(this, c);
+				_cells.put(cell.getColumnIndex(), cell);
+			}
         }
     }
 
