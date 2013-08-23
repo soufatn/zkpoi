@@ -17,8 +17,11 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
+
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.Hyphenation;
+import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
@@ -38,35 +41,111 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
   {
   }
 
-  public static CharacterProperties uncompressCHP(CharacterProperties parent,
-                                                  byte[] grpprl,
-                                                  int offset)
-  {
-    CharacterProperties newProperties = null;
-    try
+    @Deprecated
+    public static CharacterProperties uncompressCHP(
+            CharacterProperties parent, byte[] grpprl, int offset )
     {
-      newProperties = (CharacterProperties) parent.clone();
-    }
-    catch (CloneNotSupportedException cnse)
-    {
-      throw new RuntimeException("There is no way this exception should happen!!");
-    }
-    SprmIterator sprmIt = new SprmIterator(grpprl, offset);
-
-    while (sprmIt.hasNext())
-    {
-      SprmOperation sprm = sprmIt.next();
-
-      if (sprm.getType() != 2) {
-        logger.log( POILogger.WARN, "Non-CHP SPRM returned by SprmIterator: " + sprm );
-        continue;
-      }
-
-      unCompressCHPOperation(parent, newProperties, sprm);
+        CharacterProperties newProperties = parent.clone();
+        applySprms( parent, grpprl, offset, true, newProperties );
+        return newProperties;
     }
 
-    return newProperties;
-  }
+    public static CharacterProperties uncompressCHP( StyleSheet styleSheet,
+            CharacterProperties parStyle, byte[] grpprl, int offset )
+    {
+        CharacterProperties newProperties;
+        if ( parStyle == null )
+        {
+            parStyle = new CharacterProperties();
+            newProperties = new CharacterProperties();
+        }
+        else
+        {
+            newProperties = parStyle.clone();
+        }
+
+        /*
+         * not fully conform to specification, but the fastest way to make it
+         * work. Shall be rewritten if any errors would be found -- vlsergey
+         */
+        Integer style = getIstd( grpprl, offset );
+        if ( style != null )
+        {
+            try
+            {
+                applySprms( parStyle, styleSheet.getCHPX( style ), 0, false,
+                        newProperties );
+            }
+            catch ( Exception exc )
+            {
+                logger.log( POILogger.ERROR, "Unable to apply all style ",
+                        style, " CHP SPRMs to CHP: ", exc, exc );
+            }
+        }
+
+        CharacterProperties styleProperties = newProperties;
+        newProperties = styleProperties.clone();
+
+        try
+        {
+            applySprms( styleProperties, grpprl, offset, true, newProperties );
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.ERROR,
+                    "Unable to process all direct CHP SPRMs: ", exc, exc );
+        }
+        return newProperties;
+    }
+
+    private static void applySprms( CharacterProperties parentProperties,
+            byte[] grpprl, int offset, boolean warnAboutNonChpSprms,
+            CharacterProperties targetProperties )
+    {
+        SprmIterator sprmIt = new SprmIterator( grpprl, offset );
+
+        while ( sprmIt.hasNext() )
+        {
+            SprmOperation sprm = sprmIt.next();
+
+            if ( sprm.getType() != 2 )
+            {
+                if ( warnAboutNonChpSprms )
+                {
+                    logger.log( POILogger.WARN,
+                            "Non-CHP SPRM returned by SprmIterator: " + sprm );
+                }
+                continue;
+            }
+
+            unCompressCHPOperation( parentProperties, targetProperties, sprm );
+        }
+    }
+
+    private static Integer getIstd( byte[] grpprl, int offset )
+    {
+        Integer style = null;
+        try
+        {
+            SprmIterator sprmIt = new SprmIterator( grpprl, offset );
+            while ( sprmIt.hasNext() )
+            {
+                SprmOperation sprm = sprmIt.next();
+
+                if ( sprm.getType() == 2 && sprm.getOperation() == 0x30 )
+                {
+                    // sprmCIstd (0x4A30)
+                    style = Integer.valueOf( sprm.getOperand() );
+                }
+            }
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.ERROR,
+                    "Unable to extract istd from direct CHP SPRM: ", exc, exc );
+        }
+        return style;
+    }
 
   /**
    * Used in decompression of a chpx. This performs an operation defined by
@@ -101,16 +180,13 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         case 0x3:
             // sprmCPicLocation -- 0x6A03
             /*
-             * Microsoft Office Word 97-2007 Binary File Format (.doc)
-             * Specification
+             * [MS-DOC]
              * 
-             * Page 75 of 210
+             * Page 104 of 622
              * 
-             * sprmCPicLocation (opcode 0x6A03) is used ONLY IN CHPX FKPs. This
-             * sprm moves the 4-byte operand of the sprm into the chp.fcPic
-             * field. It simultaneously sets chp.fSpec to 1. This sprm is also
-             * used when the chp.lTagObj field that is unioned with chp.fcPic is
-             * to be set for OLE objects.
+             * A signed 32-bit integer that specifies either the position in the
+             * Data Stream of a picture or binary data or the name of an OLE
+             * object storage.
              */
             newCHP.setFcPic( sprm.getOperand() );
             newCHP.setFSpec( true );
@@ -236,9 +312,10 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         break;
       case 0x2f:
         break;
-      case 0x30:
-        newCHP.setIstd (sprm.getOperand());
-        break;
+        case 0x30:
+            newCHP.setIstd( sprm.getOperand() );
+            // 0x30 is supported by uncompressCHP(...)
+            break;
       case 0x31:
 
         //permutation vector for fast saves, who cares!
@@ -255,20 +332,12 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         newCHP.setKul ((byte) 0);
         newCHP.setIco ((byte) 0);
         break;
-      case 0x33:
-        try
-        {
-          // preserve the fSpec setting from the original CHP
-          boolean fSpec = newCHP.isFSpec ();
-          newCHP = (CharacterProperties) oldCHP.clone ();
-          newCHP.setFSpec (fSpec);
-
-        }
-        catch (CloneNotSupportedException e)
-        {
-          //do nothing
-        }
-        return;
+        case 0x33:
+            // preserve the fSpec setting from the original CHP
+            boolean fSpec = newCHP.isFSpec();
+            newCHP = oldCHP.clone();
+            newCHP.setFSpec( fSpec );
+            return;
       case 0x34:
         // sprmCKcd
         break;
@@ -578,9 +647,20 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x65:
         newCHP.setBrc (new BorderCode(sprm.getGrpprl(), sprm.getGrpprlOffset()));
         break;
-      case 0x66:
-        newCHP.setShd (new ShadingDescriptor(sprm.getGrpprl(), sprm.getGrpprlOffset()));
-        break;
+        case 0x66:
+            // sprmCShd80
+            /*
+             * "A Shd80 structure that specifies the background shading for the text. By default, text is not shaded."
+             * 
+             * Word (.doc) Binary File Format. Copyright (c) 2011 Microsoft
+             * Corporation. Release: Tuesday, March 15, 2011
+             */
+            ShadingDescriptor80 oldDescriptor = new ShadingDescriptor80(
+                    sprm.getGrpprl(), sprm.getGrpprlOffset() );
+            ShadingDescriptor newDescriptor = oldDescriptor
+                    .toShadingDescriptor();
+            newCHP.setShd( newDescriptor );
+            break;
       case 0x67:
         // Obsolete
         break;
@@ -618,8 +698,19 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         // sprmCRgLid0
         break;
       case 0x74:
-        // sprmCRgLid1
-        break;
+          // sprmCRgLid1
+          break;
+		case 0x75:
+			// sprmCFNoProof -- 0x875
+			/*
+			 * "A ToggleOperand value that specifies whether the text is excluded from the proofing analysis. By default, text is not excluded from the proofing analysis."
+			 * 
+			 * Word (.doc) Binary File Format. Copyright (c) 2012 Microsoft
+			 * Corporation. Released: October 8, 2012
+			 */
+			newCHP.setFNoProof(getCHPFlag((byte) sprm.getOperand(),
+					oldCHP.isFNoProof()));
+			break;
       default:
           logger.log( POILogger.DEBUG, "Unknown CHP sprm ignored: " + sprm );
           break;

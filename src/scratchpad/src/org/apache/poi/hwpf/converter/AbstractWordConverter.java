@@ -30,13 +30,13 @@ import java.util.regex.Pattern;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.AbstractWordUtils.NumberingState;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Field;
+import org.apache.poi.hwpf.usermodel.HWPFList;
 import org.apache.poi.hwpf.usermodel.Notes;
 import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -171,6 +171,10 @@ public abstract class AbstractWordConverter
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
     private FontReplacer fontReplacer = new DefaultFontReplacer();
+
+    private POILogger log = POILogFactory.getLogger( getClass() );
+
+    private NumberingState numberingState = new NumberingState();
 
     private PicturesManager picturesManager;
 
@@ -517,6 +521,13 @@ public abstract class AbstractWordConverter
                     processOle2( doc, characterRun, block );
                     continue;
                 }
+                if ( characterRun.isSymbol()
+                        && ( wordDocument instanceof HWPFDocument ) )
+                {
+                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    processSymbol( doc, characterRun, block );
+                    continue;
+                }
             }
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
@@ -768,6 +779,12 @@ public abstract class AbstractWordConverter
             CharacterRun characterRun, OfficeDrawing officeDrawing,
             String path, Element block );
 
+    protected void processDropDownList( Element block,
+            CharacterRun characterRun, String[] values, int defaultIndex )
+    {
+        outputCharacters( block, characterRun, values[defaultIndex] );
+    }
+
     protected abstract void processEndnoteAutonumbered(
             HWPFDocument wordDocument, int noteIndex, Element block,
             Range endnoteTextRange );
@@ -823,6 +840,22 @@ public abstract class AbstractWordConverter
                 return;
             }
 
+            break;
+        }
+        case 83: // drop down
+        {
+            Range fieldContent = field.firstSubrange( parentRange );
+            CharacterRun cr = fieldContent.getCharacterRun( fieldContent
+                    .numCharacterRuns() - 1 );
+            String[] values = cr.getDropDownListValues();
+            Integer defIndex = cr.getDropDownListDefaultItemIndex();
+
+            if ( values != null )
+            {
+                processDropDownList( currentBlock, cr, values,
+                        defIndex == null ? -1 : defIndex.intValue() );
+                return;
+            }
             break;
         }
         case 88: // hyperlink
@@ -1022,9 +1055,6 @@ public abstract class AbstractWordConverter
     protected void processParagraphes( HWPFDocumentCore wordDocument,
             Element flow, Range range, int currentTableLevel )
     {
-        final ListTables listTables = wordDocument.getListTables();
-        int currentListInfo = 0;
-
         final int paragraphs = range.numParagraphs();
         for ( int p = 0; p < paragraphs; p++ )
         {
@@ -1054,38 +1084,31 @@ public abstract class AbstractWordConverter
                 processPageBreak( wordDocument, flow );
             }
 
-            if ( paragraph.getIlfo() != currentListInfo )
+            boolean processed = false;
+            if ( paragraph.isInList() )
             {
-                currentListInfo = paragraph.getIlfo();
-            }
-
-            if ( currentListInfo != 0 )
-            {
-                if ( listTables != null )
+                try
                 {
-                    final ListFormatOverride listFormatOverride = listTables
-                            .getOverride( paragraph.getIlfo() );
+                    HWPFList hwpfList = paragraph.getList();
 
-                    String label = AbstractWordUtils.getBulletText( listTables,
-                            paragraph, listFormatOverride.getLsid() );
+                    String label = AbstractWordUtils.getBulletText(
+                            numberingState, hwpfList,
+                            (char) paragraph.getIlvl() );
 
                     processParagraph( wordDocument, flow, currentTableLevel,
                             paragraph, label );
+                    processed = true;
                 }
-                else
+                catch ( Exception exc )
                 {
-                    logger.log( POILogger.WARN,
-                            "Paragraph #" + paragraph.getStartOffset() + "-"
-                                    + paragraph.getEndOffset()
-                                    + " has reference to list structure #"
-                                    + currentListInfo
-                                    + ", but listTables not defined in file" );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, AbstractWordUtils.EMPTY );
+                    log.log(
+                            POILogger.WARN,
+                            "Can't process paragraph as list entry, will be processed without list information",
+                            exc );
                 }
             }
-            else
+
+            if ( processed == false )
             {
                 processParagraph( wordDocument, flow, currentTableLevel,
                         paragraph, AbstractWordUtils.EMPTY );
@@ -1101,6 +1124,12 @@ public abstract class AbstractWordConverter
             Section section )
     {
         processSection( wordDocument, section, 0 );
+    }
+
+    protected void processSymbol( HWPFDocument doc, CharacterRun characterRun,
+            Element block )
+    {
+
     }
 
     protected abstract void processTable( HWPFDocumentCore wordDocument,

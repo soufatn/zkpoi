@@ -111,7 +111,7 @@ public class XSSFHyperlink implements Hyperlink {
      * Generates the relation if required
      */
     protected void generateRelationIfNeeded(PackagePart sheetPart) {
-        if (needsRelationToo()) {
+        if (_externalRel == null && needsRelationToo()) {
             // Generate the relation
             PackageRelationship rel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());
@@ -139,7 +139,7 @@ public class XSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
      *
      * @return the address of this hyperlink
      */

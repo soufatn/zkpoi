@@ -62,6 +62,9 @@ public final class EscherArrayProperty extends EscherComplexProperty {
     }
 
     public int getNumberOfElementsInArray() {
+        if (emptyComplexPart){
+            return 0;
+        }
         return LittleEndian.getUShort(_complexData, 0);
     }
 
@@ -133,6 +136,18 @@ public final class EscherArrayProperty extends EscherComplexProperty {
                 + ", complex: " + isComplex()
                 + ", blipId: " + isBlipId()
                 + ", data: " + '\n' + results.toString();
+    }
+
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
+                .append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append(isBlipId()).append("\">\n");
+        for (int i = 0; i < getNumberOfElementsInArray(); i++) {
+            builder.append("\t").append(tab).append("<Element>").append(HexDump.toHex(getElement(i))).append("</Element>\n");
+        }
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
     }
 
     /**

@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ddf;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -140,6 +137,33 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
     }
 
     /**
+     * Set an escher property. If a property with given propId already
+     exists it is replaced.
+     *
+     * @param value the property to set.
+     */
+    public void setEscherProperty(EscherProperty value){
+        for ( Iterator<EscherProperty> iterator =
+                      properties.iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
+            if (prop.getId() == value.getId()){
+                iterator.remove();
+            }
+        }
+        properties.add( value );
+        sortProperties();
+    }
+
+    public void removeEscherProperty(int num){
+        for ( Iterator<EscherProperty> iterator = getEscherProperties().iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
+            if (prop.getPropertyNumber() == num){
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
      * Retrieve the string representation of this record.
      */
     public String toString()
@@ -176,4 +200,15 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         return stringBuilder.toString();
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(),
+                HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
+        for (EscherProperty property: getEscherProperties()){
+            builder.append(property.toXml(tab+"\t"));
+        }
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
 }
