@@ -148,7 +148,7 @@ public abstract class POIDocument {
 	 */
 	protected PropertySet getPropertySet(String setName) {
 	   //directory can be null when creating new documents
-	   if(directory == null) return null;
+	   if(directory == null || !directory.hasEntry(setName)) return null;
 
 	   DocumentInputStream dis;
 	   try {
@@ -221,7 +221,7 @@ public abstract class POIDocument {
 
 			logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
 		} catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
-			System.err.println("Couldn't write property set with name " + name + " as not supported by HPSF yet");
+			logger.log( POILogger.ERROR, "Couldn't write property set with name " + name + " as not supported by HPSF yet");
 		}
 	}
 	

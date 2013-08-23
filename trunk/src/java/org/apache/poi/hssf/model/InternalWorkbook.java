@@ -82,12 +82,16 @@ import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.OperandPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -736,15 +740,6 @@ public final class InternalWorkbook {
             boundsheets.add(bsr);
             getOrCreateLinkTable().checkExternSheet(sheetnum);
             fixTabIdRecord();
-        } else {
-           // Ensure we have enough tab IDs
-           // Can be a few short if new sheets were added
-           if(records.getTabpos() > 0) {
-              TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
-              if(tir._tabids.length < boundsheets.size()) {
-                 fixTabIdRecord();
-              }
-           }
         }
     }
 
@@ -783,15 +778,19 @@ public final class InternalWorkbook {
     /**
      * make the tabid record look like the current situation.
      *
+     * @return number of bytes written in the TabIdRecord
      */
-    private void fixTabIdRecord() {
+    private int fixTabIdRecord() {
         TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
+        int sz = tir.getRecordSize();
         short[]     tia = new short[ boundsheets.size() ];
 
         for (short k = 0; k < tia.length; k++) {
             tia[ k ] = k;
         }
         tir.setTabIdArray(tia);
+        return tir.getRecordSize() - sz;
+
     }
 
     /**
@@ -843,6 +842,19 @@ public final class InternalWorkbook {
      */
     public void removeExFormatRecord(ExtendedFormatRecord rec) {
         records.remove(rec); // this updates XfPos for us
+        numxfs--;
+    }
+    
+    /**
+     * Removes ExtendedFormatRecord record with given index from the
+     *  file's list. This will make all
+     *  subsequent font indicies drop by one,
+     *  so you'll need to update those yourself!
+     *  @param index of the Extended format record (0-based)
+     */
+    public void removeExFormatRecord(int index) {
+        int xfptr = records.getXfpos() - (numxfs - 1) + index;
+        records.remove(xfptr); // this updates XfPos for us
         numxfs--;
     }
 
@@ -1049,6 +1061,22 @@ public final class InternalWorkbook {
         return pos;
     }
 
+    /**
+     * Perform any work necessary before the workbook is about to be serialized.
+     *
+     * Include in it ant code that modifies the workbook record stream and affects its size.
+     */
+    public void preSerialize(){
+        // Ensure we have enough tab IDs
+        // Can be a few short if new sheets were added
+        if(records.getTabpos() > 0) {
+            TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
+            if(tir._tabids.length < boundsheets.size()) {
+                fixTabIdRecord();
+            }
+        }
+    }
+
     public int getSize()
     {
         int retval = 0;
@@ -1094,12 +1122,17 @@ public final class InternalWorkbook {
     private static WriteAccessRecord createWriteAccess() {
         WriteAccessRecord retval = new WriteAccessRecord();
 
+        String defaultUserName = "POI";
         try {
-            retval.setUsername(System.getProperty("user.name"));
+            String username = System.getProperty("user.name");
+            // Google App engine returns null for user.name, see Bug 53974
+            if(username == null) username = defaultUserName;
+
+            retval.setUsername(username);
         } catch (AccessControlException e) {
                 // AccessControlException can occur in a restricted context
                 // (client applet/jws application or restricted security server)
-                retval.setUsername("POI");
+                retval.setUsername(defaultUserName);
         }
         return retval;
     }

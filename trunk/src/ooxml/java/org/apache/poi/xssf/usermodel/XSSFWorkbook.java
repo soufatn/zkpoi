@@ -19,16 +19,11 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -51,9 +46,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.*;
+import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
 import org.apache.xmlbeans.XmlException;
@@ -172,9 +169,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     /**
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
-     * see <a href="http://openxml4j.org/">www.openxml4j.org</a>.
+     *  see <a href="http://poi.apache.org/oxml4j/">http://poi.apache.org/oxml4j/</a>.
+     * 
+     * Once you have finished working with the Workbook, you should close the package
+     * by calling pkg.close, to avoid leaving file handles open.
+     * 
+     * Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
+     *  footprint than an InputStream backed one.
      *
-     * @param pkg the OpenXML4J <code>Package</code> object.
+     * @param pkg the OpenXML4J <code>OPC Package</code> object.
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(pkg);
@@ -183,6 +186,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         load(XSSFFactory.getInstance());
     }
 
+    /**
+     * Constructs a XSSFWorkbook object, by buffering the whole stream into memory
+     *  and then opening an {@link OPCPackage} object for it.
+     * 
+     * Using an {@link InputStream} requires more memory than using a File, so
+     *  if a {@link File} is available then you should instead do something like
+     *   <pre><code>
+     *       OPCPackage pkg = OPCPackage.open(path);
+     *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
+     *       // work with the wb object
+     *       ......
+     *       pkg.close(); // gracefully closes the underlying zip file
+     *   </code></pre>     
+     */
     public XSSFWorkbook(InputStream is) throws IOException {
         super(PackageHelper.open(is));
         
@@ -672,27 +689,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @see #addPicture(byte[], int)
      */
     public List<XSSFPictureData> getAllPictures() {
-        if(pictures == null) {
-            //In OOXML pictures are referred to in sheets,
-            //dive into sheet's relations, select drawings and their images
-            pictures = new ArrayList<XSSFPictureData>();
-            for(XSSFSheet sh : sheets){
-                for(POIXMLDocumentPart dr : sh.getRelations()){
-                    if(dr instanceof XSSFDrawing){
-                        for(POIXMLDocumentPart img : dr.getRelations()){
-                            if(img instanceof XSSFPictureData){
-                                pictures.add((XSSFPictureData)img);
-                            }
-                        }
-                    }
-                }
+        if(pictures == null){
+            List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
+            pictures = new ArrayList<XSSFPictureData>(mediaParts.size());
+            for(PackagePart part : mediaParts){
+                pictures.add(new XSSFPictureData(part, null));
             }
         }
-        return pictures;
+        return pictures; //YK: should return Collections.unmodifiableList(pictures);
     }
 
     /**
-     * gGet the cell style object at the given index
+     * Get the cell style object at the given index
      *
      * @param idx  index within the set of styles
      * @return XSSFCellStyle object at the index
@@ -904,6 +912,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         throw new IllegalArgumentException("Named range was not found: " + name);
     }
 
+
+    /**
+     * As {@link #removeName(String)} is not necessarily unique 
+     * (name + sheet index is unique), this method is more accurate.
+     * 
+     * @param name the name to remove.
+     */
+    void removeName(XSSFName name) {
+        if (!namedRanges.remove(name)) {
+            throw new IllegalArgumentException("Name was not found: " + name);
+        }
+    }
+
+
     /**
      * Delete the printarea for the sheet specified
      *
@@ -1108,71 +1130,27 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param endColumn   0 based end of repeating columns.
      * @param startRow    0 based start of repeating rows.
      * @param endRow      0 based end of repeating rows.
+     * 
+     * @deprecated use {@link XSSFSheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link XSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
     public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
                                            int startRow, int endRow) {
-        //    Check arguments
-        if ((startColumn == -1 && endColumn != -1) || startColumn < -1 || endColumn < -1 || startColumn > endColumn)
-            throw new IllegalArgumentException("Invalid column range specification");
-        if ((startRow == -1 && endRow != -1) || startRow < -1 || endRow < -1 || startRow > endRow)
-            throw new IllegalArgumentException("Invalid row range specification");
+      XSSFSheet sheet = getSheetAt(sheetIndex);
+      
+      CellRangeAddress rows = null;
+      CellRangeAddress cols = null;
+      
+      if (startRow != -1) {
+        rows = new CellRangeAddress(startRow, endRow, -1, -1);
+      }
+      if (startColumn != -1) {
+        cols = new CellRangeAddress(-1, -1, startColumn, endColumn);
+      }
 
-        XSSFSheet sheet = getSheetAt(sheetIndex);
-        boolean removingRange = startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
-
-        XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
-        if (removingRange) {
-            if(name != null)namedRanges.remove(name);
-            return;
-        }
-        if (name == null) {
-            name = createBuiltInName(XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
-        }
-
-        String reference = getReferenceBuiltInRecord(name.getSheetName(), startColumn, endColumn, startRow, endRow);
-        name.setRefersToFormula(reference);
-
-        // If the print setup isn't currently defined, then add it
-        //  in but without printer defaults
-        // If it's already there, leave it as-is!
-        CTWorksheet ctSheet = sheet.getCTWorksheet();
-        if(ctSheet.isSetPageSetup() && ctSheet.isSetPageMargins()) {
-           // Everything we need is already there
-        } else {
-           // Have initial ones put in place
-           XSSFPrintSetup printSetup = sheet.getPrintSetup();
-           printSetup.setValidSettings(false);
-        }
-    }
-
-    private static String getReferenceBuiltInRecord(String sheetName, int startC, int endC, int startR, int endR) {
-        //windows excel example for built-in title: 'second sheet'!$E:$F,'second sheet'!$2:$3
-        CellReference colRef = new CellReference(sheetName, 0, startC, true, true);
-        CellReference colRef2 = new CellReference(sheetName, 0, endC, true, true);
-
-        String escapedName = SheetNameFormatter.format(sheetName);
-
-        String c;
-        if(startC == -1 && endC == -1) c= "";
-        else c = escapedName + "!$" + colRef.getCellRefParts()[2] + ":$" + colRef2.getCellRefParts()[2];
-
-        CellReference rowRef = new CellReference(sheetName, startR, 0, true, true);
-        CellReference rowRef2 = new CellReference(sheetName, endR, 0, true, true);
-
-        String r = "";
-        if(startR == -1 && endR == -1) r = "";
-        else {
-            if (!rowRef.getCellRefParts()[1].equals("0") && !rowRef2.getCellRefParts()[1].equals("0")) {
-                r = escapedName + "!$" + rowRef.getCellRefParts()[1] + ":$" + rowRef2.getCellRefParts()[1];
-            }
-        }
-
-        StringBuffer rng = new StringBuffer();
-        rng.append(c);
-        if(rng.length() > 0 && r.length() > 0) rng.append(',');
-        rng.append(r);
-        return rng.toString();
+      sheet.setRepeatingRows(rows);
+      sheet.setRepeatingColumns(cols);
     }
 
     private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {
@@ -1680,6 +1658,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         // when set to 0, will tell Excel that it needs to recalculate all formulas
         // in the workbook the next time the file is opened.
         calcPr.setCalcId(0);
+
+        if(value && calcPr.getCalcMode() == STCalcMode.MANUAL) {
+            calcPr.setCalcMode(STCalcMode.AUTO);
+        }
     }
 
     /**

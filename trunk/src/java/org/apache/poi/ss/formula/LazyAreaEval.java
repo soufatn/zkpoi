@@ -45,8 +45,8 @@ final class LazyAreaEval extends AreaEvalBase {
 
 	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 
-		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
+		int rowIx = (relativeRowIndex + getFirstRow() ) ;
+		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
 		return _evaluator.getEvalForCell(rowIx, colIx);
 	}
@@ -93,6 +93,6 @@ final class LazyAreaEval extends AreaEvalBase {
     */
     public boolean isSubTotal(int rowIndex, int columnIndex){
         // delegate the query to the sheet evaluator which has access to internal ptgs
-        return _evaluator.isSubTotal(rowIndex, columnIndex);
+        return _evaluator.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
     }
 }

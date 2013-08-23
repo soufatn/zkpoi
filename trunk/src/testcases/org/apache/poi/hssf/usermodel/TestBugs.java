@@ -24,9 +24,12 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -37,10 +40,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.TempFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -2237,5 +2237,86 @@ if(1==2) {
 
         // make sure we are still readable
         writeOutAndReadBack(workbook);
+    }
+    
+    public void test51675(){
+        final List<Short> list = new ArrayList<Short>();
+        HSSFWorkbook workbook = openSample("51675.xls");
+        HSSFSheet sh = workbook.getSheetAt(0);
+        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+        PageSettingsBlock psb = (PageSettingsBlock) ish.getRecords().get(13);
+        psb.visitContainedRecords(new RecordAggregate.RecordVisitor() {
+            public void visitRecord(Record r) {
+                list.add(r.getSid());
+            }
+        });
+        assertTrue(list.get(list.size()-1).intValue() == UnknownRecord.BITMAP_00E9);
+        assertTrue(list.get(list.size()-2).intValue() == UnknownRecord.HEADER_FOOTER_089C);
+    }
+    
+    public void test52272(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh = wb.createSheet();
+        HSSFPatriarch p = sh.createDrawingPatriarch();
+        
+        HSSFSimpleShape s = p.createSimpleShape(new HSSFClientAnchor());
+        s.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+
+        HSSFSheet sh2 = wb.cloneSheet(0);
+        assertNotNull(sh2.getDrawingPatriarch());
+    }
+
+    public void test53432(){
+        Workbook wb = new HSSFWorkbook(); //or new HSSFWorkbook();
+        wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(wb.getAllPictures().size(), 1);
+
+        wb = new HSSFWorkbook();
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+        assertEquals(wb.getAllPictures().size(), 0);
+        wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(wb.getAllPictures().size(), 1);
+
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+        assertEquals(wb.getAllPictures().size(), 1);
+    }
+
+    public void test46250(){
+        Workbook wb = openSample("46250.xls");
+        Sheet sh = wb.getSheet("Template");
+        Sheet cSh = wb.cloneSheet(wb.getSheetIndex(sh));
+
+        HSSFPatriarch patriarch = (HSSFPatriarch) cSh.createDrawingPatriarch();
+        HSSFTextbox tb = (HSSFTextbox) patriarch.getChildren().get(2);
+
+        tb.setString(new HSSFRichTextString("POI test"));
+        tb.setAnchor(new HSSFClientAnchor(0,0,0,0,(short)0,0,(short)10,10));
+
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+    }
+
+    public void test53404(){
+        Workbook wb = openSample("53404.xls");
+        Sheet sheet = wb.getSheet("test-sheet");
+        int rowCount = sheet.getLastRowNum() + 1;
+        int newRows = 5;
+        for (int r = rowCount; r < rowCount + newRows; r++) {
+            Row row = sheet.createRow((short) r);
+            row.createCell(0).setCellValue(1.03 * (r + 7));
+            row.createCell(1).setCellValue(new Date());
+            row.createCell(2).setCellValue(Calendar.getInstance());
+            row.createCell(3).setCellValue(String.format("row:%d/col:%d", r, 3));
+            row.createCell(4).setCellValue(true);
+            row.createCell(5).setCellType(Cell.CELL_TYPE_ERROR);
+            row.createCell(6).setCellValue("added cells.");
+        }
+
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+    }
+
+    public void test54016() {
+        // This used to break
+        HSSFWorkbook wb = openSample("54016.xls");
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 }

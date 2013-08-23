@@ -20,6 +20,8 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,6 +37,8 @@ import java.awt.*;
  */
 
 public abstract class Sheet {
+	private static POILogger logger = POILogFactory.getLogger(Sheet.class);
+
     /**
      * The <code>SlideShow</code> we belong to
      */
@@ -122,13 +126,13 @@ public abstract class Sheet {
      */
     public static TextRun[] findTextRuns(PPDrawing ppdrawing) {
         final List<TextRun> runsV = new ArrayList<TextRun>();
-        EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
+        final EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
         for (int i = 0; i < wrappers.length; i++) {
             int s1 = runsV.size();
 
             // propagate parents to parent-aware records
             RecordContainer.handleParentAwareRecords(wrappers[i]);
-            findTextRuns(wrappers[i].getChildRecords(), runsV);
+            findTextRuns(wrappers[i], runsV);
             int s2 = runsV.size();
             if (s2 != s1){
                 TextRun t = runsV.get(runsV.size()-1);
@@ -137,7 +141,6 @@ public abstract class Sheet {
         }
         return runsV.toArray(new TextRun[runsV.size()]);
     }
-
     /**
      * Scans through the supplied record array, looking for
      * a TextHeaderAtom followed by one of a TextBytesAtom or
@@ -146,8 +149,30 @@ public abstract class Sheet {
      * @param records the records to build from
      * @param found   vector to add any found to
      */
-    protected static void findTextRuns(Record[] records, List<TextRun> found) {
-        // Look for a TextHeaderAtom
+    protected static void findTextRuns(final Record[] records, final List<TextRun> found) {
+    	findTextRuns(records, found, null); 
+    }
+    /**
+     * Scans through the supplied record array, looking for
+     * a TextHeaderAtom followed by one of a TextBytesAtom or
+     * a TextCharsAtom. Builds up TextRuns from these
+     *
+     * @param wrapper an EscherTextboxWrapper
+     * @param found   vector to add any found to
+     */
+    protected static void findTextRuns(final EscherTextboxWrapper wrapper, final List<TextRun> found) {
+    	findTextRuns(wrapper.getChildRecords(), found, wrapper.getStyleTextProp9Atom());
+    }
+    /**
+     * Scans through the supplied record array, looking for
+     * a TextHeaderAtom followed by one of a TextBytesAtom or
+     * a TextCharsAtom. Builds up TextRuns from these
+     *
+     * @param records the records to build from
+     * @param found   vector to add any found to
+     * @param styleTextProp9Atom a StyleTextProp9Atom with numbered lists info
+     */
+    protected static void findTextRuns(final Record[] records, final List<TextRun> found, final StyleTextProp9Atom styleTextProp9Atom) {
         for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
             if (records[i] instanceof TextHeaderAtom) {
                 TextRun trun = null;
@@ -169,15 +194,15 @@ public abstract class Sheet {
                     TextBytesAtom tba = (TextBytesAtom) records[i + 1];
                     trun = new TextRun(tha, tba, stpa);
                 } else if (records[i + 1].getRecordType() == 4001l) {
-                    // StyleTextPropAtom - Safe to ignore
+                	stpa = (StyleTextPropAtom) records[i + 1];
                 } else if (records[i + 1].getRecordType() == 4010l) {
                     // TextSpecInfoAtom - Safe to ignore
                 } else {
-                    System.err.println("Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i + 1].getRecordType());
+                	logger.log(POILogger.ERROR, "Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i + 1].getRecordType());
                 }
 
                 if (trun != null) {
-                    ArrayList lst = new ArrayList();
+                    List<Record> lst = new ArrayList<Record>();
                     for (int j = i; j < records.length; j++) {
                         if(j > i && records[j] instanceof TextHeaderAtom) break;
                         lst.add(records[j]);
@@ -186,7 +211,7 @@ public abstract class Sheet {
                     lst.toArray(recs);
                     trun._records = recs;
                     trun.setIndex(slwtIndex);
-
+                    trun.setStyleTextProp9Atom(styleTextProp9Atom);
                     found.add(trun);
                     i++;
                 } else {

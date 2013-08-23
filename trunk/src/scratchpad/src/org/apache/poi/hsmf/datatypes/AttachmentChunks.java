@@ -31,14 +31,20 @@ import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_MIME_TAG;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_RENDERING;
 import static org.apache.poi.hsmf.datatypes.MAPIProperty.ATTACH_SIZE;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Collection of convenence chunks for standard parts of the MSG file attachment.
  */
 public class AttachmentChunks implements ChunkGroup {
+   private static POILogger logger = POILogFactory.getLogger(AttachmentChunks.class);
    public static final String PREFIX = "__attach_version1.0_#";
    
    public ByteChunk attachData;
@@ -66,6 +72,36 @@ public class AttachmentChunks implements ChunkGroup {
    
    public AttachmentChunks(String poifsName) {
       this.poifsName = poifsName;
+   }
+   
+   
+   /**
+    * Is this Attachment an embedded MAPI message?
+    */
+   public boolean isEmbeddedMessage() {
+      return (attachmentDirectory != null);
+   }
+   /**
+    * Returns the embedded MAPI message, if the attachment
+    *  is an embedded message, or null otherwise
+    */
+   public MAPIMessage getEmbeddedMessage() throws IOException {
+      if (attachmentDirectory != null) {
+         return attachmentDirectory.getAsEmbededMessage();
+      }
+      return null;
+   }
+   
+   /**
+    * Returns the embedded object, if the attachment is an
+    *  object based embedding (image, document etc), or null
+    *  if it's an embedded message
+    */
+   public byte[] getEmbeddedAttachmentObject() {
+      if (attachData != null) {
+         return attachData.getValue();
+      }
+      return null;
    }
    
    public Chunk[] getAll() {
@@ -98,7 +134,7 @@ public class AttachmentChunks implements ChunkGroup {
          } else if(chunk instanceof DirectoryChunk) {
              attachmentDirectory = (DirectoryChunk)chunk;
          } else {
-             System.err.println("Unexpected data chunk of type " + chunk);
+        	 logger.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
          }
       }
       else if(chunk.getChunkId() == ATTACH_DISPOSITION.id) {

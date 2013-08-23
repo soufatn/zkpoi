@@ -90,7 +90,8 @@ public final class FIBFieldHandler
     public static final int PLCFATNBKL = 43;
     // 506 == 0x01FA; 510 == 0x01FE
     public static final int PMS = 44;
-  public static final int FORMFLDSTTBS = 45;
+    // 514 == 0x0202; 518 == 0x0206
+    public static final int FORMFLDSTTBS = 45;
   public static final int PLCFENDREF = 46;
   public static final int PLCFENDTXT = 47;
   public static final int PLCFFLDEDN = 48;
@@ -120,7 +121,9 @@ public final class FIBFieldHandler
   public static final int ROUTESLIP = 70;
   public static final int STTBSAVEDBY = 71;
   public static final int STTBFNM = 72;
-  public static final int PLCFLST = 73;
+  public static final int PLFLST = 73;
+  @Deprecated
+  public static final int PLCFLST = PLFLST;
   public static final int PLFLFO = 74;
   public static final int PLCFTXBXBKD = 75;//validated
   public static final int PLCFTXBXHDRBKD = 76;

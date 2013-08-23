@@ -33,7 +33,89 @@
     </developers>
 
     <changes>
-        <release version="3.9-beta1" date="2012-??-??">
+        <release version="3.9" date="2012-12-03">
+          <action dev="poi-developers" type="fix">54188 - Avoid NPE in PPT2PNG</action>
+          <action dev="poi-developers" type="fix">52628 - Replace System.err info messages with a POILogger</action>
+          <action dev="poi-developers" type="fix">54137 - improved performance of DataFormatter with Fractions</action>
+          <action dev="poi-developers" type="fix">54099 - Ensure that CTHMerge and CTTcBorders go to poi-ooxml-schemas jar</action>
+          <action dev="poi-developers" type="fix">54111 - Fixed extracting text from table cells in HSLF</action>
+          <action dev="poi-developers" type="add">52583 - add support for drop-down lists in doc to html convertion</action>
+          <action dev="poi-developers" type="add">52863 - add workaround for files with broken CHP SPRMs</action>
+          <action dev="poi-developers" type="fix">53182 - Reading combined character styling and direct formatting of a character run</action>
+          <action dev="poi-developers" type="fix">52311 - Conversion to html : Problem in titles number </action>
+          <action dev="poi-developers" type="fix">53914 - TableRow#getTopBorder() return bottom's border</action>
+          <action dev="poi-developers" type="fix">53282 - Avoid exception when parsing OPC relationships with non-breaking spaces</action>
+          <action dev="poi-developers" type="fix">54016 - Avoid exception when parsing workbooks with DConRefRecord in row aggregate</action>
+          <action dev="poi-developers" type="fix">54008 - Fixed Ant build to support build directories with blanks</action>
+          <action dev="poi-developers" type="fix">53374 - Avoid exceptions when parsing hyperlinks of type "javascript://"</action>
+          <action dev="poi-developers" type="fix">53404 - Fixed compatibility bug with modifying xls files created by POI-3.6 and earlier</action>
+          <action dev="poi-developers" type="add">53979 - Support fetching properties of Numbered Lists from PPT files</action>
+          <action dev="poi-developers" type="add">53784 - Partial HSMF support for fixed sized properties</action>
+          <action dev="poi-developers" type="add">53943 - added method processSymbol() to allow converting word symbols   </action>
+          <action dev="poi-developers" type="fix">53763 - avoid style mess when using HSSFOptimiser  </action>
+          <action dev="poi-developers" type="fix">52972 - preserve leading / trailing spaces in SXSSF </action>
+          <action dev="poi-developers" type="fix">53965 - Fixed XmlValueOutOfRangeExceptio calling getDataValidations for custom validations with XSSFSheet </action>
+          <action dev="poi-developers" type="fix">53974 - Avoid NPE when constructing HSSFWorbook on Google App Engine</action>
+          <action dev="poi-developers" type="fix">53568 - Fixed null returned by XSSFPicture.getPictureData()</action>
+          <action dev="poi-developers" type="fix">53950 - fixed setForceFormulaRecalculation to reset workbook-level "manual" flag</action>
+          <action dev="poi-developers" type="fix">52211 - avoid unnessary re-coverting content types to US-ASCII, it can cause exceptions on ibm mainframes</action>
+          <action dev="poi-developers" type="fix">53568 - Set shapes anchors in XSSF when reading from existing drawings</action>
+          <action dev="poi-developers" type="add">HSSFOptimiser will now also tidy away un-used cell styles, in addition to duplicate styles</action>
+          <action dev="poi-developers" type="fix">53493 - Fixed memory and temporary file leak in SXSSF </action>
+          <action dev="poi-developers" type="fix">53780 - Fixed memory and temporary file leak in SXSSF </action>
+          <action dev="poi-developers" type="fix">53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document. </action>
+          <action dev="poi-developers" type="fix">53434 - Subtotal is not return correct value. </action>
+          <action dev="poi-developers" type="fix">53642 - [PATCH] XLS formula evaluation logging </action>
+          <action dev="poi-developers" type="fix">53561 - Unexpected adding of drawings into a workbook </action>
+          <action dev="poi-developers" type="fix">53413 - [GSoC] Improved work with shapes. HSSF </action>
+          <action dev="poi-developers" type="fix">53361 - feature: enhancements in EscherAggregate </action>
+          <action dev="poi-developers" type="fix">53302 - [Patch] EscherAggregate does not handle Continue records </action>
+          <action dev="poi-developers" type="fix">53144 - First comment not cloned after cloneSheet() </action>
+          <action dev="poi-developers" type="fix">53028 - Broken auto fit row height in the cells with word wrap </action>
+          <action dev="poi-developers" type="fix">53010 - [GSoC2012] Improve drawing support in HSSF </action>
+          <action dev="poi-developers" type="fix">52764 - Unmodified cell comments disappear after HSSFWorkbook.write </action>
+          <action dev="poi-developers" type="fix">52300 - Corrupted File after cloneSheet() </action>
+          <action dev="poi-developers" type="fix">52272 - [PATCH] Inserting images on cloned sheet with images. </action>
+          <action dev="poi-developers" type="fix">51796 - The [EscherClientAnchorRecord] for object (eg: TextBox,Shape) may get lost. </action>
+          <action dev="poi-developers" type="fix">51683 - [HSSF] Improve support for Shapes and Shape Groups </action>
+          <action dev="poi-developers" type="fix">51676 - Using drawingPatriarch.createCellComment(anchor) leads to File error: data may have been lost </action>
+          <action dev="poi-developers" type="fix">51675 - Background images cause problems in HSSF spreadsheet </action>
+          <action dev="poi-developers" type="fix">51455 - It would be really nice to be able to set the background picture of a comment </action>
+          <action dev="poi-developers" type="fix">51341 - Adding Image to Header in Excel Using HSSF </action>
+          <action dev="poi-developers" type="fix">51280 - when we insert a new image to the existing excel file that corrupts the previous images </action>
+          <action dev="poi-developers" type="fix">50696 - File Error: data may have been lost </action>
+          <action dev="poi-developers" type="fix">48989 - If we have a comment but the row is not created we will not be able to get it. </action>
+          <action dev="poi-developers" type="fix">48873 - Comments not saving in XLS files with collapsible columns </action>
+          <action dev="poi-developers" type="fix">48654 - Not able to read Excel (xls) file having drawing objects </action>
+          <action dev="poi-developers" type="fix">48590 - Excel chrashes after using removeCellComment methods </action>
+          <action dev="poi-developers" type="fix">46444 - cloning cloned sheet with autofilters corrupts the workbook </action>
+          <action dev="poi-developers" type="fix">45129 - Lost picture in file output after saving with POI </action>
+          <action dev="poi-developers" type="fix">47624 - File Error Data May Have been Lost error while opening commented workbook(excel file) </action>
+          <action dev="poi-developers" type="fix">46143 - setLineStyleColor for comments donot work </action>
+          <action dev="poi-developers" type="fix">53699 - Patch to correct BorderStyle enum positions </action>
+          <action dev="poi-developers" type="add">53064 - Ugly Duckling case study</action>
+          <action dev="poi-developers" type="add">53644 - XLS formula bugfix (CalFieldFunc) + WeekDay addon </action>
+          <action dev="poi-developers" type="add">53446 - Fixed some problems extracting PNGs </action>
+          <action dev="poi-developers" type="fix">53205 - Fixed some parsing errors and encoding issues in HDGF </action>
+          <action dev="poi-developers" type="add">53204 - Improved performanceof PageSettingsBlock in HSSF </action>
+          <action dev="poi-developers" type="add">53500 - Getter for repeating rows and columns</action>
+          <action dev="poi-developers" type="fix">53369 - Fixed tests failing on JDK 1.7</action>
+          <action dev="poi-developers" type="fix">53360 - Fixed SXSSF to correctly write text before escaped Unicode control character</action>
+          <action dev="poi-developers" type="add">Change HSMF Types to have full data on ID, Name and Length, rather than just being a simple ID</action>
+          <action dev="poi-developers" type="add">48469 - Updated case study</action>
+          <action dev="poi-developers" type="add">53476 - Support Complex Name in formulas </action>
+          <action dev="poi-developers" type="fix">53414 - properly update sheet dimensions when adding column </action>
+          <action dev="poi-developers" type="add">Add File based constructor to OPCPackage, alongside existing String one (which constructed a File from the string internally)</action>
+          <action dev="poi-developers" type="fix">53389 - Handle formatting General and @ formats even if a locale is prefixed to them</action>
+          <action dev="poi-developers" type="fix">53271 - Removed unconditional asserts in SXSSF</action>
+          <action dev="poi-developers" type="add">53025 - Updatad documentation and example on using Data Validations  </action>
+          <action dev="poi-developers" type="add">53227 - Corrected AddDimensionedImage.java to support XSSF/SXSSF  </action>
+          <action dev="poi-developers" type="add">53058 - Utility for representing drawings contained in a binary Excel file as a XML tree</action>
+          <action dev="poi-developers" type="add">53165 - HWPF support for fetching the description (alt text) of a picture</action>
+          <action dev="poi-developers" type="fix">48528 - support negative arguments to the DATE() function</action>
+          <action dev="poi-developers" type="fix">53092 - allow specifying of a TimeZone to DateUtil.getJavaDate(), for when it is known that a file comes from a different (known) timezone to the current machine</action>
+          <action dev="poi-developers" type="fix">53043 - don't duplicate hyperlink relationships when saving XSSF file</action>
+          <action dev="poi-developers" type="fix">53101 - fixed evaluation of SUM over cell range &gt; 255</action>
           <action dev="poi-developers" type="fix">49529 - avoid exception when cloning sheets with no drawing records and initialized drawing patriarch</action>
         </release>
         <release version="3.8-FINAL" date="2012-03-26">
