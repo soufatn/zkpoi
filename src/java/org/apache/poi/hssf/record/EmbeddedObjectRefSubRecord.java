@@ -29,6 +29,9 @@ import org.zkoss.poi.util.LittleEndian;
 import org.zkoss.poi.util.LittleEndianInput;
 import org.zkoss.poi.util.LittleEndianInputStream;
 import org.zkoss.poi.util.LittleEndianOutput;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.StringUtil;
+import org.zkoss.poi.util.POILogger;
 import org.zkoss.poi.util.StringUtil;
 
 /**
@@ -39,6 +42,7 @@ import org.zkoss.poi.util.StringUtil;
  * @author Daniel Noll
  */
 public final class EmbeddedObjectRefSubRecord extends SubRecord {
+	private static POILogger logger = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);
 	public static final short sid = 0x0009;
 
 	private static final byte[] EMPTY_BYTE_ARRAY = { };
@@ -137,7 +141,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int nUnexpectedPadding = remaining - dataLenAfterFormula;
 
 		if (nUnexpectedPadding > 0) {
-			System.err.println("Discarding " + nUnexpectedPadding + " unexpected padding bytes ");
+			logger.log( POILogger.ERROR, "Discarding " + nUnexpectedPadding + " unexpected padding bytes ");
 			readRawData(in, nUnexpectedPadding);
 			remaining-=nUnexpectedPadding;
 		}

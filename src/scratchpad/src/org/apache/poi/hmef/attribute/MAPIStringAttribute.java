@@ -23,6 +23,8 @@ import org.zkoss.poi.hmef.Attachment;
 import org.zkoss.poi.hmef.HMEFMessage;
 import org.zkoss.poi.hsmf.datatypes.MAPIProperty;
 import org.zkoss.poi.hsmf.datatypes.Types;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 import org.zkoss.poi.util.StringUtil;
 
 /**
@@ -30,6 +32,7 @@ import org.zkoss.poi.util.StringUtil;
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIStringAttribute extends MAPIAttribute {
+   private static POILogger logger = POILogFactory.getLogger(MAPIStringAttribute.class);
    private static final String CODEPAGE = "CP1252";
    private final String data;
    
@@ -37,13 +40,13 @@ public final class MAPIStringAttribute extends MAPIAttribute {
       super(property, type, data);
       
       String tmpData = null;
-      if(type == Types.ASCII_STRING) {
+      if(type == Types.ASCII_STRING.getId()) {
          try {
             tmpData = new String(data, CODEPAGE);
          } catch(UnsupportedEncodingException e) {
             throw new RuntimeException("JVM Broken - core encoding " + CODEPAGE + " missing");
          }
-      } else if(type == Types.UNICODE_STRING) {
+      } else if(type == Types.UNICODE_STRING.getId()) {
          tmpData = StringUtil.getFromUnicodeLE(data);
       } else {
          throw new IllegalArgumentException("Not a string type " + type);
@@ -78,7 +81,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
          return ((MAPIRtfAttribute)attr).getDataString();
       }
       
-      System.err.println("Warning, non string property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non string property found: " + attr.toString());
       return null;
   }
 }

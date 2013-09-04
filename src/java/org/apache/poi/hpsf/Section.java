@@ -54,7 +54,7 @@ public class Section
      * <p>Returns the format ID. The format ID is the "type" of the
      * section. For example, if the format ID of the first {@link
      * Section} contains the bytes specified by
-     * <code>org.apache.poi.hpsf.wellknown.SectionIDMap.SUMMARY_INFORMATION_ID</code>
+     * <code>org.zkoss.poi.hpsf.wellknown.SectionIDMap.SUMMARY_INFORMATION_ID</code>
      * the section (and thus the property set) is a SummaryInformation.</p>
      *
      * @return The format ID

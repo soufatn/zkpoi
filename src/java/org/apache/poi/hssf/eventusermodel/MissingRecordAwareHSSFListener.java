@@ -20,15 +20,7 @@ package org.zkoss.poi.hssf.eventusermodel;
 import org.zkoss.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.zkoss.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.zkoss.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
-import org.zkoss.poi.hssf.record.BOFRecord;
-import org.zkoss.poi.hssf.record.CellValueRecordInterface;
-import org.zkoss.poi.hssf.record.MulBlankRecord;
-import org.zkoss.poi.hssf.record.MulRKRecord;
-import org.zkoss.poi.hssf.record.NoteRecord;
-import org.zkoss.poi.hssf.record.Record;
-import org.zkoss.poi.hssf.record.RecordFactory;
-import org.zkoss.poi.hssf.record.RowRecord;
-import org.zkoss.poi.hssf.record.SharedFormulaRecord;
+import org.zkoss.poi.hssf.record.*;
 
 /**
  * <p>A HSSFListener which tracks rows and columns, and will
@@ -72,6 +64,11 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 			thisRow = valueRec.getRow();
 			thisColumn = valueRec.getColumn();
 		} else {
+            if (record instanceof StringRecord){
+                //it contains only cashed result of the previous FormulaRecord evaluation
+                childListener.processRecord(record);
+                return;
+            }
 			thisRow = -1;
 			thisColumn = -1;
 

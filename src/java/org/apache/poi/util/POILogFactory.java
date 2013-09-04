@@ -88,7 +88,7 @@ public class POILogFactory
         //  between class loading and first use
         if(_loggerClassName == null) {
         	try {
-        		_loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
+        		_loggerClassName = System.getProperty("org.zkoss.poi.util.POILogger");
         	} catch(Exception e) {}
         	
         	// Use the default logger if none specified,

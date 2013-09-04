@@ -460,6 +460,7 @@ public final class HSSFRow implements Row {
         if(height == -1){
             row.setBadFontHeight(false); //20120103, henrichen@zkoss.org: default height, custom height shall be set to false
             row.setHeight((short)(0xFF | 0x8000));
+            row.setBadFontHeight(false);
         } else {
             row.setBadFontHeight(true);
             row.setHeight(height);

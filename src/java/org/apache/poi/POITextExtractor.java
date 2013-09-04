@@ -21,7 +21,7 @@ package org.zkoss.poi;
  *  of POI Documents. 
  * You will typically find the implementation of
  *  a given format's text extractor under
- *  org.apache.poi.[format].extractor .
+ *  org.zkoss.poi.[format].extractor .
  * @see org.zkoss.poi.hssf.extractor.ExcelExtractor
  * @see org.zkoss.poi.hslf.extractor.PowerPointExtractor
  * @see org.zkoss.poi.hdgf.extractor.VisioTextExtractor

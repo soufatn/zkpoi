@@ -115,7 +115,7 @@ final class LinkTable {
         /**
          * Create a new block for internal references. It is called when constructing a new LinkTable.
          *
-         * @see org.apache.poi.hssf.model.LinkTable#LinkTable(int, WorkbookRecordList)
+         * @see org.zkoss.poi.hssf.model.LinkTable#LinkTable(int, WorkbookRecordList)
          */
         public ExternalBookBlock(int numberOfSheets) {
 			_externalBookRecord = SupBookRecord.createInternalReferences((short)numberOfSheets);
@@ -126,7 +126,7 @@ final class LinkTable {
         /**
          * Create a new block for registering add-in functions
          *
-         * @see org.apache.poi.hssf.model.LinkTable#addNameXPtg(String)
+         * @see org.zkoss.poi.hssf.model.LinkTable#addNameXPtg(String)
          */
         public ExternalBookBlock() {
             _externalBookRecord = SupBookRecord.createAddInFunctions();

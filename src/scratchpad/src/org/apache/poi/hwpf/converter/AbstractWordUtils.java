@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,10 +29,8 @@ import org.zkoss.poi.hwpf.HWPFDocument;
 import org.zkoss.poi.hwpf.HWPFDocumentCore;
 import org.zkoss.poi.hwpf.HWPFOldDocument;
 import org.zkoss.poi.hwpf.OldWordFileFormatException;
-import org.zkoss.poi.hwpf.model.ListLevel;
-import org.zkoss.poi.hwpf.model.ListTables;
 import org.zkoss.poi.hwpf.usermodel.BorderCode;
-import org.zkoss.poi.hwpf.usermodel.Paragraph;
+import org.zkoss.poi.hwpf.usermodel.HWPFList;
 import org.zkoss.poi.hwpf.usermodel.Table;
 import org.zkoss.poi.hwpf.usermodel.TableCell;
 import org.zkoss.poi.hwpf.usermodel.TableRow;
@@ -226,32 +226,54 @@ public class AbstractWordUtils
         return stringBuilder.toString();
     }
 
-    public static String getBulletText( ListTables listTables,
-            Paragraph paragraph, int listId )
+    public static class NumberingState
     {
-        final ListLevel listLevel = listTables.getLevel( listId,
-                paragraph.getIlvl() );
 
-        if ( listLevel==null || listLevel.getNumberText() == null )
-            return EMPTY;
+        private final Map<String, Integer> levels = new HashMap<String, Integer>();
 
+    }
+
+    public static String getBulletText( NumberingState numberingState,
+            HWPFList list, char level )
+    {
         StringBuffer bulletBuffer = new StringBuffer();
-        char[] xst = listLevel.getNumberText().toCharArray();
+        char[] xst = list.getNumberText( level ).toCharArray();
         for ( char element : xst )
         {
             if ( element < 9 )
             {
-                ListLevel numLevel = listTables.getLevel( listId, element );
+                int lsid = list.getLsid();
+                final String key = lsid + "#" + ( (int) element );
+                int num;
 
-                int num = numLevel.getStartAt();
-                bulletBuffer.append( NumberFormatter.getNumber( num,
-                        listLevel.getNumberFormat() ) );
-
-                if ( numLevel == listLevel )
+                if ( !list.isStartAtOverriden( element )
+                        && numberingState.levels.containsKey( key ) )
                 {
-                    numLevel.setStartAt( numLevel.getStartAt() + 1 );
+                    num = numberingState.levels.get( key ).intValue();
+                    if ( level == element )
+                    {
+                        num++;
+                        numberingState.levels.put( key, Integer.valueOf( num ) );
+                    }
+                }
+                else
+                {
+                    num = list.getStartAt( element );
+                    numberingState.levels.put( key, Integer.valueOf( num ) );
                 }
 
+                if ( level == element )
+                {
+                    // cleaning states of nested levels to reset numbering
+                    for ( int i = element + 1; i < 9; i++ )
+                    {
+                        final String childKey = lsid + "#" + i;
+                        numberingState.levels.remove( childKey );
+                    }
+                }
+                
+                bulletBuffer.append( NumberFormatter.getNumber( num,
+                        list.getNumberFormat( level ) ) );
             }
             else
             {
@@ -259,7 +281,7 @@ public class AbstractWordUtils
             }
         }
 
-        byte follow = listLevel.getTypeOfCharFollowingTheNumber();
+        byte follow = list.getTypeOfCharFollowingTheNumber( level );
         switch ( follow )
         {
         case 0:
@@ -431,7 +453,7 @@ public class AbstractWordUtils
     {
 
         if ( format != 0 )
-            System.err.println( "NYI: toListItemNumberLabel(): " + format );
+        	logger.log( POILogger.INFO, "NYI: toListItemNumberLabel(): " + format );
 
         return String.valueOf( number );
     }

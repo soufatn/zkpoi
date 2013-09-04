@@ -89,6 +89,7 @@ import org.zkoss.poi.util.POILogger;
  * For POI internal use only
  *
  * @author Josh Micich
+ * @author Thies Wellpott (debug output enhancements)
  * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference, dependency tracking
  */
 public final class WorkbookEvaluator {
@@ -427,16 +428,48 @@ public final class WorkbookEvaluator {
 			_dependencyTracker.addDependency(ec, ptgs);
 		}
 	}
+
+    /**
+     * whether print detailed messages about the next formula evaluation
+     */
+	private boolean dbgEvaluationOutputForNextEval = false;
+
+	// special logger for formula evaluation output (because of possibly very large output)
+	private final POILogger EVAL_LOG = POILogFactory.getLogger("POI.FormulaEval");
+	// current indent level for evalution; negative value for no output
+	private int dbgEvaluationOutputIndent = -1;
+
 	// visibility raised for testing
 	/* package */ ValueEval evaluateFormula(OperationEvaluationContext ec, Ptg[] ptgs, boolean ignoreDependency, boolean ignoreDereference) {
 		if (!ignoreDependency)
 			addDependency(ec, ptgs); //20110324, henrichen@zkoss.org: construct the dependency DAG per this formula (bug#290)
+			
+		String dbgIndentStr = "";		// always init. to non-null just for defensive avoiding NPE
+		if (dbgEvaluationOutputForNextEval) {
+			// first evaluation call when ouput is desired, so iit. this evaluator instance
+			dbgEvaluationOutputIndent = 1;
+			dbgEvaluationOutputForNextEval = false;
+		}
+		if (dbgEvaluationOutputIndent > 0) {
+			// init. indent string to needed spaces (create as substring vom very long space-only string;
+			// limit indendation for deep recursions)
+			dbgIndentStr = "                                                                                                    ";
+			dbgIndentStr = dbgIndentStr.substring(0, Math.min(dbgIndentStr.length(), dbgEvaluationOutputIndent*2));
+			EVAL_LOG.log(POILogger.WARN, dbgIndentStr
+			                   + "- evaluateFormula('" + ec.getRefEvaluatorForCurrentSheet().getSheetName()
+			                   + "'/" + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
+			                   + "): " + Arrays.toString(ptgs).replaceAll("\\Qorg.zkoss.poi.ss.formula.ptg.\\E", ""));
+			dbgEvaluationOutputIndent++;
+		}
 		
 		Stack<ValueEval> stack = new Stack<ValueEval>();
 		for (int i = 0, iSize = ptgs.length; i < iSize; i++) {
 
 			// since we don't know how to handle these yet :(
 			Ptg ptg = ptgs[i];
+			if (dbgEvaluationOutputIndent > 0) {
+				EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "  * ptg " + i + ": " + ptg);
+			}
 			if (ptg instanceof AttrPtg) {
 				AttrPtg attrPtg = (AttrPtg) ptg;
 				if (attrPtg.isSum()) {
@@ -547,6 +580,9 @@ public final class WorkbookEvaluator {
 			}
 //			logDebug("push " + opResult);
 			stack.push(opResult);
+			if (dbgEvaluationOutputIndent > 0) {
+				EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "    = " + opResult);
+			}
 		}
 
 		ValueEval value = stack.pop();
@@ -554,7 +590,19 @@ public final class WorkbookEvaluator {
 			throw new IllegalStateException("evaluation stack not empty");
 		}
 		value = postProcessValueEval(ec, value, true); //20101115, henrichen@zkoss.org: might be simple one operand formula
-		return ignoreDereference ? value : dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
+		ValueEval result = ignoreDereference ? value : dereferenceResult(value, ec.getRowIndex(), ec.getColumnIndex());
+		if (dbgEvaluationOutputIndent > 0) {
+			EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "finshed eval of "
+							+ new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
+							+ ": " + result);
+			dbgEvaluationOutputIndent--;
+			if (dbgEvaluationOutputIndent == 1) {
+				// this evaluation is done, reset indent to stop logging
+				dbgEvaluationOutputIndent = -1;
+			}
+		} // if
+		return result;
+
 	}
 	/**
 	 * Calculates the number of tokens that the evaluator should skip upon reaching a tAttrSkip.
@@ -694,10 +742,12 @@ public final class WorkbookEvaluator {
      * YK: Used by OperationEvaluationContext to resolve indirect names.
      */
 	/*package*/ ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
-		if (ptgs.length > 1) {
-			throw new RuntimeException("Complex name formulas not supported yet");
-		}
-		return getEvalForPtg(ptgs[0], ec);
+	    if (ptgs.length == 1) {
+	      return getEvalForPtg(ptgs[0], ec);
+	    }
+	    //2013/8/27 dennischen@zkoss.org, zpoi extends evaluateFormula to provide ignoreDependency and ignoreDifference
+	    //I give a default value true for ignoreDependency and ignoreDifference false.
+	    return evaluateFormula(ec, ptgs, true, false);
 	}
 
 	/**
@@ -740,7 +790,7 @@ public final class WorkbookEvaluator {
      * </ul>
      *
      * @param ignore whether to ignore missing references to external workbooks
-     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52575">Bug 52575</a> for details
+     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52575">Bug 52575 for details</a>
      */
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _ignoreMissingWorkbooks = ignore;
@@ -897,4 +947,8 @@ public final class WorkbookEvaluator {
 		// the top evaluation frame
 		return result;
 	}
+
+    public void setDebugEvaluationOutputForNextEval(boolean value){
+        dbgEvaluationOutputForNextEval = value;
+    }
 }

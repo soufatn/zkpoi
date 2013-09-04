@@ -24,6 +24,7 @@ import java.util.List;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -131,14 +132,14 @@ public interface Workbook {
     /**
      * Set the sheet name.
      * <p>
-     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     * See {@link org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
      *      for a safe way to create valid names
      * </p>
      * @param sheet number (0 based)
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
      * @see #createSheet(String)
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     void setSheetName(int sheet, String name);
 
@@ -212,14 +213,14 @@ public interface Workbook {
      * </p>
      *
      * <p>
-     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     * See {@link org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
      *      for a safe way to create valid names
      * </p>
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     Sheet createSheet(String sheetname);
 
@@ -285,6 +286,9 @@ public interface Workbook {
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
+     * 
+     * @deprecated use {@link Sheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link Sheet#setRepeatingColumns(CellRangeAddress)}
      */
     void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow);
 

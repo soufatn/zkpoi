@@ -90,7 +90,7 @@ public class EFBiffViewer
             System.out.println(
                 "Outputs biffview of records based on HSSFEventFactory");
             System.out
-                .println("usage: java org.apache.poi.hssf.dev.EBBiffViewer "
+                .println("usage: java org.zkoss.poi.hssf.dev.EBBiffViewer "
                          + "filename");
         }
     }

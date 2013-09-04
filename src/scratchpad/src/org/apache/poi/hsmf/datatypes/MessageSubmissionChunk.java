@@ -24,7 +24,10 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.zkoss.poi.hsmf.datatypes.Types.MAPIType;
 import org.zkoss.poi.util.IOUtils;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * A Chunk that holds the details given back by the
@@ -35,6 +38,7 @@ import org.zkoss.poi.util.IOUtils;
  */
 
 public class MessageSubmissionChunk extends Chunk {
+	private static POILogger logger = POILogFactory.getLogger(MessageSubmissionChunk.class);
 	private String rawId;
 	private Calendar date;
 	
@@ -44,7 +48,7 @@ public class MessageSubmissionChunk extends Chunk {
 	/**
 	 * Creates a Byte Chunk.
 	 */
-	public MessageSubmissionChunk(String namePrefix, int chunkId, int type) {
+	public MessageSubmissionChunk(String namePrefix, int chunkId, MAPIType type) {
 		super(namePrefix, chunkId, type);
 	}
 	
@@ -52,7 +56,7 @@ public class MessageSubmissionChunk extends Chunk {
 	 * Create a Byte Chunk, with the specified
 	 *  type.
 	 */
-	public MessageSubmissionChunk(int chunkId, int type) {
+	public MessageSubmissionChunk(int chunkId, MAPIType type) {
 	   super(chunkId, type);
 	}
 
@@ -86,7 +90,7 @@ public class MessageSubmissionChunk extends Chunk {
                   date.set(Calendar.SECOND,      Integer.parseInt(m.group(6)));
                   date.set(Calendar.MILLISECOND, 0);
                } else {
-                  System.err.println("Warning - unable to make sense of date " + dateS);
+            	   logger.log(POILogger.WARN, "Warning - unable to make sense of date " + dateS);
                }
             }
          }

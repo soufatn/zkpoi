@@ -18,15 +18,11 @@
 
 package org.zkoss.poi.ddf;
 
-import org.zkoss.poi.util.LittleEndian;
-
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
-import org.zkoss.poi.util.BitField;
-import org.zkoss.poi.util.BitFieldFactory;
-import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.util.*;
 
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
@@ -297,5 +293,29 @@ public abstract class EscherRecord {
     public void setVersion( short value )
     {
         _options = fVersion.setShortValue( _options, value );
+    }
+
+    /**
+     * @param tab - each children must be a right of his parent
+     * @return xml representation of this record
+     */
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(">\n")
+                .append(tab).append("\t").append("<RecordId>0x").append(HexDump.toHex(_recordId)).append("</RecordId>\n")
+                .append(tab).append("\t").append("<Options>").append(_options).append("</Options>\n")
+                .append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+    
+    protected String formatXmlRecordHeader(String className, String recordId, String version, String instance){
+        StringBuilder builder = new StringBuilder();
+        builder.append("<").append(className).append(" recordId=\"0x").append(recordId).append("\" version=\"0x")
+                .append(version).append("\" instance=\"0x").append(instance).append("\" size=\"").append(getRecordSize()).append("\">\n");
+        return builder.toString();
+    }
+    
+    public String toXml(){
+        return toXml("");
     }
 }

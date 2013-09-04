@@ -19,6 +19,8 @@ package org.zkoss.poi.hdgf.chunks;
 
 import org.zkoss.poi.util.LittleEndian;
 
+import java.nio.charset.Charset;
+
 /**
  * A chunk header
  */
@@ -80,6 +82,7 @@ public abstract class ChunkHeader {
 	public abstract int getSizeInBytes();
 	public abstract boolean hasTrailer();
 	public abstract boolean hasSeparator();
+	public abstract Charset getChunkCharset();
 
 	/**
 	 * Returns the ID/IX of the chunk

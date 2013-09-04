@@ -118,7 +118,7 @@ public final class LazyAreaEval extends AreaEvalBase implements HyperlinkEval {
     */
     public boolean isSubTotal(int rowIndex, int columnIndex){
         // delegate the query to the sheet evaluator which has access to internal ptgs
-        return _evaluator.isSubTotal(rowIndex, columnIndex);
+        return _evaluator.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
     }
 	
 	//20100720, henrichen@zkoss.org: handle HYPERLINK function

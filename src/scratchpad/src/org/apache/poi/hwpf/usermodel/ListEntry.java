@@ -17,60 +17,27 @@
 
 package org.zkoss.poi.hwpf.usermodel;
 
-import org.zkoss.poi.hwpf.model.ListFormatOverride;
-import org.zkoss.poi.hwpf.model.ListFormatOverrideLevel;
-import org.zkoss.poi.hwpf.model.ListLevel;
 import org.zkoss.poi.hwpf.model.ListTables;
 import org.zkoss.poi.hwpf.model.PAPX;
 import org.zkoss.poi.util.Internal;
-import org.zkoss.poi.util.POILogFactory;
-import org.zkoss.poi.util.POILogger;
 
-public final class ListEntry
-  extends Paragraph
+public final class ListEntry extends Paragraph
 {
-	private static POILogger log = POILogFactory.getLogger(ListEntry.class);
-
-	ListLevel _level;
-	ListFormatOverrideLevel _overrideLevel;
-
-	@Internal
+    @Internal
     ListEntry( PAPX papx, ParagraphProperties properties, Range parent )
     {
         super( papx, properties, parent );
-
-        final ListTables tables = parent._doc.getListTables();
-        if ( tables != null && _props.getIlfo() < tables.getOverrideCount() )
-        {
-            ListFormatOverride override = tables.getOverride( _props.getIlfo() );
-            _overrideLevel = override.getOverrideLevel( _props.getIlvl() );
-            _level = tables.getLevel( override.getLsid(), _props.getIlvl() );
-        }
-        else
-        {
-            log.log( POILogger.WARN,
-                    "No ListTables found for ListEntry - document probably partly corrupt, "
-                            + "and you may experience problems" );
-        }
     }
 
     @Deprecated
-  ListEntry(PAPX papx, Range parent, ListTables tables)
-  {
-    super(papx, parent);
-
-    if(tables != null && _props.getIlfo() < tables.getOverrideCount()) {
-	    ListFormatOverride override = tables.getOverride(_props.getIlfo());
-	    _overrideLevel = override.getOverrideLevel(_props.getIlvl());
-	    _level = tables.getLevel(override.getLsid(), _props.getIlvl());
-    } else {
-    	log.log(POILogger.WARN, "No ListTables found for ListEntry - document probably partly corrupt, and you may experience problems");
+    ListEntry( PAPX papx, Range parent, ListTables tables )
+    {
+        super( papx, parent );
     }
-  }
 
-  @Deprecated
-  public int type()
-  {
-    return TYPE_LISTENTRY;
-  }
+    @Deprecated
+    public int type()
+    {
+        return TYPE_LISTENTRY;
+    }
 }

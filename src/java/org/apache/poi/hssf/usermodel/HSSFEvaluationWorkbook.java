@@ -34,6 +34,8 @@ import org.zkoss.poi.ss.formula.FormulaParsingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaRenderingWorkbook;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 /**
  * Internal POI use only
@@ -42,7 +44,7 @@ import org.zkoss.poi.ss.formula.udf.UDFFinder;
  * @author Henri Chen (henrichen at zkoss dot org) - Sheet1:Sheet3!xxx 3d reference
  */
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
-
+	private static POILogger logger = POILogFactory.getLogger(HSSFEvaluationWorkbook.class);
 	private final HSSFWorkbook _uBook;
 	private final InternalWorkbook _iBook;
 
@@ -147,7 +149,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 				// Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
 				// IntesectionPtg.  However it is still not capable of parsing it.
 				// So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
-				System.err.println(e.getMessage());
+				logger.log( POILogger.ERROR, e.getMessage());
 			}
 		}
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();

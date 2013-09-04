@@ -25,6 +25,7 @@ import org.zkoss.poi.hssf.record.ObjRecord;
 import org.zkoss.poi.hssf.usermodel.HSSFShape;
 import org.zkoss.poi.hssf.usermodel.HSSFSimpleShape;
 
+@Deprecated
 public class SimpleFilledShape
         extends AbstractShape
 {

@@ -307,7 +307,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     public void setLineWidth(double width) {
         CTShapeProperties spPr = getSpPr();
         if (width == 0.) {
-            if (spPr.isSetLn())
+            if (spPr.isSetLn() && spPr.getLn().isSetW())
                 spPr.getLn().unsetW();
         } else {
             CTLineProperties ln = spPr.isSetLn() ? spPr.getLn() : spPr
@@ -361,7 +361,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     public void setLineDash(LineDash dash) {
         CTShapeProperties spPr = getSpPr();
         if (dash == null) {
-            if (spPr.isSetLn())
+            if (spPr.isSetLn() &&  spPr.getLn().isSetPrstDash())
                 spPr.getLn().unsetPrstDash();
         } else {
             CTPresetLineDashProperties val = CTPresetLineDashProperties.Factory
@@ -414,7 +414,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     public void setLineCap(LineCap cap) {
         CTShapeProperties spPr = getSpPr();
         if (cap == null) {
-            if (spPr.isSetLn())
+            if (spPr.isSetLn() && spPr.getLn().isSetCap())
                 spPr.getLn().unsetCap();
         } else {
             CTLineProperties ln = spPr.isSetLn() ? spPr.getLn() : spPr

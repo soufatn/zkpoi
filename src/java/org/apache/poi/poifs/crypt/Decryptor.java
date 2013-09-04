@@ -50,17 +50,17 @@ public abstract class Decryptor {
 
     /**
      * Returns the length of the encytpted data that can be safely read with
-     * {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}.
+     * {@link #getDataStream(org.zkoss.poi.poifs.filesystem.DirectoryNode)}.
      * Just reading to the end of the input stream is not sufficient because there are
      * normally padding bytes that must be discarded
      *
      * <p>
-     *    The length variable is initialized in {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)},
+     *    The length variable is initialized in {@link #getDataStream(org.zkoss.poi.poifs.filesystem.DirectoryNode)},
      *    an attempt to call getLength() prior to getDataStream() will result in IllegalStateException.
      * </p>
      *
      * @return length of the encrypted data
-     * @throws IllegalStateException if {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}
+     * @throws IllegalStateException if {@link #getDataStream(org.zkoss.poi.poifs.filesystem.DirectoryNode)}
      * was not called
      */
     public abstract long getLength();

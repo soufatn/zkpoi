@@ -41,7 +41,8 @@ import org.zkoss.poi.hwpf.model.CHPX;
 import org.zkoss.poi.hwpf.model.FieldsDocumentPart;
 import org.zkoss.poi.hwpf.model.FileInformationBlock;
 import org.zkoss.poi.hwpf.model.GenericPropertyNode;
-import org.zkoss.poi.hwpf.model.ListFormatOverride;
+import org.zkoss.poi.hwpf.model.LFO;
+import org.zkoss.poi.hwpf.model.LFOData;
 import org.zkoss.poi.hwpf.model.ListLevel;
 import org.zkoss.poi.hwpf.model.ListTables;
 import org.zkoss.poi.hwpf.model.PAPFormattedDiskPage;
@@ -716,27 +717,33 @@ public final class HWPFLister
     {
         if ( paragraph.getIlfo() != 0 )
         {
-            final ListFormatOverride listFormatOverride = listTables
-                    .getOverride( paragraph.getIlfo() );
+            final LFO lfo = listTables.getLfo( paragraph.getIlfo() );
+            System.out.println( "PAP's LFO: " + lfo );
 
-            System.out.println( "PAP's LFO: " + listFormatOverride );
+            final LFOData lfoData = listTables.getLfoData( paragraph.getIlfo() );
+            System.out.println( "PAP's LFOData: " + lfoData );
 
-            final ListLevel listLevel = listTables.getLevel(
-                    listFormatOverride.getLsid(), paragraph.getIlvl() );
-
-            System.out.println( "PAP's ListLevel: " + listLevel );
-            if ( listLevel.getGrpprlPapx() != null )
+            if ( lfo != null )
             {
-                System.out.println( "PAP's ListLevel PAPX:" );
-                dumpSprms( new SprmIterator( listLevel.getGrpprlPapx(), 0 ),
-                        "* " );
-            }
+                final ListLevel listLevel = listTables.getLevel( lfo.getLsid(),
+                        paragraph.getIlvl() );
 
-            if ( listLevel.getGrpprlPapx() != null )
-            {
-                System.out.println( "PAP's ListLevel CHPX:" );
-                dumpSprms( new SprmIterator( listLevel.getGrpprlChpx(), 0 ),
-                        "* " );
+                System.out.println( "PAP's ListLevel: " + listLevel );
+                if ( listLevel.getGrpprlPapx() != null )
+                {
+                    System.out.println( "PAP's ListLevel PAPX:" );
+                    dumpSprms(
+                            new SprmIterator( listLevel.getGrpprlPapx(), 0 ),
+                            "* " );
+                }
+
+                if ( listLevel.getGrpprlPapx() != null )
+                {
+                    System.out.println( "PAP's ListLevel CHPX:" );
+                    dumpSprms(
+                            new SprmIterator( listLevel.getGrpprlChpx(), 0 ),
+                            "* " );
+                }
             }
         }
     }

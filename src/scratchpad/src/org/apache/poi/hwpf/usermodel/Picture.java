@@ -27,11 +27,17 @@ import java.util.zip.InflaterInputStream;
 
 import org.zkoss.poi.ddf.EscherBSERecord;
 import org.zkoss.poi.ddf.EscherBlipRecord;
+import org.zkoss.poi.ddf.EscherComplexProperty;
+import org.zkoss.poi.ddf.EscherOptRecord;
+import org.zkoss.poi.ddf.EscherProperties;
+import org.zkoss.poi.ddf.EscherProperty;
 import org.zkoss.poi.ddf.EscherRecord;
 import org.zkoss.poi.hwpf.model.PICF;
 import org.zkoss.poi.hwpf.model.PICFAndOfficeArtData;
+import org.zkoss.poi.util.PngUtils;
 import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.StringUtil;
 
 /**
  * Represents embedded picture extracted from Word Document
@@ -186,6 +192,15 @@ public final class Picture
         {
             // Raw data is not compressed.
             content = rawContent;
+
+            //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
+            //Just cut it off!.
+            if (PngUtils.matchesPngHeader(content, 16))
+            {
+                byte[] png = new byte[content.length-16];
+                System.arraycopy(content, 16, png, 0, png.length);
+                content = png;
+            }
         }
     }
 
@@ -487,6 +502,28 @@ public final class Picture
             fillWidthHeight();
         }
         return width;
+    }
+    
+    /**
+     * returns the description stored in the alternative text
+     * 
+     * @return pictue description
+     */
+    public String getDescription()
+    {
+       for(EscherRecord escherRecord : _picfAndOfficeArtData.getShape().getChildRecords()){
+          if(escherRecord instanceof EscherOptRecord){
+             EscherOptRecord escherOptRecord = (EscherOptRecord) escherRecord;
+             for(EscherProperty property : escherOptRecord.getEscherProperties()){
+                if(EscherProperties.GROUPSHAPE__DESCRIPTION == property.getPropertyNumber()){
+                   byte[] complexData = ((EscherComplexProperty)property).getComplexData();
+                   return StringUtil.getFromUnicodeLE(complexData,0,complexData.length/2-1);
+                }
+             }
+          }
+       }
+
+       return null;
     }
 
     /**

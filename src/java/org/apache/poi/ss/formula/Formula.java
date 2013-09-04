@@ -162,8 +162,8 @@ public class Formula {
 	}
 
 	/**
-	 * Gets the locator for the corresponding {@link org.apache.poi.hssf.record.SharedFormulaRecord},
-     * {@link org.apache.poi.hssf.record.ArrayRecord} or {@link org.apache.poi.hssf.record.TableRecord}
+	 * Gets the locator for the corresponding {@link org.zkoss.poi.hssf.record.SharedFormulaRecord},
+     * {@link org.zkoss.poi.hssf.record.ArrayRecord} or {@link org.zkoss.poi.hssf.record.TableRecord}
      * if this formula belongs to such a grouping.  The {@link CellReference}
 	 * returned by this method will  match the top left corner of the range of that grouping.
 	 * The return value is usually not the same as the location of the cell containing this formula.

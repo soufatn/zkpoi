@@ -157,7 +157,7 @@ public class LbsDataSubRecord extends SubRecord {
     /**
      *
      * @return a new instance of LbsDataSubRecord to construct auto-filters
-     * @see org.zkoss.poi.hssf.model.ComboboxShape#createObjRecord(org.apache.poi.hssf.usermodel.HSSFSimpleShape, int)
+     * @see org.zkoss.poi.hssf.model.ComboboxShape#createObjRecord(org.zkoss.poi.hssf.usermodel.HSSFSimpleShape, int)
      */
     public static LbsDataSubRecord newAutoFilterInstance(){
         LbsDataSubRecord lbs = new LbsDataSubRecord();

@@ -50,18 +50,13 @@ import org.zkoss.poi.poifs.filesystem.POIFSFileSystem;
 import org.zkoss.poi.ss.formula.FormulaShifter;
 import org.zkoss.poi.ss.formula.FormulaType;
 import org.zkoss.poi.ss.formula.SheetNameFormatter;
-import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
-import org.zkoss.poi.ss.formula.ptg.MemFuncPtg;
-import org.zkoss.poi.ss.formula.ptg.OperandPtg;
-import org.zkoss.poi.ss.formula.ptg.Ptg;
-import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
-import org.zkoss.poi.ss.formula.ptg.UnionPtg;
 import org.zkoss.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.PictureData;
 import org.zkoss.poi.ss.usermodel.PivotCache;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.WorkbookUtil;
 import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
@@ -82,8 +77,6 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
-    private static final int MAX_ROW = 0xFFFF;
-    private static final short MAX_COLUMN = (short)0x00FF;
 
     /**
      * The maximum number of cell styles in a .xls workbook.
@@ -144,7 +137,6 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
      */
     private HSSFDataFormat formatter;
 
-    
     /**
      * The policy to apply in the event of missing or
      *  blank cells when fetching from a row.
@@ -557,7 +549,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
      * @see #createSheet(String)
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     public void setSheetName(int sheetIx, String name) {
         if (name == null) {
@@ -640,7 +632,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
      * be removed in future versions of POI.
      */
     public int getExternalSheetIndex(int internalSheetIndex) {
-        return workbook.checkExternSheet(internalSheetIndex, internalSheetIndex);
+        return workbook.checkExternSheet(internalSheetIndex,internalSheetIndex);
     }
     /**
      * @deprecated for POI internal use only (formula rendering).  This method is likely to
@@ -714,7 +706,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
             names.add(newName);
         }
         // TODO - maybe same logic required for other/all built-in name records
-        workbook.cloneDrawings(clonedSheet.getSheet());
+//        workbook.cloneDrawings(clonedSheet.getSheet());
 
         return clonedSheet;
     }
@@ -791,7 +783,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
+     * @see org.zkoss.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     public HSSFSheet createSheet(String sheetname)
     {
@@ -805,7 +797,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         //20100903, henrichen@zkoss.org: allow customize creating HSSFSheet 
         //HSSFSheet sheet = new HSSFSheet(this);
         HSSFSheet sheet = createHSSFSheet(this);
-        
+
         workbook.setSheetName(_sheets.size(), sheetname);
         _sheets.add(sheet);
         boolean isOnlySheet = _sheets.size() == 1;
@@ -972,84 +964,31 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
+     * 
+     * @deprecated use {@link HSSFSheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link HSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
     public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
-                                           int startRow, int endRow)
-    {
-        // Check arguments
-        if (startColumn == -1 && endColumn != -1) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow == -1 && endRow != -1) throw new IllegalArgumentException("Invalid row range specification");
-        if (startColumn < -1 || startColumn >= MAX_COLUMN) throw new IllegalArgumentException("Invalid column range specification");
-        if (endColumn < -1 || endColumn >= MAX_COLUMN) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow < -1 || startRow > MAX_ROW) throw new IllegalArgumentException("Invalid row range specification");
-        if (endRow < -1 || endRow > MAX_ROW) throw new IllegalArgumentException("Invalid row range specification");
-        if (startColumn > endColumn) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow > endRow) throw new IllegalArgumentException("Invalid row range specification");
+                                           int startRow, int endRow) {
+      HSSFSheet sheet = getSheetAt(sheetIndex);
 
-        HSSFSheet sheet = getSheetAt(sheetIndex);
-        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex, sheetIndex);
+      CellRangeAddress rows = null;
+      CellRangeAddress cols = null;
 
-        boolean settingRowAndColumn =
-                startColumn != -1 && endColumn != -1 && startRow != -1 && endRow != -1;
-        boolean removingRange =
-                startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
+      if (startRow != -1) {
+        rows = new CellRangeAddress(startRow, endRow, -1, -1);
+      }
+      if (startColumn != -1) {
+        cols = new CellRangeAddress(-1, -1, startColumn, endColumn);
+      }
 
-        int rowColHeaderNameIndex = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_PRINT_TITLE);
-        if (removingRange) {
-            if (rowColHeaderNameIndex >= 0) {
-                workbook.removeName(rowColHeaderNameIndex);
-            }
-            return;
-        }
-        boolean isNewRecord;
-        NameRecord nameRecord;
-        if (rowColHeaderNameIndex < 0) {
-            //does a lot of the house keeping for builtin records, like setting lengths to zero etc
-            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, sheetIndex+1);
-            isNewRecord = true;
-        } else {
-            nameRecord = workbook.getNameRecord(rowColHeaderNameIndex);
-            isNewRecord = false;
-        }
-
-        List temp = new ArrayList();
-
-        if (settingRowAndColumn) {
-            final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
-            temp.add(new MemFuncPtg(exprsSize));
-        }
-        if (startColumn >= 0) {
-            Area3DPtg colArea = new Area3DPtg(0, MAX_ROW, startColumn, endColumn,
-                    false, false, false, false, externSheetIndex);
-            temp.add(colArea);
-        }
-        if (startRow >= 0) {
-            Area3DPtg rowArea = new Area3DPtg(startRow, endRow, 0, MAX_COLUMN,
-                    false, false, false, false, externSheetIndex);
-            temp.add(rowArea);
-        }
-        if (settingRowAndColumn) {
-            temp.add(UnionPtg.instance);
-        }
-        Ptg[] ptgs = new Ptg[temp.size()];
-        temp.toArray(ptgs);
-        nameRecord.setNameDefinition(ptgs);
-
-        if (isNewRecord)
-        {
-            HSSFName newName = new HSSFName(this, nameRecord, nameRecord.isBuiltInName() ? null : workbook.getNameCommentRecord(nameRecord));
-            names.add(newName);
-        }
-
-        HSSFPrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setValidSettings(false);
-
-        sheet.setActive(true);
+      sheet.setRepeatingRows(rows);
+      sheet.setRepeatingColumns(cols);
     }
 
 
-    private int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
+    int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
         for(int defNameIndex =0; defNameIndex<names.size(); defNameIndex++) {
             NameRecord r = workbook.getNameRecord(defNameIndex);
             if (r == null) {
@@ -1065,6 +1004,26 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         return -1;
     }
 
+    
+    HSSFName createBuiltInName(byte builtinCode, int sheetIndex) {
+      NameRecord nameRecord = 
+        workbook.createBuiltInName(builtinCode, sheetIndex + 1);
+      HSSFName newName = new HSSFName(this, nameRecord, null);
+      names.add(newName);
+      return newName;
+    }
+
+    
+    HSSFName getBuiltInName(byte builtinCode, int sheetIndex) {
+      int index = findExistingBuiltinNameRecordIdx(sheetIndex, builtinCode);
+      if (index < 0) {
+        return null;
+      } else {
+        return names.get(index);
+      }
+    }
+
+    
     /**
      * create a new Font and add it to the workbook's font table
      * @return new font object
@@ -1149,7 +1108,6 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         return retval;
     }
 
-    
     /**
      * Reset the fonts cache, causing all new calls
      *  to getFontAt() to create new objects.
@@ -1173,7 +1131,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     	//20130125, samchuang@zkoss.org: try to remove duplicate cell styles
     	if(workbook.getNumExFormats() == MAX_STYLES) {
     		HSSFOptimiser.optimiseCellStyles(this);
-    	}
+    	}    
         if(workbook.getNumExFormats() == MAX_STYLES) {
             throw new IllegalStateException("The maximum number of cell styles was exceeded. " +
                     "You can define up to 4000 styles in a .xls workbook");
@@ -1181,9 +1139,9 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         ExtendedFormatRecord xfr = workbook.createCellXF();
         short index = (short) (getNumCellStyles() - 1);
         HSSFCellStyle style = new HSSFCellStyle(index, xfr, this);
-        
+
         //20110119, henrichen@zkoss.org: whenever we create a XF(ExtendedFormatRecord), we shall create an associated XFExt
-        workbook.createCellXFExt(index); 
+        workbook.createCellXFExt(index);
         return style;
     }
 
@@ -1301,10 +1259,13 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         HSSFSheet[] sheets = getSheets();
         int nSheets = sheets.length;
 
+
         // before getting the workbook size we must tell the sheets that
         // serialization is about to occur.
+        workbook.preSerialize();
         for (int i = 0; i < nSheets; i++) {
             sheets[i].getSheet().preSerialize();
+            sheets[i].preSerialize();
         }
 
         int totalsize = workbook.getSize();
@@ -1499,6 +1460,25 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     }
 
 
+    /**
+     * As {@link #getNameIndex(String)} is not necessarily unique 
+     * (name + sheet index is unique), this method is more accurate.
+     * 
+     * @param name the name whose index in the list of names of this workbook
+     *        should be looked up.
+     * @return an index value >= 0 if the name was found; -1, if the name was 
+     *         not found
+     */
+    int getNameIndex(HSSFName name) {
+      for (int k = 0; k < names.size(); k++) {
+        if (name == names.get(k)) {
+            return k;
+        }
+      }
+      return -1;
+    }
+
+
     public void removeName(int index){
         names.remove(index);
         workbook.removeName(index);
@@ -1519,8 +1499,19 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
 
     public void removeName(String name) {
         int index = getNameIndex(name);
-
         removeName(index);
+    }
+
+
+    /**
+     * As {@link #removeName(String)} is not necessarily unique 
+     * (name + sheet index is unique), this method is more accurate.
+     * 
+     * @param name the name to remove.
+     */
+    void removeName(HSSFName name) {
+      int index = getNameIndex(name);
+      removeName(index);
     }
 
     public HSSFPalette getCustomPalette()
@@ -1636,7 +1627,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         r.setUid( uid );
         r.setTag( (short) 0xFF );
         r.setSize( pictureData.length + 25 );
-        r.setRef( 1 );
+        r.setRef( 0 );
         r.setOffset( 0 );
         r.setBlipRecord( blipRecord );
 
@@ -1665,8 +1656,9 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         }
         return pictures;
     }
-
     
+    //2013/8/27 dennischen@zkoss.org, following getAllAutofilters is added by zkoss someone(in zpoi 3.8 or earlier)
+    //I add comment to mark this info for ease to merge 
     //TODO, get all autofilter info
     public List<NameRecord> getAllAutofilters(){
     	List<NameRecord> records = new ArrayList<NameRecord>();
@@ -1684,7 +1676,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         }
         return records;
     }
-    
+
     /**
      * Performs a recursive search for pictures in the given list of escher records.
      *
@@ -1700,7 +1692,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
             	//20111110, henrichen@zkoss.org: shall handle bse record
                 HSSFPictureData picture = new HSSFPictureData((EscherBSERecord) escherRecord);
 				pictures.add(picture);
-/*            	
+/*
                 EscherBlipRecord blip = ((EscherBSERecord) escherRecord).getBlipRecord();
                 if (blip != null)
                 {
@@ -1708,7 +1700,8 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
                     HSSFPictureData picture = new HSSFPictureData(blip);
 					pictures.add(picture);
                 }
-*/                
+*/
+                
             }
 
             // Recursive call.
@@ -1750,7 +1743,7 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         List<HSSFObjectData> objects = new ArrayList<HSSFObjectData>();
         for (int i = 0; i < getNumberOfSheets(); i++)
         {
-            getAllEmbeddedObjects(getSheetAt(i).getSheet().getRecords(), objects);
+            getAllEmbeddedObjects(getSheetAt(i), objects);
         }
         return objects;
     }
@@ -1758,27 +1751,20 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     /**
      * Gets all embedded OLE2 objects from the Workbook.
      *
-     * @param records the list of records to search.
+     * @param sheet embedded object attached to
      * @param objects the list of embedded objects to populate.
      */
-    private void getAllEmbeddedObjects(List<RecordBase> records, List<HSSFObjectData> objects)
+    private void getAllEmbeddedObjects(HSSFSheet sheet, List<HSSFObjectData> objects)
     {
-       for (RecordBase obj : records) {
-          if (obj instanceof ObjRecord)
-          {
-             // TODO: More convenient way of determining if there is stored binary.
-             // TODO: Link to the data stored in the other stream.
-             Iterator<SubRecord> subRecordIter = ((ObjRecord) obj).getSubRecords().iterator();
-             while (subRecordIter.hasNext())
-             {
-                SubRecord sub = subRecordIter.next();
-                if (sub instanceof EmbeddedObjectRefSubRecord)
-                {
-                   objects.add(new HSSFObjectData((ObjRecord) obj, directory));
-                }
-             }
-          }
-       }
+        HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
+        if (null == patriarch){
+            return;
+        }
+        for (HSSFShape shape: patriarch.getChildren()){
+            if (shape instanceof HSSFObjectData){
+                objects.add((HSSFObjectData) shape);
+            }
+        }
     }
 
     public HSSFCreationHelper getCreationHelper() {
@@ -1795,7 +1781,6 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     /*package*/ UDFFinder getUDFFinder(){
         return _udfFinder;
     }
-    
     //20130424, dennischen@zkoss.org, provide the chance to override default UDFFinder
     /**
      * Inserts the locator of user-defined functions
@@ -1803,7 +1788,6 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     public void insertToolPack(int index,UDFFinder udfFinder){
     	 ((AggregatingUDFFinder)_udfFinder).insert(index, udfFinder);
     }
-    
 
     /**
      * Register a new toolpack in this workbook.
@@ -1861,7 +1845,11 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return workbook.changeExternalReference(oldUrl, newUrl);
     }
-    
+
+    public DirectoryNode getRootDirectory(){
+        return directory;
+    }
+
     //20100903, henrichen@zkoss.org: create sheet indirectly to allow extension
     protected HSSFSheet createHSSFSheet(HSSFWorkbook workbook, InternalSheet sheet) {
     	return new HSSFSheet(workbook, sheet);

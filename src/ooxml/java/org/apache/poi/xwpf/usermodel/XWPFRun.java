@@ -655,9 +655,9 @@ public class XWPFRun {
      *  
      * @param pictureData The raw picture data
      * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
-     * @param image width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
-     * @param image height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+     * @param width width in EMUs. To convert to / from points use {@link org.zkoss.poi.util.Units}
+     * @param height height in EMUs. To convert to / from points use {@link org.zkoss.poi.util.Units}
+     * @throws org.zkoss.poi.openxml4j.exceptions.InvalidFormatException
      * @throws IOException
      * @throws org.zkoss.poi.openxml4j.exceptions.InvalidFormatException 
      */

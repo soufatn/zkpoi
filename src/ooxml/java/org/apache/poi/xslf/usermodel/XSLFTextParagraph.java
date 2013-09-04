@@ -302,8 +302,6 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * If bulletSize >= 0, then bulletSize is a percentage of the font size.
      * If bulletSize < 0, then it specifies the size in points
      * </p>
-     *
-     * @return the bullet size
      */
     public void setBulletFontSize(double bulletSize){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -425,7 +423,13 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? getDefaultTabSize() : fetcher.getValue();
+        return fetcher.getValue() == null ? 0. : fetcher.getValue();
+    }
+
+    public void addTabStop(double value){
+        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
+        CTTextTabStopList tabStops = pr.isSetTabLst() ? pr.getTabLst() : pr.addNewTabLst();
+        tabStops.addNewTab().setPos(Units.toEMU(value));
     }
 
     /**

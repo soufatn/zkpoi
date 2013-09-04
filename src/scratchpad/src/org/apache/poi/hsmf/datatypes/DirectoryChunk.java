@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.zkoss.poi.hsmf.MAPIMessage;
+import org.zkoss.poi.hsmf.datatypes.Types.MAPIType;
 import org.zkoss.poi.poifs.filesystem.DirectoryNode;
 
 /**
@@ -33,7 +34,7 @@ import org.zkoss.poi.poifs.filesystem.DirectoryNode;
 public class DirectoryChunk extends Chunk {
     private DirectoryNode dir;
     
-    public DirectoryChunk(DirectoryNode dir, String namePrefix, int chunkId, int type) {
+    public DirectoryChunk(DirectoryNode dir, String namePrefix, int chunkId, MAPIType type) {
         super(namePrefix, chunkId, type);
         this.dir = dir;
     }

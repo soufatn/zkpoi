@@ -42,6 +42,7 @@ import org.zkoss.poi.hslf.record.PPDrawing;
 import org.zkoss.poi.hslf.record.Record;
 import org.zkoss.poi.hslf.record.RecordTypes;
 import org.zkoss.poi.hslf.record.StyleTextPropAtom;
+import org.zkoss.poi.hslf.record.TextBytesAtom;
 import org.zkoss.poi.hslf.record.TextCharsAtom;
 import org.zkoss.poi.hslf.record.TextHeaderAtom;
 import org.zkoss.poi.hslf.record.TxInteractiveInfoAtom;
@@ -484,8 +485,26 @@ public abstract class TextShape extends SimpleShape {
     /**
       * @return the TextRun object for this text box
       */
-     public TextRun getTextRun(){
-         if(_txtrun == null) initTextRun();
+    public TextRun getTextRun(){
+        if (null == this._txtrun) initTextRun();
+        if (null == this._txtrun && null != this._txtbox) {
+        	TextHeaderAtom    tha = null; 
+        	TextBytesAtom     tba = null;
+        	StyleTextPropAtom sta = null;
+        	Record[] childRecords = this._txtbox.getChildRecords();
+        	for (Record r : childRecords) {
+        		if (r instanceof TextHeaderAtom) {
+        			tha = (TextHeaderAtom) r;
+				} else if (r instanceof TextBytesAtom) {
+					tba = (TextBytesAtom) r;
+				} else if (r instanceof StyleTextPropAtom) {
+					sta = (StyleTextPropAtom) r;
+				}
+        	}
+        	if (null != tba) {
+        		this._txtrun = new TextRun(tha, tba, sta);
+        	}
+         }
          return _txtrun;
      }
 

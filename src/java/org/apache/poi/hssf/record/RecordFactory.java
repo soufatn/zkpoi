@@ -405,7 +405,7 @@ public final class RecordFactory {
 	/**
 	 * gets the record constructors and sticks them in the map by SID
 	 * @return map of SIDs to short,short,byte[] constructors for Record classes
-	 * most of org.apache.poi.hssf.record.*
+	 * most of org.zkoss.poi.hssf.record.*
 	 */
 	private static Map<Integer, I_RecordCreator> recordsToMap(Class<? extends Record> [] records) {
 		Map<Integer, I_RecordCreator> result = new HashMap<Integer, I_RecordCreator>();

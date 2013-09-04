@@ -40,7 +40,7 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createDateConstraint
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createDateConstraint
 	 * (int, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createDateConstraint(int operatorType, String formula1, String formula2, String dateFormat) {
@@ -51,7 +51,7 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createExplicitListConstraint
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createExplicitListConstraint
 	 * (java.lang.String[])
 	 */
 	public DataValidationConstraint createExplicitListConstraint(String[] listOfValues) {
@@ -62,7 +62,7 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createFormulaListConstraint
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createFormulaListConstraint
 	 * (java.lang.String)
 	 */
 	public DataValidationConstraint createFormulaListConstraint(String listFormula) {
@@ -83,7 +83,7 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createNumericConstraint
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createNumericConstraint
 	 * (int, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createDecimalConstraint(int operatorType, String formula1, String formula2) {
@@ -94,7 +94,7 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createTextLengthConstraint
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createTextLengthConstraint
 	 * (int, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createTextLengthConstraint(int operatorType, String formula1, String formula2) {
@@ -105,7 +105,7 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createTimeConstraint
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createTimeConstraint
 	 * (int, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createTimeConstraint(int operatorType, String formula1, String formula2) {
@@ -122,9 +122,9 @@ public class HSSFDataValidationHelper implements DataValidationHelper {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.apache.poi.ss.usermodel.DataValidationHelper#createValidation(org
+	 * org.zkoss.poi.ss.usermodel.DataValidationHelper#createValidation(org
 	 * .apache.poi.ss.usermodel.DataValidationConstraint,
-	 * org.apache.poi.ss.util.CellRangeAddressList)
+	 * org.zkoss.poi.ss.util.CellRangeAddressList)
 	 */
 	public DataValidation createValidation(DataValidationConstraint constraint, CellRangeAddressList cellRangeAddressList) {
 		return new HSSFDataValidation(cellRangeAddressList, constraint); 

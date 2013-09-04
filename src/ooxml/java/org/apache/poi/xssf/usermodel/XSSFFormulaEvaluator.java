@@ -310,6 +310,11 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 		throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
 	}
 	
+    /** {@inheritDoc} */
+    public void setDebugEvaluationOutputForNextEval(boolean value){
+        _bookEvaluator.setDebugEvaluationOutputForNextEval(value);
+    }
+	
 	//20111124, henrichen@zkoss.org: get left-top cell value 
 	@Override
 	public CellValue evaluateFormula(int sheetIndex, String formula) {

@@ -27,7 +27,7 @@ import java.io.OutputStream;
 /**
  * A TextBytesAtom (type 4008). Holds text in ascii form (unknown
  *  code page, for now assumed to be the default of
- *  org.apache.poi.util.StringUtil, which is the Excel default).
+ *  org.zkoss.poi.util.StringUtil, which is the Excel default).
  * The trailing return character is always stripped from this
  *
  * @author Nick Burch

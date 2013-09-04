@@ -39,6 +39,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFShape;
  *
  * @author Yegor Kozlov
  */
+@Deprecated
 public final class CommentShape extends TextboxShape {
 
     private NoteRecord _note;

@@ -17,11 +17,12 @@
 package org.zkoss.poi.hssf.usermodel;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.zkoss.poi.hssf.record.ExtendedFormatRecord;
 import org.zkoss.poi.hssf.record.FontRecord;
 import org.zkoss.poi.hssf.record.common.UnicodeString;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.Row;
 
 /**
  * Excel can get cranky if you give it files containing too
@@ -135,17 +136,13 @@ public class HSSFOptimiser {
 		//  the new locations of the fonts
 		// Remember that one underlying unicode string
 		//  may be shared by multiple RichTextStrings!
-		HashSet doneUnicodeStrings = new HashSet();
+		HashSet<UnicodeString> doneUnicodeStrings = new HashSet<UnicodeString>();
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
-			Iterator rIt = s.rowIterator();
-			while(rIt.hasNext()) {
-				HSSFRow row = (HSSFRow)rIt.next();
-				Iterator cIt = row.cellIterator();
-				while(cIt.hasNext()) {
-					HSSFCell cell = (HSSFCell)cIt.next();
-					if(cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-						HSSFRichTextString rtr = cell.getRichStringCellValue();
+			for (Row row : s) {
+			   for (Cell cell : row) {
+					if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+						HSSFRichTextString rtr = (HSSFRichTextString)cell.getRichStringCellValue();
 						UnicodeString u = rtr.getRawUnicodeString();
 						
 						// Have we done this string already?
@@ -168,7 +165,7 @@ public class HSSFOptimiser {
 	
 	/**
 	 * Goes through the Wokrbook, optimising the cell styles
-	 *  by removing duplicate ones.
+	 *  by removing duplicate ones, and ones that aren't used.
 	 * For best results, optimise the fonts via a call to
 	 *  {@link #optimiseFonts(HSSFWorkbook)} first.
 	 * @param workbook The workbook in which to optimise the cell styles
@@ -178,8 +175,10 @@ public class HSSFOptimiser {
 		//  delete the record for it. Start off with no change
 		short[] newPos = 
 			new short[workbook.getWorkbook().getNumExFormats()];
+		boolean[] isUsed = new boolean[newPos.length];
 		boolean[] zapRecords = new boolean[newPos.length];
 		for(int i=0; i<newPos.length; i++) {
+         isUsed[i] = false;
 			newPos[i] = (short)i;
 			zapRecords[i] = false;
 		}
@@ -214,6 +213,27 @@ public class HSSFOptimiser {
 			}
 		}
 		
+		// Loop over all the cells in the file, and identify any user defined
+		//  styles aren't actually being used (don't touch built-in ones)
+      for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
+         HSSFSheet s = workbook.getSheetAt(sheetNum);
+         for (Row row : s) {
+            for (Cell cellI : row) {
+               HSSFCell cell = (HSSFCell)cellI;
+               short oldXf = cell.getCellValueRecord().getXFIndex();
+               isUsed[oldXf] = true;
+            }
+         }
+      }
+      // Mark any that aren't used as needing zapping
+      for (int i=21; i<isUsed.length; i++) {
+         if (! isUsed[i]) {
+            // Un-used style, can be removed
+            zapRecords[i] = true;
+            newPos[i] = 0;
+         }
+      }
+		
 		// Update the new positions based on
 		//  deletes that have occurred between
 		//  the start and them
@@ -232,25 +252,27 @@ public class HSSFOptimiser {
 		}
 		
 		// Zap the un-needed user style records
-		for(int i=21; i<newPos.length; i++) {
-			if(zapRecords[i]) {
-				workbook.getWorkbook().removeExFormatRecord(
-						xfrs[i]
-				);
-			}
-		}
+        // removing by index, because removing by object may delete
+        // styles we did not intend to (the ones that _were_ duplicated and not the duplicates)
+        int max = newPos.length;
+        int removed = 0; // to adjust index after deletion
+        for(int i=21; i<max; i++) {
+            if(zapRecords[i + removed]) {
+                workbook.getWorkbook().removeExFormatRecord(i);
+                i--;
+                max--;
+                removed++;
+            }
+        }
 		
-		// Finally, update the cells to point at
-		//  their new extended format records
+		// Finally, update the cells to point at their new extended format records
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
-			Iterator rIt = s.rowIterator();
-			while(rIt.hasNext()) {
-				HSSFRow row = (HSSFRow)rIt.next();
-				Iterator cIt = row.cellIterator();
-				while(cIt.hasNext()) {
-					HSSFCell cell = (HSSFCell)cIt.next();
+			for (Row row : s) {
+			   for (Cell cellI : row) {
+					HSSFCell cell = (HSSFCell)cellI;
 					short oldXf = cell.getCellValueRecord().getXFIndex();
+					
 					HSSFCellStyle newStyle = workbook.getCellStyleAt(
 							newPos[oldXf]
 					);

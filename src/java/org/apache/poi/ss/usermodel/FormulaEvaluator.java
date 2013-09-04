@@ -117,6 +117,16 @@ public interface FormulaEvaluator {
      * @param cell
      */
     Cell evaluateInCell(Cell cell);
+
+    /**
+     * Perform detailed output of formula evaluation for next evaluation only?
+     * Is for developer use only (also developers using POI for their XLS files).
+     * Log-Level WARN is for basic info, INFO for detailed information. These quite
+     * high levels are used because you have to explicitly enable this specific logging.
+	 
+     * @param value whether to perform detailed output
+     */
+    void setDebugEvaluationOutputForNextEval(boolean value);
     
     WorkbookEvaluator getWorkbookEvaluator();
 
@@ -125,5 +135,6 @@ public interface FormulaEvaluator {
     //20111128, henrichen@zkoss.org: given formula, sheet index, evaluate the formula results
     ValueEval evaluateFormulaValueEval(int sheetIndex, String formula, boolean ignoreDereference);
     //20111128, henrichen@zkoss.org: given ValueEval, return CellValue
-	CellValue getCellValueByValueEval(ValueEval eval);
+	CellValue getCellValueByValueEval(ValueEval eval);    
+	
 }
