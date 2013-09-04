@@ -20,6 +20,7 @@ package org.zkoss.poi.ss.formula.functions;
 import org.zkoss.poi.ss.formula.eval.BoolEval;
 import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.EvaluationException;
+import org.zkoss.poi.ss.formula.eval.MissingArgEval;
 import org.zkoss.poi.ss.formula.eval.OperandResolver;
 import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
@@ -81,6 +82,8 @@ public abstract class BooleanFunction implements Function {
 			if (arg instanceof RefEval) {
 				ValueEval ve = ((RefEval) arg).getInnerValueEval();
 				tempVe = OperandResolver.coerceValueToBoolean(ve, true);
+			} else if (arg == MissingArgEval.instance) {
+				tempVe = null;		// you can leave out parameters, they are simply ignored
 			} else {
 				tempVe = OperandResolver.coerceValueToBoolean(arg, false);
 			}

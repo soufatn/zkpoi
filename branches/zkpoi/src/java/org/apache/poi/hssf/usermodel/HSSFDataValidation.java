@@ -57,7 +57,7 @@ public final class HSSFDataValidation implements DataValidation {
 
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getConstraint()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getConstraint()
 	 */
 	public DataValidationConstraint getValidationConstraint() {
 		return _constraint;
@@ -73,42 +73,42 @@ public final class HSSFDataValidation implements DataValidation {
 
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setErrorStyle(int)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#setErrorStyle(int)
 	 */
 	public void setErrorStyle(int error_style) {
 		_errorStyle = error_style;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorStyle()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getErrorStyle()
 	 */
 	public int getErrorStyle() {
 		return _errorStyle;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setEmptyCellAllowed(boolean)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#setEmptyCellAllowed(boolean)
 	 */
 	public void setEmptyCellAllowed(boolean allowed) {
 		_emptyCellAllowed = allowed;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getEmptyCellAllowed()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getEmptyCellAllowed()
 	 */
 	public boolean getEmptyCellAllowed() {
 		return _emptyCellAllowed;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
 	 */
 	public void setSuppressDropDownArrow(boolean suppress) {
 		_suppress_dropdown_arrow = suppress;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getSuppressDropDownArrow()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getSuppressDropDownArrow()
 	 */
 	public boolean getSuppressDropDownArrow() {
 		if (_constraint.getValidationType()==ValidationType.LIST) {
@@ -118,28 +118,28 @@ public final class HSSFDataValidation implements DataValidation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setShowPromptBox(boolean)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#setShowPromptBox(boolean)
 	 */
 	public void setShowPromptBox(boolean show) {
 		_showPromptBox = show;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getShowPromptBox()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getShowPromptBox()
 	 */
 	public boolean getShowPromptBox() {
 		return _showPromptBox;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setShowErrorBox(boolean)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#setShowErrorBox(boolean)
 	 */
 	public void setShowErrorBox(boolean show) {
 		_showErrorBox = show;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getShowErrorBox()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getShowErrorBox()
 	 */
 	public boolean getShowErrorBox() {
 		return _showErrorBox;
@@ -147,7 +147,7 @@ public final class HSSFDataValidation implements DataValidation {
 
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
 	 */
 	public void createPromptBox(String title, String text) {
 		_prompt_title = title;
@@ -156,21 +156,21 @@ public final class HSSFDataValidation implements DataValidation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxTitle()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getPromptBoxTitle()
 	 */
 	public String getPromptBoxTitle() {
 		return _prompt_title;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxText()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getPromptBoxText()
 	 */
 	public String getPromptBoxText() {
 		return _prompt_text;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
 	 */
 	public void createErrorBox(String title, String text) {
 		_error_title = title;
@@ -179,14 +179,14 @@ public final class HSSFDataValidation implements DataValidation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxTitle()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getErrorBoxTitle()
 	 */
 	public String getErrorBoxTitle() {
 		return _error_title;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxText()
+	 * @see org.zkoss.poi.hssf.usermodel.DataValidation#getErrorBoxText()
 	 */
 	public String getErrorBoxText() {
 		return _error_text;

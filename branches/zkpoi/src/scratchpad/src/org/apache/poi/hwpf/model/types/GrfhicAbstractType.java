@@ -17,8 +17,8 @@
 package org.zkoss.poi.hwpf.model.types;
 
 
-import org.zkoss.poi.util.BitField;
-import org.zkoss.poi.util.Internal;
+import org.zkoss.poi.hwpf.usermodel.*;
+import org.zkoss.poi.util.*;
 
 /**
  * The grfhic structure is a set of HTML incompatibility flags that specify the HTML
@@ -108,9 +108,10 @@ public abstract class GrfhicAbstractType
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
+
         builder.append("[Grfhic]\n");
-        builder.append("    .grfhic               = ");
-        builder.append(" (").append(getGrfhic()).append(" )\n");
+        builder.append( "    .grfhic               = " );
+        builder.append(" ( ").append( field_1_grfhic ).append( " )\n" );
         builder.append("         .fHtmlChecked             = ").append(isFHtmlChecked()).append('\n');
         builder.append("         .fHtmlUnsupported         = ").append(isFHtmlUnsupported()).append('\n');
         builder.append("         .fHtmlListTextNotSharpDot     = ").append(isFHtmlListTextNotSharpDot()).append('\n');
@@ -120,7 +121,7 @@ public abstract class GrfhicAbstractType
         builder.append("         .fHtmlHangingIndentBeneathNumber     = ").append(isFHtmlHangingIndentBeneathNumber()).append('\n');
         builder.append("         .fHtmlBuiltInBullet       = ").append(isFHtmlBuiltInBullet()).append('\n');
 
-        builder.append("[/Grfhic]\n");
+        builder.append("[/Grfhic]");
         return builder.toString();
     }
 

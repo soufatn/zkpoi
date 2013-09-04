@@ -23,43 +23,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.zkoss.poi.hssf.record.BOFRecord;
-import org.zkoss.poi.hssf.record.CFHeaderRecord;
-import org.zkoss.poi.hssf.record.CalcCountRecord;
-import org.zkoss.poi.hssf.record.CalcModeRecord;
-import org.zkoss.poi.hssf.record.CellValueRecordInterface;
-import org.zkoss.poi.hssf.record.ColumnInfoRecord;
-import org.zkoss.poi.hssf.record.DVALRecord;
-import org.zkoss.poi.hssf.record.DefaultColWidthRecord;
-import org.zkoss.poi.hssf.record.DefaultRowHeightRecord;
-import org.zkoss.poi.hssf.record.DeltaRecord;
-import org.zkoss.poi.hssf.record.DimensionsRecord;
-import org.zkoss.poi.hssf.record.DrawingRecord;
-import org.zkoss.poi.hssf.record.EOFRecord;
-import org.zkoss.poi.hssf.record.EscherAggregate;
-import org.zkoss.poi.hssf.record.FeatHdrRecord;
-import org.zkoss.poi.hssf.record.FeatRecord;
-import org.zkoss.poi.hssf.record.GridsetRecord;
-import org.zkoss.poi.hssf.record.GutsRecord;
-import org.zkoss.poi.hssf.record.IndexRecord;
-import org.zkoss.poi.hssf.record.IterationRecord;
-import org.zkoss.poi.hssf.record.MergeCellsRecord;
-import org.zkoss.poi.hssf.record.NoteRecord;
-import org.zkoss.poi.hssf.record.ObjRecord;
-import org.zkoss.poi.hssf.record.PaneRecord;
-import org.zkoss.poi.hssf.record.PrintGridlinesRecord;
-import org.zkoss.poi.hssf.record.PrintHeadersRecord;
-import org.zkoss.poi.hssf.record.Record;
-import org.zkoss.poi.hssf.record.RecordBase;
-import org.zkoss.poi.hssf.record.RefModeRecord;
-import org.zkoss.poi.hssf.record.RowRecord;
-import org.zkoss.poi.hssf.record.SCLRecord;
-import org.zkoss.poi.hssf.record.SaveRecalcRecord;
-import org.zkoss.poi.hssf.record.SelectionRecord;
-import org.zkoss.poi.hssf.record.TextObjectRecord;
-import org.zkoss.poi.hssf.record.UncalcedRecord;
-import org.zkoss.poi.hssf.record.WSBoolRecord;
-import org.zkoss.poi.hssf.record.WindowTwoRecord;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Library;
+import org.zkoss.poi.hssf.record.*;
 import org.zkoss.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
 import org.zkoss.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.zkoss.poi.hssf.record.aggregates.ConditionalFormattingTable;
@@ -79,9 +45,6 @@ import org.zkoss.poi.util.Internal;
 import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
 
-import org.zkoss.lang.Classes;
-import org.zkoss.lang.Library;
-import org.zkoss.poi.hssf.record.AutoFilterInfoRecord;
 /**
  * Low level model implementation of a Sheet (one workbook contains many sheets)
  * This file contains the low level binary records starting at the sheets BOF and
@@ -138,7 +101,7 @@ public final class InternalSheet {
     protected final RowRecordsAggregate  _rowsAggregate;
     private   DataValidityTable          _dataValidityTable=     null;
     private   ConditionalFormattingTable condFormatting;
-    
+
     private   Iterator<RowRecord>        rowRecIterator    =     null;
 
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
@@ -186,7 +149,6 @@ public final class InternalSheet {
         while (rs.hasNext()) {
             int recSid = rs.peekNextSid();
 
-            
             if ( recSid == CFHeaderRecord.sid ) {
                 condFormatting = new ConditionalFormattingTable(rs);
                 records.add(condFormatting);
@@ -273,7 +235,7 @@ public final class InternalSheet {
                 _isUncalced = true; // this flag is enough
                 continue;
             }
-            
+
             if (recSid == FeatRecord.sid ||
             		recSid == FeatHdrRecord.sid) {
                 records.add(rec);
@@ -284,7 +246,7 @@ public final class InternalSheet {
                 records.add(rec);
                 break;
             }
-            
+
             if (recSid == DimensionsRecord.sid)
             {
                 // Make a columns aggregate if one hasn't ready been created.
@@ -396,12 +358,10 @@ public final class InternalSheet {
                 continue;
             }
             if (rb instanceof EscherAggregate){
-                // EscherAggregate is used only as a container for SODRAWING and OBJ record combinations
-                // So, if the container is empty, there is no reason to clone this record
-                // See https://issues.apache.org/bugzilla/show_bug.cgi?id=49529
-                if (0 == rb.getRecordSize()){
-                    continue;
-                }
+                /**
+                 * this record will be removed after reading actual data from EscherAggregate
+                 */
+                rb = new DrawingRecord();
             }
             Record rec = (Record) ((Record) rb).clone();
             clonedRecords.add(rec);
@@ -543,7 +503,6 @@ public final class InternalSheet {
         return condFormatting;
     }
 
-    
     /**
      * Per an earlier reported bug in working with Andy Khan's excel read library.  This
      * sets the values in the sheet's DimensionsRecord object to be correct.  Excel doesn't
@@ -651,7 +610,7 @@ public final class InternalSheet {
         }
         DimensionsRecord d = _dimensions;
 
-        if (col.getColumn() > d.getLastCol()) {
+        if (col.getColumn() >= d.getLastCol()) {
             d.setLastCol(( short ) (col.getColumn() + 1));
         }
         if (col.getColumn() < d.getFirstCol()) {
@@ -1536,6 +1495,7 @@ public final class InternalSheet {
      *  if none currently exist
      * @param drawingManager The DrawingManager2 for our workbook
      * @param createIfMissing Should one be created if missing?
+     * @return location of EscherAggregate record. if no EscherAggregate record is found return -1
      */
     public int aggregateDrawingRecords(DrawingManager2 drawingManager, boolean createIfMissing) {
 //20101014, henrichen@zkoss.org: EscherAggregate could have been created and insert into records    	
@@ -1552,7 +1512,7 @@ public final class InternalSheet {
                 return -1;
             }
 
-            EscherAggregate aggregate = new EscherAggregate( drawingManager );
+            EscherAggregate aggregate = new EscherAggregate(true);
             loc = findFirstRecordLocBySid(EscherAggregate.sid);
             if (loc == -1) {
                 loc = findFirstRecordLocBySid( WindowTwoRecord.sid );
@@ -1563,35 +1523,10 @@ public final class InternalSheet {
             return loc;
         }
         List<RecordBase> records = getRecords();
-//20101013, henrichen@zkoss.org: handle EscherAggregate for ZK
-        if (mergeRecordsIntoEscherAggregate(records, loc, drawingManager)) {
-        	return loc;
-        }
-        EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
-        int startloc = loc;
-//20100614, Henri Chen: there is not always an ObjRecord after a DrawingRecord
-/*        while ( loc + 1 < records.size()
-                && records.get( loc ) instanceof DrawingRecord
-                && (records.get( loc + 1 ) instanceof ObjRecord ||
-                    records.get( loc + 1 ) instanceof TextObjectRecord) )
-        {
-            loc += 2;
-            if (records.get( loc ) instanceof NoteRecord) loc ++;
-        }
-*/
-        boolean drawRecord = true;
-        while (loc + 1 < records.size() 
-        		&& ((drawRecord && records.get(loc) instanceof DrawingRecord)
-        		|| (!drawRecord && records.get(loc) instanceof ObjRecord))) {
-    		++loc;
-    		drawRecord = !drawRecord;
-       	}
-        int endloc = loc-1;
-        for(int i = 0; i < (endloc - startloc + 1); i++)
-            records.remove(startloc);
-        records.add(startloc, r);
 
-        return startloc;
+        EscherAggregate.createAggregate(records, loc);
+        
+        return loc;
     }
 
     /**
@@ -1688,25 +1623,5 @@ public final class InternalSheet {
         NoteRecord[] result = new NoteRecord[temp.size()];
         temp.toArray(result);
         return result;
-    }
-
-    //20101013, henrichen@zkoss.org: merge drawing records into a fake EscherAggregate record if possible 
-    @SuppressWarnings("unchecked")
-	private boolean mergeRecordsIntoEscherAggregate(List<RecordBase> records, int loc, DrawingManager2 drawingManager) {
-	    final String clsName = Library.getProperty("org.zkoss.zss.model.EscherAggregate.class");
-	    if (clsName != null) {
-	    	try {
-	    		final Class cls = Classes.forNameByThread(clsName);
-				final Object r = cls.getConstructor(DrawingManager2.class).newInstance(drawingManager);
-				final Method m = Classes.getMethodInPublic(cls, "mergeRecordsIntoEscherAggregate", new Class[] {List.class, int.class, DrawingManager2.class});
-				return ((Boolean)m.invoke(r, records, new Integer(loc), drawingManager)).booleanValue();
-	    	} catch (InvocationTargetException e) {
-	    		throw new RuntimeException(e.getCause());
-			} catch (Exception ex) {
-				//ignore, falling to return false
-				log.log(POILogger.DEBUG, ex);
-			}
-	    }
-	    return false;
     }
 }

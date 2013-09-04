@@ -80,42 +80,42 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getExplicitListValues()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#getExplicitListValues()
 	 */
 	public String[] getExplicitListValues() {
 		return explicitListOfValues;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getFormula1()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#getFormula1()
 	 */
 	public String getFormula1() {
 		return formula1;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getFormula2()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#getFormula2()
 	 */
 	public String getFormula2() {
 		return formula2;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getOperator()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#getOperator()
 	 */
 	public int getOperator() {
 		return operator;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#getValidationType()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#getValidationType()
 	 */
 	public int getValidationType() {
 		return validationType;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setExplicitListValues(java.lang.String[])
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#setExplicitListValues(java.lang.String[])
 	 */
 	public void setExplicitListValues(String[] explicitListValues) {
 		this.explicitListOfValues = explicitListValues;
@@ -134,7 +134,7 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setFormula1(java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#setFormula1(java.lang.String)
 	 */
 	public void setFormula1(String formula1) {
 		this.formula1 = removeLeadingEquals(formula1);
@@ -145,14 +145,14 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setFormula2(java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#setFormula2(java.lang.String)
 	 */
 	public void setFormula2(String formula2) {
 		this.formula2 = removeLeadingEquals(formula2);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint#setOperator(int)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationConstraint#setOperator(int)
 	 */
 	public void setOperator(int operator) {
 		this.operator = operator;

@@ -23,8 +23,12 @@ import org.zkoss.poi.hdgf.chunks.Chunk;
 import org.zkoss.poi.hdgf.chunks.ChunkFactory;
 import org.zkoss.poi.hdgf.chunks.ChunkHeader;
 import org.zkoss.poi.hdgf.pointers.Pointer;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
 
 public final class ChunkStream extends Stream {
+	private static POILogger logger = POILogFactory.getLogger(ChunkStream.class);
+	
 	private ChunkFactory chunkFactory;
 	/** All the Chunks we contain */
 	private Chunk[] chunks;
@@ -52,18 +56,24 @@ public final class ChunkStream extends Stream {
 
 		int pos = 0;
 		byte[] contents = getStore().getContents();
-		while(pos < contents.length) {
-			// Ensure we have enough data to create a chunk from
-			int headerSize = ChunkHeader.getHeaderSize(chunkFactory.getVersion());
-			if(pos+headerSize <= contents.length) {
-				Chunk chunk = chunkFactory.createChunk(contents, pos);
-				chunksA.add(chunk);
+		try {
+			while(pos < contents.length) {
+				// Ensure we have enough data to create a chunk from
+				int headerSize = ChunkHeader.getHeaderSize(chunkFactory.getVersion());
+				if(pos+headerSize <= contents.length) {
+					Chunk chunk = chunkFactory.createChunk(contents, pos);
+					chunksA.add(chunk);
 
-				pos += chunk.getOnDiskSize();
-			} else {
-				System.err.println("Needed " + headerSize + " bytes to create the next chunk header, but only found " + (contents.length-pos) + " bytes, ignoring rest of data");
-				pos = contents.length;
+					pos += chunk.getOnDiskSize();
+				} else {
+					logger.log(POILogger.WARN, "Needed " + headerSize + " bytes to create the next chunk header, but only found " + (contents.length-pos) + " bytes, ignoring rest of data");
+					pos = contents.length;
+				}
 			}
+		}
+		catch (Exception e)
+		{
+			logger.log(POILogger.ERROR, "Failed to create chunk at " + pos + ", ignoring rest of data." + e);
 		}
 
 		chunks = chunksA.toArray(new Chunk[chunksA.size()]);

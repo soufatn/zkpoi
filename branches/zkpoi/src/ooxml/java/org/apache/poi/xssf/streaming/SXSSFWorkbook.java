@@ -44,6 +44,7 @@ import java.util.zip.ZipEntry;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
 import org.zkoss.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.zkoss.poi.ss.util.AreaReference;
+import org.zkoss.poi.ss.util.CellRangeAddress;
 
 /**
  * Streaming version of XSSFWorkbook implementing the "BigGridDemo" strategy.
@@ -246,7 +247,6 @@ public class SXSSFWorkbook implements Workbook
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
     {
         XSSFSheet result=_sxFromXHash.get(sheet);
-        assert result!=null;
         return result;
     }
 
@@ -545,7 +545,6 @@ public class SXSSFWorkbook implements Workbook
      */
     public int getSheetIndex(Sheet sheet)
     {
-        assert sheet instanceof SXSSFSheet;
         return _wb.getSheetIndex(getXSSFSheet((SXSSFSheet)sheet));
     }
 
@@ -666,6 +665,9 @@ public class SXSSFWorkbook implements Workbook
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
+     * 
+     * @deprecated use {@link SXSSFSheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link SXSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
     public void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow)
     {
@@ -760,14 +762,40 @@ public class SXSSFWorkbook implements Workbook
     	
         //Save the template
         File tmplFile = File.createTempFile("poi-sxssf-template", ".xlsx");
-        tmplFile.deleteOnExit();
-        FileOutputStream os = new FileOutputStream(tmplFile);
-        _wb.write(os);
-        os.close();
+        try
+        {
+            FileOutputStream os = new FileOutputStream(tmplFile);
+            try
+            {
+                _wb.write(os);
+            }
+            finally
+            {
+                os.close();
+            }
 
-        //Substitute the template entries with the generated sheet data files
-        injectData(tmplFile, stream);
-        tmplFile.delete();
+            //Substitute the template entries with the generated sheet data files
+            injectData(tmplFile, stream);
+        }
+        finally
+        {
+            tmplFile.delete();
+        }
+    }
+    
+    /**
+     * Dispose of temporary files backing this workbook on disk.
+     * Calling this method will render the workbook unusable.
+     * @return true if all temporary files were deleted successfully.
+     */
+    public boolean dispose()
+    {
+        boolean success = true;
+        for (SXSSFSheet sheet : _sxFromXHash.keySet())
+        {
+            success = sheet.dispose() && success;
+        }
+        return success;
     }
 
     /**

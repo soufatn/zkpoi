@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -38,6 +37,14 @@ public class EscherClientAnchorRecord
     public static final short RECORD_ID = (short) 0xF010;
     public static final String RECORD_DESCRIPTION = "MsofbtClientAnchor";
 
+    /**
+     * bit[0] -  fMove (1 bit): A bit that specifies whether the shape will be kept intact when the cells are moved.
+     * bit[1] - fSize (1 bit): A bit that specifies whether the shape will be kept intact when the cells are resized. If fMove is 1, the value MUST be 1.
+     * bit[2-4] - reserved, MUST be 0 and MUST be ignored
+     * bit[5-15]- Undefined and MUST be ignored.
+     *
+     * it can take values: 0, 2, 3
+     */
     private short field_1_flag;
     private short field_2_col1;
     private short field_3_dx1;
@@ -158,6 +165,38 @@ public class EscherClientAnchorRecord
                 "  DY2: " + field_9_dy2 + nl +
                 "  Extra Data:" + nl + extraData;
 
+    }
+
+    @Override
+    public String toXml(String tab) {
+        String extraData;
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        try
+        {
+            HexDump.dump(this.remainingData, 0, b, 0);
+            extraData = b.toString();
+        }
+        catch ( Exception e )
+        {
+            extraData = "error\n";
+        }
+        if (extraData.contains("No Data")){
+            extraData = "No Data";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<Flag>").append(field_1_flag).append("</Flag>\n")
+                .append(tab).append("\t").append("<Col1>").append(field_2_col1).append("</Col1>\n")
+                .append(tab).append("\t").append("<DX1>").append(field_3_dx1).append("</DX1>\n")
+                .append(tab).append("\t").append("<Row1>").append(field_4_row1).append("</Row1>\n")
+                .append(tab).append("\t").append("<DY1>").append(field_5_dy1).append("</DY1>\n")
+                .append(tab).append("\t").append("<Col2>").append(field_6_col2).append("</Col2>\n")
+                .append(tab).append("\t").append("<DX2>").append(field_7_dx2).append("</DX2>\n")
+                .append(tab).append("\t").append("<Row2>").append(field_8_row2).append("</Row2>\n")
+                .append(tab).append("\t").append("<DY2>").append(field_9_dy2).append("</DY2>\n")
+                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
     }
 
     /**

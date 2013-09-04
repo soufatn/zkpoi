@@ -113,7 +113,7 @@ public class DrawingManager2
     /**
      * Finds the next available (1 based) drawing group id
      */
-    short findNewDrawingGroupId()
+    public short findNewDrawingGroupId()
     {
         short dgId = 1; 
         while ( drawingGroupExists( dgId ) )
@@ -156,4 +156,7 @@ public class DrawingManager2
         return dgg;
     }
 
+    public void incrementDrawingsSaved(){
+        dgg.setDrawingsSaved(dgg.getDrawingsSaved()+1);
+    }
 }

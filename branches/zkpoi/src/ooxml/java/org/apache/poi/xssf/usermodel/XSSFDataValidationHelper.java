@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOperator;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
 import org.zkoss.poi.ss.usermodel.DataValidation;
 import org.zkoss.poi.ss.usermodel.DataValidationConstraint;
@@ -42,28 +43,28 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createDateConstraint(int, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createDateConstraint(int, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createDateConstraint(int operatorType, String formula1, String formula2, String dateFormat) {
 		return new XSSFDataValidationConstraint(ValidationType.DATE, operatorType,formula1, formula2);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createDecimalConstraint(int, java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createDecimalConstraint(int, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createDecimalConstraint(int operatorType, String formula1, String formula2) {
 		return new XSSFDataValidationConstraint(ValidationType.DECIMAL, operatorType,formula1, formula2);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createExplicitListConstraint(java.lang.String[])
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createExplicitListConstraint(java.lang.String[])
 	 */
 	public DataValidationConstraint createExplicitListConstraint(String[] listOfValues) {
 		return new XSSFDataValidationConstraint(listOfValues);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createFormulaListConstraint(java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createFormulaListConstraint(java.lang.String)
 	 */
 	public DataValidationConstraint createFormulaListConstraint(String listFormula) {
 		return new XSSFDataValidationConstraint(ValidationType.LIST, listFormula);
@@ -83,21 +84,21 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createIntegerConstraint(int, java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createIntegerConstraint(int, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createIntegerConstraint(int operatorType, String formula1, String formula2) {
 		return new XSSFDataValidationConstraint(ValidationType.INTEGER, operatorType,formula1,formula2);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createTextLengthConstraint(int, java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createTextLengthConstraint(int, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createTextLengthConstraint(int operatorType, String formula1, String formula2) {
 		return new XSSFDataValidationConstraint(ValidationType.TEXT_LENGTH, operatorType,formula1,formula2);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createTimeConstraint(int, java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createTimeConstraint(int, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public DataValidationConstraint createTimeConstraint(int operatorType, String formula1, String formula2) {
 		return new XSSFDataValidationConstraint(ValidationType.TIME, operatorType,formula1,formula2);
@@ -108,7 +109,7 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidationHelper#createValidation(org.apache.poi.ss.usermodel.DataValidationConstraint, org.apache.poi.ss.util.CellRangeAddressList)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidationHelper#createValidation(org.zkoss.poi.ss.usermodel.DataValidationConstraint, org.zkoss.poi.ss.util.CellRangeAddressList)
 	 */
 	public DataValidation createValidation(DataValidationConstraint constraint, CellRangeAddressList cellRangeAddressList) {
 		XSSFDataValidationConstraint dataValidationConstraint = (XSSFDataValidationConstraint)constraint;
@@ -146,7 +147,10 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 		}
 		
 		if (validationType!=ValidationType.ANY && validationType!=ValidationType.LIST) {
-			newDataValidation.setOperator(XSSFDataValidation.operatorTypeMappings.get(constraint.getOperator()));			
+            STDataValidationOperator.Enum op = XSSFDataValidation.operatorTypeMappings.get(constraint.getOperator());
+			if(op != null) {
+                newDataValidation.setOperator(op);
+            }
 			if (constraint.getFormula1() != null) {
 				newDataValidation.setFormula1(constraint.getFormula1());
 			}

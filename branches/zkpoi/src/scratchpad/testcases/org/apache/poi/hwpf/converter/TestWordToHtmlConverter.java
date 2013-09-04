@@ -141,6 +141,20 @@ public class TestWordToHtmlConverter extends TestCase
         getHtmlText( "Bug48075.doc" );
     }
 
+    public void testBug52583() throws Exception
+    {
+        String result = getHtmlText( "Bug52583.doc" );
+        assertContains(
+                result,
+                "<select><option selected>riri</option><option>fifi</option><option>loulou</option></select>" );
+    }
+
+    public void testBug53182() throws Exception
+    {
+        String result = getHtmlText( "Bug53182.doc" );
+        assertFalse( result.contains( "italic" ) );
+    }
+
     public void testDocumentProperties() throws Exception
     {
         String result = getHtmlText( "documentProperties.doc" );
@@ -183,7 +197,7 @@ public class TestWordToHtmlConverter extends TestCase
 
         assertContains( result, "<span>Before text; </span><a " );
         assertContains( result,
-                "<a href=\"http://testuri.org/\"><span>Hyperlink text</span></a>" );
+                "<a href=\"http://testuri.org/\"><span class=\"s1\">Hyperlink text</span></a>" );
         assertContains( result, "</a><span>; after text</span>" );
     }
 

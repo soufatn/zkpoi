@@ -17,22 +17,36 @@
 
 package org.zkoss.poi.xssf.streaming;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.Map;
-
-import org.zkoss.poi.ss.SpreadsheetVersion;
-import org.zkoss.poi.ss.usermodel.*;
-import org.zkoss.poi.ss.util.CellReference;
-
-import org.zkoss.poi.ss.util.SheetUtil;
-import org.zkoss.poi.util.Internal;
-import org.zkoss.poi.xssf.usermodel.XSSFSheet;
+import java.util.TreeMap;
 
 import org.zkoss.poi.hssf.util.PaneInformation;
+import org.zkoss.poi.ss.SpreadsheetVersion;
+import org.zkoss.poi.ss.usermodel.AutoFilter;
+import org.zkoss.poi.ss.usermodel.Cell;
+import org.zkoss.poi.ss.usermodel.CellRange;
+import org.zkoss.poi.ss.usermodel.CellStyle;
+import org.zkoss.poi.ss.usermodel.Comment;
+import org.zkoss.poi.ss.usermodel.DataValidation;
+import org.zkoss.poi.ss.usermodel.DataValidationHelper;
+import org.zkoss.poi.ss.usermodel.Drawing;
+import org.zkoss.poi.ss.usermodel.Footer;
+import org.zkoss.poi.ss.usermodel.Header;
+import org.zkoss.poi.ss.usermodel.PivotCache;
+import org.zkoss.poi.ss.usermodel.PivotTable;
+import org.zkoss.poi.ss.usermodel.PrintSetup;
+import org.zkoss.poi.ss.usermodel.Row;
+import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.usermodel.SheetConditionalFormatting;
+import org.zkoss.poi.ss.usermodel.Workbook;
 import org.zkoss.poi.ss.util.CellRangeAddress;
+import org.zkoss.poi.ss.util.CellReference;
+import org.zkoss.poi.ss.util.SheetUtil;
+import org.zkoss.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
@@ -1266,7 +1280,26 @@ public class SXSSFSheet implements Sheet, Cloneable
     public SheetConditionalFormatting getSheetConditionalFormatting(){
         return _sh.getSheetConditionalFormatting();
     }
-
+    
+    
+    public CellRangeAddress getRepeatingRows() {
+      return _sh.getRepeatingRows();
+    }
+    
+    public CellRangeAddress getRepeatingColumns() {
+      return _sh.getRepeatingColumns();
+    }
+    
+    public void setRepeatingRows(CellRangeAddress rowRangeRef) {
+      _sh.setRepeatingRows(rowRangeRef);
+    }
+    
+    public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
+      _sh.setRepeatingColumns(columnRangeRef);
+    }
+    
+    
+    
 //end of interface implementation
     /**
      * Specifies how many rows can be accessed at most via getRow().
@@ -1333,9 +1366,17 @@ public class SXSSFSheet implements Sheet, Cloneable
             if(entry.getValue()==row)
                 return entry.getKey().intValue();
         }
-        assert false;
         return -1;
     }
+
+    /**
+     * Deletes the temporary file that backed this sheet on disk.
+     * @return true if the file was deleted, false if it wasn't.
+     */
+    boolean dispose() {
+        return _writer.dispose();
+    }
+    
     //20111124, henrichen@zkoss.org
 	@Override
 	public boolean isAutoFilterMode() {

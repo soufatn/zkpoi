@@ -20,6 +20,16 @@ package org.zkoss.poi.xssf.usermodel;
 import java.awt.Dimension;
 import java.io.IOException;
 
+import org.zkoss.poi.POIXMLDocumentPart;
+import org.zkoss.poi.openxml4j.opc.PackagePart;
+import org.zkoss.poi.openxml4j.opc.PackageRelationship;
+import org.zkoss.poi.ss.usermodel.ClientAnchor;
+import org.zkoss.poi.ss.usermodel.Picture;
+import org.zkoss.poi.ss.usermodel.Workbook;
+import org.zkoss.poi.ss.util.ImageUtils;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
@@ -32,16 +42,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.zkoss.poi.POIXMLDocumentPart;
-import org.zkoss.poi.openxml4j.opc.PackagePart;
-import org.zkoss.poi.openxml4j.opc.PackageRelationship;
-import org.zkoss.poi.ss.usermodel.ClientAnchor;
-import org.zkoss.poi.ss.usermodel.Picture;
-import org.zkoss.poi.ss.usermodel.Workbook;
-import org.zkoss.poi.ss.util.ImageUtils;
-import org.zkoss.poi.util.Internal;
-import org.zkoss.poi.util.POILogFactory;
-import org.zkoss.poi.util.POILogger;
 
 /**
  * Represents a picture shape in a SpreadsheetML drawing.
@@ -297,18 +297,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      */
     public XSSFPictureData getPictureData() {
         String blipId = ctPicture.getBlipFill().getBlip().getEmbed();
-        //20111109, henrichen@zkoss.org: use getRelationById() is faster!
-        final XSSFPictureData part = (XSSFPictureData) getDrawing().getRelationById(blipId); //20111109,henrichen@zkoss.org
-        if (part != null) return part; //20111109,henrichen@zkoss.org
-        /*
-        for (POIXMLDocumentPart part : getDrawing().getRelations()) {
-            if(part.getPackageRelationship().getId().equals(blipId)){
-                return (XSSFPictureData)part;
-            }
-        }
-        */
-        logger.log(POILogger.WARN, "Picture data was not found for blipId=" + blipId);
-        return null;
+        return  (XSSFPictureData)getDrawing().getRelationById(blipId);
     }
 
     protected CTShapeProperties getShapeProperties(){

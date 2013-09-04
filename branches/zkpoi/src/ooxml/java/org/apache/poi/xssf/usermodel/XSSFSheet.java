@@ -31,51 +31,6 @@ import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFilterColumn;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnsignedShortHex;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 import org.zkoss.poi.POIXMLDocumentPart;
 import org.zkoss.poi.POIXMLException;
 import org.zkoss.poi.hssf.record.PasswordRecord;
@@ -87,20 +42,8 @@ import org.zkoss.poi.openxml4j.opc.PackageRelationship;
 import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 import org.zkoss.poi.ss.formula.FormulaShifter;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellRange;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.DataValidation;
-import org.zkoss.poi.ss.usermodel.DataValidationHelper;
-import org.zkoss.poi.ss.usermodel.FilterColumn;
-import org.zkoss.poi.ss.usermodel.Footer;
-import org.zkoss.poi.ss.usermodel.Header;
-import org.zkoss.poi.ss.usermodel.IndexedColors;
-import org.zkoss.poi.ss.usermodel.PivotCache;
-import org.zkoss.poi.ss.usermodel.PivotTable;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.usermodel.Sheet;
+import org.zkoss.poi.ss.formula.SheetNameFormatter;
+import org.zkoss.poi.ss.usermodel.*;
 import org.zkoss.poi.ss.util.CellRangeAddress;
 import org.zkoss.poi.ss.util.CellRangeAddressList;
 import org.zkoss.poi.ss.util.CellReference;
@@ -115,7 +58,11 @@ import org.zkoss.poi.xssf.usermodel.XSSFAutoFilter.XSSFFilterColumn;
 import org.zkoss.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.zkoss.poi.xssf.usermodel.helpers.XSSFPivotTableHelpers;
 import org.zkoss.poi.xssf.usermodel.helpers.XSSFRowShifter;
-
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -137,9 +84,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
-
-
-	/**
+    /**
      * cache of master shared formulas in this sheet.
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
      */
@@ -204,7 +149,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         // Look for bits we're interested in
         for(POIXMLDocumentPart p : getRelations()){
-        	//TODO: test to dump p
             if(p instanceof CommentsTable) {
                sheetComments = (CommentsTable)p;
                break;
@@ -222,7 +166,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         
     }
 
-	/**
+    /**
      * Initialize worksheet data when creating a new sheet.
      */
     @Override
@@ -866,6 +810,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return worksheet.getHeaderFooter();
     }
+
+
 
     /**
      * Returns the default footer for the sheet,
@@ -1590,7 +1536,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @see org.zkoss.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
      */
     public void setForceFormulaRecalculation(boolean value) {
-       if(worksheet.isSetSheetCalcPr()) {
+        CTCalcPr calcPr = getWorkbook().getCTWorkbook().getCalcPr();
+
+        if(worksheet.isSetSheetCalcPr()) {
           // Change the current setting
           CTSheetCalcPr calc = worksheet.getSheetCalcPr();
           calc.setFullCalcOnLoad(value);
@@ -1600,9 +1548,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
           CTSheetCalcPr calc = worksheet.addNewSheetCalcPr();
           calc.setFullCalcOnLoad(value);
        }
-       else {
-          // Not set, requested not, nothing to do
-       }
+        if(value && calcPr != null && calcPr.getCalcMode() == STCalcMode.MANUAL) {
+            calcPr.setCalcMode(STCalcMode.AUTO);
+        }
+
     }
 
     /**
@@ -3283,7 +3232,164 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         color.setIndexed(colorIndex);
         pr.setTabColor(color);
     }
-	
+    
+    
+    public CellRangeAddress getRepeatingRows() {
+      return getRepeatingRowsOrColums(true);
+    }
+
+
+    public CellRangeAddress getRepeatingColumns() {
+      return getRepeatingRowsOrColums(false);
+    }
+
+    public void setRepeatingRows(CellRangeAddress rowRangeRef) {
+      CellRangeAddress columnRangeRef = getRepeatingColumns();
+      setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
+    }
+
+    
+    public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
+      CellRangeAddress rowRangeRef = getRepeatingRows();
+      setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
+    }
+
+    
+    private void setRepeatingRowsAndColumns(
+        CellRangeAddress rowDef, CellRangeAddress colDef) {
+      int col1 = -1; 
+      int col2 =  -1;
+      int row1 = -1; 
+      int row2 =  -1;
+      
+      if (rowDef != null) {
+        row1 = rowDef.getFirstRow();
+        row2 = rowDef.getLastRow();
+        if ((row1 == -1 && row2 != -1) 
+            || row1 < -1 || row2 < -1 || row1 > row2) {
+          throw new IllegalArgumentException("Invalid row range specification");
+        }
+      }
+      if (colDef != null) {
+        col1 = colDef.getFirstColumn();
+        col2 = colDef.getLastColumn();
+        if ((col1 == -1 && col2 != -1) 
+            || col1 < -1 || col2 < -1 || col1 > col2) {
+          throw new IllegalArgumentException(
+              "Invalid column range specification");
+        }
+      }
+      
+      int sheetIndex = getWorkbook().getSheetIndex(this);
+
+      boolean removeAll = rowDef == null && colDef == null;
+
+      XSSFName name = getWorkbook().getBuiltInName(
+          XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
+      if (removeAll) {
+          if (name != null) {
+            getWorkbook().removeName(name);
+          }
+          return;
+      }
+      if (name == null) {
+          name = getWorkbook().createBuiltInName(
+              XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
+      }
+
+      String reference = getReferenceBuiltInRecord(
+          name.getSheetName(), col1, col2, row1, row2);
+      name.setRefersToFormula(reference);
+
+      // If the print setup isn't currently defined, then add it
+      //  in but without printer defaults
+      // If it's already there, leave it as-is!
+      if (worksheet.isSetPageSetup() && worksheet.isSetPageMargins()) {
+         // Everything we need is already there
+      } else {
+        // Have initial ones put in place
+        getPrintSetup().setValidSettings(false);
+      }
+    }
+
+    private static String getReferenceBuiltInRecord(
+        String sheetName, int startC, int endC, int startR, int endR) {
+        // Excel example for built-in title: 
+        //   'second sheet'!$E:$F,'second sheet'!$2:$3
+      
+        CellReference colRef = 
+          new CellReference(sheetName, 0, startC, true, true);
+        CellReference colRef2 = 
+          new CellReference(sheetName, 0, endC, true, true);
+        CellReference rowRef = 
+          new CellReference(sheetName, startR, 0, true, true);
+        CellReference rowRef2 = 
+          new CellReference(sheetName, endR, 0, true, true);
+
+        String escapedName = SheetNameFormatter.format(sheetName);
+
+        String c = "";
+        String r = "";
+
+        if(startC == -1 && endC == -1) {
+        } else {
+          c = escapedName + "!$" + colRef.getCellRefParts()[2] 
+              + ":$" + colRef2.getCellRefParts()[2];
+        }
+
+        if (startR == -1 && endR == -1) {
+          
+        } else if (!rowRef.getCellRefParts()[1].equals("0") 
+            && !rowRef2.getCellRefParts()[1].equals("0")) {
+           r = escapedName + "!$" + rowRef.getCellRefParts()[1] 
+                 + ":$" + rowRef2.getCellRefParts()[1];
+        }
+
+        StringBuffer rng = new StringBuffer();
+        rng.append(c);
+        if(rng.length() > 0 && r.length() > 0) {
+          rng.append(',');
+        }
+        rng.append(r);
+        return rng.toString();
+    }
+
+
+    private CellRangeAddress getRepeatingRowsOrColums(boolean rows) {
+      int sheetIndex = getWorkbook().getSheetIndex(this);
+      XSSFName name = getWorkbook().getBuiltInName(
+          XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
+      if (name == null ) {
+        return null;
+      }
+      String refStr = name.getRefersToFormula();
+      if (refStr == null) {
+        return null;
+      }
+      String[] parts = refStr.split(",");
+      int maxRowIndex = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+      int maxColIndex = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+      for (String part : parts) {
+        CellRangeAddress range = CellRangeAddress.valueOf(part);
+        if ((range.getFirstColumn() == 0 
+            && range.getLastColumn() == maxColIndex)
+            || (range.getFirstColumn() == -1 
+                && range.getLastColumn() == -1)) {
+          if (rows) {
+            return range;
+          }
+        } else if (range.getFirstRow() == 0 
+            && range.getLastRow() == maxRowIndex
+            || (range.getFirstRow() == -1 
+                && range.getLastRow() == -1)) {
+          if (!rows) {
+            return range;
+          }
+        }
+      }
+      return null;
+    }
+    	
 	//20100914, henrichen@zkoss.org: expose _rows
 	protected TreeMap<Integer, XSSFRow> getRows() {
 		return _rows;

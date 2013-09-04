@@ -113,7 +113,7 @@ public class XSSFDataValidation implements DataValidation {
 
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
 	 */
 	public void createErrorBox(String title, String text) {
 		ctDdataValidation.setErrorTitle(title);
@@ -121,7 +121,7 @@ public class XSSFDataValidation implements DataValidation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
 	 */
 	public void createPromptBox(String title, String text) {
 		ctDdataValidation.setPromptTitle(title);
@@ -129,28 +129,28 @@ public class XSSFDataValidation implements DataValidation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getEmptyCellAllowed()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getEmptyCellAllowed()
 	 */
 	public boolean getEmptyCellAllowed() {
 		return ctDdataValidation.getAllowBlank();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getErrorBoxText()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getErrorBoxText()
 	 */
 	public String getErrorBoxText() {
 		return ctDdataValidation.getError();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getErrorBoxTitle()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getErrorBoxTitle()
 	 */
 	public String getErrorBoxTitle() {
 		return ctDdataValidation.getErrorTitle();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getErrorStyle()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getErrorStyle()
 	 */
 	public int getErrorStyle() {
 		//20111130, henrichen@zkoss.org
@@ -158,77 +158,77 @@ public class XSSFDataValidation implements DataValidation {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getPromptBoxText()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getPromptBoxText()
 	 */
 	public String getPromptBoxText() {
 		return ctDdataValidation.getPrompt();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getPromptBoxTitle()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getPromptBoxTitle()
 	 */
 	public String getPromptBoxTitle() {
 		return ctDdataValidation.getPromptTitle();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getShowErrorBox()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getShowErrorBox()
 	 */
 	public boolean getShowErrorBox() {
 		return ctDdataValidation.getShowErrorMessage();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getShowPromptBox()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getShowPromptBox()
 	 */
 	public boolean getShowPromptBox() {
 		return ctDdataValidation.getShowInputMessage();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getSuppressDropDownArrow()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getSuppressDropDownArrow()
 	 */
 	public boolean getSuppressDropDownArrow() {
 		return !ctDdataValidation.getShowDropDown();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#getValidationConstraint()
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#getValidationConstraint()
 	 */
 	public DataValidationConstraint getValidationConstraint() {
 		return validationConstraint;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#setEmptyCellAllowed(boolean)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#setEmptyCellAllowed(boolean)
 	 */
 	public void setEmptyCellAllowed(boolean allowed) {
 		ctDdataValidation.setAllowBlank(allowed);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#setErrorStyle(int)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#setErrorStyle(int)
 	 */
 	public void setErrorStyle(int errorStyle) {
 		ctDdataValidation.setErrorStyle(errorStyleMappings.get(errorStyle));
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#setShowErrorBox(boolean)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#setShowErrorBox(boolean)
 	 */
 	public void setShowErrorBox(boolean show) {
 		ctDdataValidation.setShowErrorMessage(show);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#setShowPromptBox(boolean)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#setShowPromptBox(boolean)
 	 */
 	public void setShowPromptBox(boolean show) {
 		ctDdataValidation.setShowInputMessage(show);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.apache.poi.ss.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
+	 * @see org.zkoss.poi.ss.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
 	 */
 	public void setSuppressDropDownArrow(boolean suppress) {
 		if (validationConstraint.getValidationType()==ValidationType.LIST) {

@@ -20,9 +20,7 @@ package org.apache.poi.hssf.record;
 import junit.framework.TestCase;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
@@ -72,14 +70,13 @@ public final class TestEscherAggregate extends TestCase {
 
         ObjRecord r2 = new ObjRecord();
 
-        List<Record> records = new ArrayList<Record>();
+        List<RecordBase> records = new ArrayList<RecordBase>();
         records.add( d1 );
         records.add( r1 );
         records.add( d2 );
         records.add( r2 );
 
-        DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord() );
-        EscherAggregate aggregate = EscherAggregate.createAggregate( records, 0, drawingManager );
+        EscherAggregate aggregate = EscherAggregate.createAggregate(records, 0);
 
         assertEquals( 1, aggregate.getEscherRecords().size() );
         assertEquals( (short) 0xF002, aggregate.getEscherRecord( 0 ).getRecordId() );
@@ -120,7 +117,7 @@ public final class TestEscherAggregate extends TestCase {
         spContainer2.addChildRecord( d2 );
         spContainer3.addChildRecord( d3 );
 
-        EscherAggregate aggregate = new EscherAggregate(null);
+        EscherAggregate aggregate = new EscherAggregate(false);
         aggregate.addEscherRecord( container1 );
         aggregate.associateShapeToObjRecord( d2, new ObjRecord() );
         aggregate.associateShapeToObjRecord( d3, new ObjRecord() );

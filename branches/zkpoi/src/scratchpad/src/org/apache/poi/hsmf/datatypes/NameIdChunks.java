@@ -26,7 +26,7 @@ import java.util.List;
  *  NameID part of an outlook file
  */
 public final class NameIdChunks implements ChunkGroup {
-   public static final String PREFIX = "__nameid_version1.0";
+   public static final String NAME = "__nameid_version1.0";
    
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();

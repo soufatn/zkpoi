@@ -17,8 +17,8 @@
 
 package org.zkoss.poi.hssf.record.common;
 
-//import org.apache.poi.hssf.record.Feat11Record;
-//import org.apache.poi.hssf.record.Feat12Record;
+//import org.zkoss.poi.hssf.record.Feat11Record;
+//import org.zkoss.poi.hssf.record.Feat12Record;
 import org.zkoss.poi.hssf.record.FeatRecord;
 import org.zkoss.poi.hssf.record.RecordInputStream;
 import org.zkoss.poi.util.LittleEndianOutput;

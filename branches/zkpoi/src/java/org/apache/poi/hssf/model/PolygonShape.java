@@ -27,6 +27,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFPolygon;
 import org.zkoss.poi.hssf.usermodel.HSSFShape;
 import org.zkoss.poi.util.LittleEndian;
 
+@Deprecated
 public class PolygonShape
         extends AbstractShape
 {
@@ -63,7 +64,7 @@ public class PolygonShape
         spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
         spContainer.setOptions( (short) 0x000F );
         sp.setRecordId( EscherSpRecord.RECORD_ID );
-        sp.setOptions( (short) ( ( EscherAggregate.ST_DONUT << 4 ) | 0x2 ) );
+        sp.setOptions( (short) ( ( EscherAggregate.ST_NOT_PRIMATIVE << 4 ) | 0x2 ) );
         sp.setShapeId( shapeId );
         if (hssfShape.getParent() == null)
             sp.setFlags( EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE );

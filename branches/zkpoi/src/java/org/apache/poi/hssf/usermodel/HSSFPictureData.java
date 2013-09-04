@@ -23,6 +23,7 @@ import org.zkoss.poi.ddf.EscherBitmapBlip;
 import org.zkoss.poi.ddf.EscherBlipRecord;
 import org.zkoss.poi.ddf.EscherMetafileBlip;
 import org.zkoss.poi.ss.usermodel.PictureData;
+import org.zkoss.poi.util.PngUtils;
 
 /**
  * Represents binary data stored in the file.  Eg. A GIF, JPEG etc...
@@ -58,11 +59,22 @@ public class HSSFPictureData implements PictureData
     }
 */
     /* (non-Javadoc)
-     * @see org.apache.poi.hssf.usermodel.PictureData#getData()
+     * @see org.zkoss.poi.hssf.usermodel.PictureData#getData()
      */
     public byte[] getData()
     {
-        return blip.getPicturedata();
+        byte[] pictureData = blip.getPicturedata();
+
+        //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
+        //Just cut it off!.
+        if (PngUtils.matchesPngHeader(pictureData, 16))
+        {
+            byte[] png = new byte[pictureData.length-16];
+            System.arraycopy(pictureData, 16, png, 0, png.length);
+            pictureData = png;
+        }
+
+        return pictureData;
     }
 
     /**

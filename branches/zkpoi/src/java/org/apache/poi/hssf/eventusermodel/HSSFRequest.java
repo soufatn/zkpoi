@@ -68,7 +68,7 @@ public class HSSFRequest {
 
 	/**
 	 * This is the equivalent of calling addListener(myListener, sid) for EVERY
-	 * record in the org.apache.poi.hssf.record package. This is for lazy
+	 * record in the org.zkoss.poi.hssf.record package. This is for lazy
 	 * people like me. You can call this more than once with more than one listener, but
 	 * that seems like a bad thing to do from a practice-perspective unless you have a
 	 * compelling reason to do so (like maybe you send the event two places or log it or

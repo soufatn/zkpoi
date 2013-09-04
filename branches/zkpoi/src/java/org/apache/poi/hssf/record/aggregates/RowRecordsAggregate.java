@@ -24,20 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.zkoss.poi.hssf.model.RecordStream;
-import org.zkoss.poi.hssf.record.ArrayRecord;
-import org.zkoss.poi.hssf.record.CellValueRecordInterface;
-import org.zkoss.poi.hssf.record.ContinueRecord;
-import org.zkoss.poi.hssf.record.DBCellRecord;
-import org.zkoss.poi.hssf.record.DimensionsRecord;
-import org.zkoss.poi.hssf.record.FormulaRecord;
-import org.zkoss.poi.hssf.record.IndexRecord;
-import org.zkoss.poi.hssf.record.MergeCellsRecord;
-import org.zkoss.poi.hssf.record.MulBlankRecord;
-import org.zkoss.poi.hssf.record.Record;
-import org.zkoss.poi.hssf.record.RowRecord;
-import org.zkoss.poi.hssf.record.SharedFormulaRecord;
-import org.zkoss.poi.hssf.record.TableRecord;
-import org.zkoss.poi.hssf.record.UnknownRecord;
+import org.zkoss.poi.hssf.record.*;
 import org.zkoss.poi.ss.formula.FormulaShifter;
 import org.zkoss.poi.ss.SpreadsheetVersion;
 
@@ -86,7 +73,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
 				case RowRecord.sid:
 					insertRow((RowRecord) rec);
 					continue;
-				case DBCellRecord.sid:
+                case DConRefRecord.sid:
+                    addUnknownRecord(rec);
+                    continue;
+                case DBCellRecord.sid:
 					// end of 'Row Block'.  Should only occur after cell records
 					// ignore DBCELL records because POI generates them upon re-serialization
 					continue;

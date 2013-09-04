@@ -21,13 +21,14 @@
 package org.zkoss.poi.hslf.record;
 
 import java.io.*;
-
+import org.zkoss.poi.poifs.filesystem.*;
+import org.zkoss.poi.util.LittleEndian;
+import org.zkoss.poi.util.POILogFactory;
+import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.util.StringUtil;
 import org.zkoss.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.zkoss.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.zkoss.poi.hslf.exceptions.OldPowerPointFormatException;
-import org.zkoss.poi.poifs.filesystem.*;
-import org.zkoss.poi.util.LittleEndian;
-import org.zkoss.poi.util.StringUtil;
 
 
 /**
@@ -40,6 +41,8 @@ import org.zkoss.poi.util.StringUtil;
 
 public class CurrentUserAtom
 {
+	private static POILogger logger = POILogFactory.getLogger(CurrentUserAtom.class);
+
 	/** Standard Atom header */
 	public static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
 	/** The PowerPoint magic number for a non-encrypted file */
@@ -129,7 +132,7 @@ public class CurrentUserAtom
 			if(_contents.length >= 4) {
 				// PPT95 has 4 byte size, then data
 				int size = LittleEndian.getInt(_contents);
-				System.err.println(size);
+				//System.err.println(size);
 				if(size + 4 == _contents.length) {
 					throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
 				}
@@ -174,7 +177,7 @@ public class CurrentUserAtom
 		long usernameLen = LittleEndian.getUShort(_contents,20);
 		if(usernameLen > 512) {
 			// Handle the case of it being garbage
-			System.err.println("Warning - invalid username length " + usernameLen + " found, treating as if there was no username set");
+			logger.log(POILogger.WARN, "Warning - invalid username length " + usernameLen + " found, treating as if there was no username set");
 			usernameLen = 0;
 		}
 

@@ -404,7 +404,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
      * In some cases exetrnal workbooks referenced by formulas in the main workbook are not avaiable.
      * With this method you can control how POI handles such missing references:
      * <ul>
-     *     <li>by default ignoreMissingWorkbooks=false and POI throws {@link org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException}
+     *     <li>by default ignoreMissingWorkbooks=false and POI throws {@link org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException}
      *     if an external reference cannot be resolved</li>
      *     <li>if ignoreMissingWorkbooks=true then POI uses cached formula result
      *     that already exists in the main workbook</li>
@@ -416,8 +416,12 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
         _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
     }
 
-	
-	//20111124, henrichen@zkoss.org: evaluate with sheet and formula text only.
+    /** {@inheritDoc} */
+    public void setDebugEvaluationOutputForNextEval(boolean value){
+        _bookEvaluator.setDebugEvaluationOutputForNextEval(value);
+    }
+
+    //20111124, henrichen@zkoss.org: evaluate with sheet and formula text only.
 	@Override
 	public CellValue evaluateFormula(int sheetIndex, String formula) {
 		ValueEval eval = _bookEvaluator.evaluate(sheetIndex, formula, false);

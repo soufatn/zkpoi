@@ -29,7 +29,7 @@ import org.zkoss.poi.ss.formula.PlainCellCache.Loc;
 import org.zkoss.poi.ss.usermodel.Cell;
 
 /**
- * Performance optimisation for {@link org.apache.poi.ss.usermodel.FormulaEvaluator}.
+ * Performance optimisation for {@link org.zkoss.poi.ss.usermodel.FormulaEvaluator}.
  * This class stores previously calculated values of already visited cells,
  * to avoid unnecessary re-calculation when the same cells are referenced multiple times
  *

@@ -70,7 +70,7 @@ public class RecordLister
            );
            if(clz != null) {
               System.out.print("  \t");
-              System.out.print(clz.getName().replace("org.apache.poi.hssf.record.", ""));
+              System.out.print(clz.getName().replace("org.zkoss.poi.hssf.record.", ""));
            }
            System.out.println();
            
@@ -195,7 +195,7 @@ public class RecordLister
             System.out.println(
                 "Outputs the summary of the records in file order");
             System.out
-                .println("usage: java org.apache.poi.hssf.dev.RecordLister "
+                .println("usage: java org.zkoss.poi.hssf.dev.RecordLister "
                          + "filename");
         }
     }

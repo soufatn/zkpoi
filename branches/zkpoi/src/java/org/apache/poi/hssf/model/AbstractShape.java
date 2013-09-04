@@ -38,6 +38,7 @@ import org.zkoss.poi.hssf.usermodel.HSSFTextbox;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
+@Deprecated
 public abstract class AbstractShape
 {
     /**
