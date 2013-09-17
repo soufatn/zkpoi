@@ -514,6 +514,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             pane.setTopLeftCell(new CellReference(topRow, leftmostColumn).formatAsString());
             pane.setActivePane(STPane.BOTTOM_RIGHT);
         }
+        
+        //20130912 dennischen@zkoss.org ZSS-431 reset top-left if freezed
+        ctView.setTopLeftCell(new CellReference(0, 0).formatAsString());
 
         ctView.setSelectionArray(null);
         CTSelection sel = ctView.addNewSelection();
@@ -595,6 +598,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return new XSSFComment(sheetComments, ctComment,
                 vml == null ? null : vml.findCommentShape(row, column));
     }
+    
+    // 20130814, paowang@potix.com, ZSS-418: provide a method to remove a specific comment
+	public void removeCellComment(int row, int column) {
+		CommentsTable ct = getCommentsTable(false);
+		if(ct != null) { // just in case
+			ct.removeComment(new CellReference(row, column).formatAsString());
+		}
+		XSSFVMLDrawing vd = getVMLDrawing(false);
+		if(vd != null) { // just in case
+			vd.removeCommentShape(row, column);
+		}
+	}
 
     public XSSFHyperlink getHyperlink(int row, int column) {
         String ref = new CellReference(row, column).formatAsString();
@@ -1493,9 +1508,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         for(XSSFCell cell : cellsToDelete) row.removeCell(cell);
 
-        int idx = _rows.headMap(row.getRowNum()).size();
+        // 20130905, paowang@potix.com, ZSS-439: the row might be shift, should not use size to calculate index
+        // directly find the row for removing
         _rows.remove(row.getRowNum());
-        worksheet.getSheetData().removeRow(idx);
+		CTRow ctr = ((XSSFRow)row).getCTRow();
+		int index = 0;
+		for(CTRow r : worksheet.getSheetData().getRowList()) {
+			if(r.getR() == ctr.getR()) {
+				break;
+			}
+			++index;
+		}
+		worksheet.getSheetData().removeRow(index);
     }
 
     /**
@@ -2685,6 +2709,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
+        //20130912 dennischen@zkoss.org zss-432, clear emeory part before write it in commit to avoid redunantly out put the previous data
+        clearMemoryPackagePart(part);
         OutputStream out = part.getOutputStream();
         write(out);
         out.close();
@@ -3420,8 +3446,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         XSSFWorkbook wb = getWorkbook();
         int sheetIndex = getWorkbook().getSheetIndex(this);
         XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
-        
-    	wb.removeName(name.getNameName());
+    	wb.removeName(name);
     	return CellRangeAddress.valueOf(name.getRefersToFormula());
     }
 
@@ -3536,11 +3561,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (name == null) {
             name = wb.createBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
             name.getCTName().setHidden(true); 
-            CellReference r1 = new CellReference(getSheetName(), top, left, true, true);
-            CellReference r2 = new CellReference(null, bottom, right, true, true);
-            String fmla = r1.formatAsString() + ":" + r2.formatAsString();
-            name.setRefersToFormula(fmla);
         }
+        //20130913, hawkchen@potix.com, ZSS-428: update formula if named range exists.
+        CellReference r1 = new CellReference(getSheetName(), top, left, true, true);
+        CellReference r2 = new CellReference(null, bottom, right, true, true);
+        String fmla = r1.formatAsString() + ":" + r2.formatAsString();
+        name.setRefersToFormula(fmla);
+        
         
         //set FilterMode in SheetPr to true
         CTSheetPr sheetPr = worksheet.getSheetPr();

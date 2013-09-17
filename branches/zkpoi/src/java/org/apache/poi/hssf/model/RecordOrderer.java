@@ -23,6 +23,7 @@ import org.zkoss.poi.hssf.record.ArrayRecord;
 import org.zkoss.poi.hssf.record.BOFRecord;
 import org.zkoss.poi.hssf.record.BlankRecord;
 import org.zkoss.poi.hssf.record.BoolErrRecord;
+import org.zkoss.poi.hssf.record.CFRuleRecord;
 import org.zkoss.poi.hssf.record.CalcCountRecord;
 import org.zkoss.poi.hssf.record.CalcModeRecord;
 import org.zkoss.poi.hssf.record.DVALRecord;
@@ -292,6 +293,9 @@ final class RecordOrderer {
 	 * o SHEETPROTECTION
 	 * o RANGEPROTECTION
 	 * + EOF
+	 * 
+	 * See more complete description of file format in "[MS-XLS]: Excel Binary File Format (.xls) Structure",
+	 *  2.1.7.20.5 Worksheet Substream
 	 */
 	private static int findDataValidationTableInsertPos(List<RecordBase> records) {
 		int i = records.size() - 1;
@@ -334,6 +338,11 @@ final class RecordOrderer {
 			case UnknownRecord.LABELRANGES_015F:
 			case UnknownRecord.PHONETICPR_00EF:
 			// ConditionalFormattingTable
+			//20130916, hawkchen@potix.com, ZSS-272
+			case CFRuleRecord.sid:	//Excel Binary File Format (.xls) Structure. Record: CF (433 = 0x01B1)
+			case UnknownRecord.CFEX_087B:
+			case UnknownRecord.CF12_087A:
+				
 			case HyperlinkRecord.sid:
 			case UnknownRecord.QUICKTIP_0800:
             // name of a VBA module    

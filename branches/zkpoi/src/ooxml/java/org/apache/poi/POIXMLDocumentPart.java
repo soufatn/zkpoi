@@ -32,6 +32,7 @@ import org.zkoss.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.zkoss.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.zkoss.poi.openxml4j.opc.PackagingURIHelper;
 import org.zkoss.poi.openxml4j.opc.TargetMode;
+import org.zkoss.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
 import org.apache.xmlbeans.XmlOptions;
@@ -447,4 +448,13 @@ public class POIXMLDocumentPart {
     protected void onDocumentRemove() throws IOException {
 
     }
+    
+	// 20130809, paowang@potix.com: (ZSS-358) clear memory package part, otherwise, it will keep old data.
+    // 20130912, dennischen@zkoss.org: (ZSS-432), it is common issue of xssf, move this api to super class
+	// the package part is only for temporary data (RAW to XML)
+	protected void clearMemoryPackagePart(PackagePart part) {
+		if(part instanceof MemoryPackagePart) {
+			((MemoryPackagePart)part).clear();
+		}
+	}
 }

@@ -256,6 +256,10 @@ public class ColumnHelper {
     protected CTCol getOrCreateColumn1Based(long index1, boolean splitColumns) {
         CTCol col = getColumn1Based(index1, splitColumns);
         if (col == null) {
+        	//20130911, hawkchen@potix.com, ZSS-437, ZSS-429. refer to XSSFSheet.write()
+        	if(worksheet.sizeOfColsArray()==0){
+        		worksheet.addNewCols();
+        	}
             col = worksheet.getColsArray(0).addNewCol();
             col.setMin(index1);
             col.setMax(index1);

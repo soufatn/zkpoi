@@ -231,11 +231,4 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         writeTo(out);
         out.close();
     }
-    
-    //20110819, henrichen: clear MemoryPackagePart to avoid data accumulated
-    private void clearMemoryPackagePart(PackagePart part) {
-        if (part instanceof MemoryPackagePart) {
-        	((MemoryPackagePart)part).clear();
-        }
-    }
 }

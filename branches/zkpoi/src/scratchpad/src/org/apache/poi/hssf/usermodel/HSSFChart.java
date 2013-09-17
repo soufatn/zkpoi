@@ -1378,7 +1378,7 @@ public final class HSSFChart implements ChartInfo {
 		this.chartTitleFormat = chartTitleFormat;
 		this.chartTitleText = chartTitleText;
 		this.shapeRecord = chartType;
-		this.type = getChartType(chartType);
+		this.type = chartType==null?null:getChartType(chartType);
 		this.chart3d = chart3d;
 		this.titleTextRecord = titleTextRecord;
 		for(Object[] seriesObj : seriesList) {
