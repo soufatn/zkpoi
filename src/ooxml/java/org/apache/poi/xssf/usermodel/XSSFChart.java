@@ -206,14 +206,6 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		chartSpace.save(out, xmlOptions);
 		out.close();
 	}
-	
-	// 20130809, paowang@potix.com: (ZSS-358) clear memory package part, otherwise, it will keep old data.
-	// the package part is only for temporary data (RAW to XML)
-	private void clearMemoryPackagePart(PackagePart part) {
-		if(part instanceof MemoryPackagePart) {
-			((MemoryPackagePart)part).clear();
-		}
-	}
 
 	/**
 	 * Returns the parent graphic frame.

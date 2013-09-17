@@ -137,13 +137,6 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         out.close();
     }
 
-    // 20130626, paowang@potix.com: (ZSS-317) clear memory package part, or it will keep old data.    
-    private void clearMemoryPackagePart(PackagePart part) {
-        if (part instanceof MemoryPackagePart) {
-        	((MemoryPackagePart)part).clear();
-        }
-    }
-
 	public XSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2,
 			int col1, int row1, int col2, int row2) {
 		return new XSSFClientAnchor(dx1, dy1, dx2, dy2, col1, row1, col2, row2);

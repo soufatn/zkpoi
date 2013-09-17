@@ -58,7 +58,13 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int SHEETPROTECTION_0867 = 0x0867;
 	public static final int HEADER_FOOTER_089C   = 0x089C;
     public static final int CODENAME_1BA         = 0x01BA;
-
+    
+    //20130916, hawkchen@potix.com, ZSS-272: : to identify records of conditional formatting
+    //Conditional format related record
+    //refer to 2.3 Record Enumeration, Excel Binary File Format (.xls) Structure
+    public static final int CFEX_087B 			= 0x087B;
+    public static final int CF12_087A 			= 0x087A;
+    
 	private int _sid;
 	private byte[] _rawData;
 
@@ -177,6 +183,8 @@ public final class UnknownRecord extends StandardRecord {
 			case 0x0874: return "DROPDOWNOBJIDS";
 			case 0x0876: return "DCONN";
 			case 0x087B: return "CFEX";
+			//20130916, hawkchen@potix.com, ZSS-272: for being printed
+			case 0x087A: return "CF12";
 //			case 0x087C: return "XFCRC";
 //			case 0x087D: return "XFEXT";
 			case 0x087F: return "CONTINUEFRT12";

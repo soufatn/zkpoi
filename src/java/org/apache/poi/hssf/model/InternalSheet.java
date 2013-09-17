@@ -1358,6 +1358,10 @@ public final class InternalSheet {
 
         windowTwo.setFreezePanes(true);
         windowTwo.setFreezePanesNoSplit(true);
+        
+      //20130912 dennischen@zkoss.org ZSS-431 reset top-left if freezed
+        windowTwo.setLeftCol((short)0);
+        windowTwo.setTopRow((short)0);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
         sel.setPane((byte)pane.getActivePane());

@@ -142,7 +142,11 @@ public class XSSFComment implements Comment {
 		_comment.setRef(newRef);
       _comments.referenceUpdated(oldRef, _comment);
       
-        if(_vmlShape != null) _vmlShape.getClientDataArray(0).setRowArray(0, new BigInteger(String.valueOf(row)));
+        if(_vmlShape != null) {
+        	_vmlShape.getClientDataArray(0).setRowArray(0, new BigInteger(String.valueOf(row)));
+			// 20130815, paowang@potix.com, ZSS-418: fixed according to POI bug #50795 (see above setColumn() )
+			_vmlShape.getClientDataList().toString();
+        }
     }
 	
     /**
