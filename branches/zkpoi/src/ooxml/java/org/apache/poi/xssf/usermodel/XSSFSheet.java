@@ -22,11 +22,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
@@ -81,7 +84,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     protected CTWorksheet worksheet;
 
     private TreeMap<Integer, XSSFRow> _rows;
-    private List<XSSFHyperlink> hyperlinks;
+    //20131001 dennischen@zkoss.org plubic this for maniuplate
+    protected List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
     private CommentsTable sheetComments;
     /**
@@ -619,18 +623,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         return null;
-    }
-    
-    //20130808 dennis remove hyperlinks
-    public void removeHyperlink(int row,int column){
-    	String ref = new CellReference(row, column).formatAsString();
-    	HashSet remove = new HashSet();
-        for(XSSFHyperlink hyperlink : hyperlinks) {
-            if(hyperlink.getCellRef().equals(ref)) {
-                remove.add(hyperlink);
-            }
-        }
-        hyperlinks.removeAll(remove);
     }
 
     /**

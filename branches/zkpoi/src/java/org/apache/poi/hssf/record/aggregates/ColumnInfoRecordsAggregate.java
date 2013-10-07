@@ -529,4 +529,15 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	public void setDefaultColumnWidth(int defaultColWidth) {
 		_defaultColumnWidth256 = defaultColWidth * 256;
 	}
+	
+	//20130924, dennischen@zkoss.org: able to get max column index of column info
+	public int getMaxColumn(){
+		int result = -1;
+		int count=records.size();
+		for (int i=0; i<count; i++) {
+			ColumnInfoRecord columnInfoRecord = getColInfo(i);
+			result = Math.max(columnInfoRecord.getLastColumn(), result);
+		}
+		return result;
+	}
 }
