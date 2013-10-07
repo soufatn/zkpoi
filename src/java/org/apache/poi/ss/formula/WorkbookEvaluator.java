@@ -638,8 +638,10 @@ public final class WorkbookEvaluator {
 	public static ValueEval dereferenceResult(ValueEval evaluationResult, int srcRowNum, int srcColNum) {
 		ValueEval value;
 		try {
-			value = OperandResolver.getMultipleValue(evaluationResult, srcRowNum, srcColNum); //20111125, henrichen@zkoss.org: handle array value  
-				//OperandResolver.getSingleValue(evaluationResult, srcRowNum, srcColNum);
+			// 20130918 hawkchen@potix.com ZSS-441 comment out henri's fix, it causes getting wrong value of array formula
+			// can't figure out why henri did this.
+//			value = OperandResolver.getMultipleValue(evaluationResult, srcRowNum, srcColNum); //20111125, henrichen@zkoss.org: handle array value  
+			value = OperandResolver.getSingleValue(evaluationResult, srcRowNum, srcColNum);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

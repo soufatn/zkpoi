@@ -157,7 +157,9 @@ public final class HSSFDataFormat implements DataFormat {
 		      return fmt;
 		   } else {
 		      // Standard built in format
-	         return _builtinFormats[index];
+			 //20130923, dennischen@zkoss.org ZSS-447, follow the fix on ZSS-68
+			  return BuiltinFormats.getBuiltinFormat(index, ZssContext.getCurrent().getLocale()); 
+	         //return _builtinFormats[index];
 		   }
 		}
 		return fmt;

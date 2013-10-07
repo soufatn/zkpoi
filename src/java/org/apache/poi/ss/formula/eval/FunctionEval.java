@@ -234,14 +234,24 @@ public final class FunctionEval {
 		retval[363] = MinaMaxa.MINA;
 
 		for (int i = 0; i < retval.length; i++) {
-			Function f = retval[i];
-			if (f == null) {
-				FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(i);
-				if (fm == null) {
-					continue;
-				}
+			//20130927, dennischen@zkoss.org, support to override basic function
+//			Function f = retval[i];
+//			if (f == null) {
+//				FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(i);
+//				if (fm == null) {
+//					continue;
+//				}
+//				retval[i] = new NotImplementedFunction(fm.getName());
+//			}
+
+			FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(i);
+			if(fm==null)
+				continue;
+			if (retval[i] == null) {
 				retval[i] = new NotImplementedFunction(fm.getName());
 			}
+			retval[i] = new OverridableFunction(fm.getName(),retval[i]);
+			
 		}
 		return retval;
 	}

@@ -1628,4 +1628,9 @@ public final class InternalSheet {
         temp.toArray(result);
         return result;
     }
+    
+    //20130924, dennischen@zkoss.org: zss-256 able to get max column index of column info
+    public int getMaxConfiguredColumn(){
+    	return _columnInfos.getMaxColumn();
+    }
 }

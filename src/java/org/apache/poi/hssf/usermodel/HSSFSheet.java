@@ -845,7 +845,8 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
      *
      * @return Sheet - low level representation of this HSSFSheet.
      */
-    InternalSheet getSheet() {
+    //20130924, dennischen@zkoss.org, make it protected for zss-256
+    protected InternalSheet getSheet() {
         return _sheet;
     }
 
