@@ -988,6 +988,42 @@ public final class HSSFCellStyle implements CellStyle {
     	final FontRecord frec = _workbook.getFontRecordAt(getFontIndex());
     	frec.setColorPaletteIndex(color.getIndex());
     }
+
+	//20131011, kuroridoplayer@gmail.com: choose similar color in palette.
+    public void setTopBorderColor(HSSFColor color) {
+    	if (color instanceof HSSFColorExt) {
+    		getOrCreateXFExt().setTopBorderColor(((HSSFColorExt) color).getFullColorExt());
+    		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
+    	}
+        setTopBorderColor(color.getIndex());  	
+    }
+    
+    //20131011, kuroridoplayer@gmail.com: choose similar color in palette.
+    public void setBottomBorderColor(HSSFColor color) {
+    	if (color instanceof HSSFColorExt) {
+    		getOrCreateXFExt().setBottomBorderColor(((HSSFColorExt) color).getFullColorExt());
+    		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
+    	}
+        setBottomBorderColor(color.getIndex());  	
+    }
+    
+    //20131011, kuroridoplayer@gmail.com: choose similar color in palette.
+    public void setRightBorderColor(HSSFColor color) {
+    	if (color instanceof HSSFColorExt) {
+    		getOrCreateXFExt().setRightBorderColor(((HSSFColorExt) color).getFullColorExt());
+    		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
+    	}
+        setRightBorderColor(color.getIndex());  	
+    }
+    
+    //20131011, kuroridoplayer@gmail.com: choose similar color in palette.
+    public void setLeftBorderColor(HSSFColor color) {
+    	if (color instanceof HSSFColorExt) {
+    		getOrCreateXFExt().setLeftBorderColor(((HSSFColorExt) color).getFullColorExt());
+    		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
+    	}
+        setLeftBorderColor(color.getIndex());  	
+    }    
     
     //20110118, henrichen@zkoss.org: handle XFExtRecord
     private XFExtRecord _xfext;

@@ -16,6 +16,8 @@
    ==================================================================== */
 package org.zkoss.poi.xssf.usermodel.charts;
 
+import java.util.regex.Pattern;
+
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
@@ -94,7 +96,10 @@ public class XSSFChartAxDataSource<T> implements ChartDataSource<T> {
 				final String o = SheetNameFormatter.format(oldname);
 				final String n = SheetNameFormatter.format(newname);
 				final String ref = cat.getNumRef().getF();
-				final String newref = ref.replaceAll(o+"!", n+"!");
+				//20131024, dennischen@zkoss.org,  ZSS-473, ZSS-482
+				Pattern p = Pattern.compile(o+"!",Pattern.LITERAL);
+				final String newref = p.matcher(ref).replaceAll(n+"!");
+//				final String newref = ref.replaceAll(o+"!", n+"!");
 				if (!newref.equals(ref)) {
 					cat.getNumRef().setF(newref);
 					CTNumData cache = cat.getNumRef().getNumCache();
@@ -106,7 +111,10 @@ public class XSSFChartAxDataSource<T> implements ChartDataSource<T> {
 				final String o = SheetNameFormatter.format(oldname);
 				final String n = SheetNameFormatter.format(newname);
 				final String ref = cat.getStrRef().getF();
-				final String newref = ref.replaceAll(o+"!", n+"!");
+				//20131024, dennischen@zkoss.org, ZSS-473, ZSS-482
+				Pattern p = Pattern.compile(o+"!",Pattern.LITERAL);
+				final String newref = p.matcher(ref).replaceAll(n+"!");
+//				final String newref = ref.replaceAll(o+"!", n+"!");
 				if (!newref.equals(ref)) {
 					cat.getStrRef().setF(newref);
 					CTStrData cache = cat.getStrRef().getStrCache();

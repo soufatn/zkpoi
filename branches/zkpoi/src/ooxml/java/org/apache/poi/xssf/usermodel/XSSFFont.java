@@ -379,7 +379,8 @@ public class XSSFFont implements Font {
             } else if (srcctColor.isSetTheme()) { //20110114, henrichen@zkoss.org: handle theme color
             	ctColor.setTheme(srcctColor.getTheme());
             } else {
-            	ctColor.setRgb(color.getRgb());
+            	//20131017, dennischen@zkoss.org, should be honest to color argb or rgb.
+            	ctColor.setRgb(color.isArgb()?color.getARgb():color.getRgb());
             }
         	if (srcctColor.isSetTint()) {
         		ctColor.setTint(srcctColor.getTint());

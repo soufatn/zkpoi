@@ -16,6 +16,8 @@
    ==================================================================== */
 package org.zkoss.poi.xssf.usermodel.charts;
 
+import java.util.regex.Pattern;
+
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.zkoss.poi.ss.formula.SheetNameFormatter;
@@ -76,7 +78,10 @@ public class XSSFChartNumDataSource<T> implements ChartDataSource<T> {
 			final String o = SheetNameFormatter.format(oldname);
 			final String n = SheetNameFormatter.format(newname);
 			final String ref = val.getNumRef().getF();
-			final String newref = ref.replaceAll(o+"!", n+"!");
+			//20131024, dennischen@zkoss.org,  ZSS-473, ZSS-482
+			Pattern p = Pattern.compile(o+"!",Pattern.LITERAL);
+			final String newref = p.matcher(ref).replaceAll(n+"!");
+//			final String newref = ref.replaceAll(o+"!", n+"!");
 			if (!newref.equals(ref)) {
 				val.getNumRef().setF(newref);
 				CTNumData cache = val.getNumRef().getNumCache();

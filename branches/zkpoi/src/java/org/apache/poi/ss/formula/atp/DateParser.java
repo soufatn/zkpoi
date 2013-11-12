@@ -80,7 +80,8 @@ public class DateParser {
             return makeDate(f2, f0, f1);
         }
         // TODO - find a way to choose the correct date format
-        throw new RuntimeException("Unable to determine date format for text '" + strVal + "'");
+        //20131030, dennischen@zkoss.org, should throw evaluation exception instead.
+        throw new EvaluationException(ErrorEval.VALUE_INVALID,"Unable to determine date format for text '" + strVal + "'");
     }
 
     /**

@@ -197,9 +197,12 @@ public final class XSSFAutoFilter extends POIXMLDocumentPart implements AutoFilt
 				if (fc0Id == colId) { //found
 					fc = fc0;
 					break;
-				} else if (fc0Id > colId) { //pass over
-					break;
-				}
+				} 
+				//20131021, hawkchen@potix.com, ZSS-471, filter columns are not sorted by id so we should search all
+//				else if (fc0Id > colId) { //pass over
+//					break;
+//				}
+				
 				++j;
 			}
 		}

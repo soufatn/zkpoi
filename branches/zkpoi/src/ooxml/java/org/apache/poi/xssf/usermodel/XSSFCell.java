@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.SharedFormula;
@@ -1082,7 +1083,9 @@ public final class XSSFCell implements Cell {
     		if (fml != null) {
 				final String o = SheetNameFormatter.format(oldname);
 				final String n = SheetNameFormatter.format(newname);
-				final String newfml = fml.replaceAll(o+"!", n+"!");
+				//20131021, dennischen@zkoss.org, ZSS-473 get exception if renamed sheet contains '(' or ')'
+				Pattern p = Pattern.compile(o+"!",Pattern.LITERAL);
+				final String newfml = p.matcher(fml).replaceAll(n+"!");
 				if (!newfml.equals(fml)) {
 					cf.setStringValue(newfml);
 				}

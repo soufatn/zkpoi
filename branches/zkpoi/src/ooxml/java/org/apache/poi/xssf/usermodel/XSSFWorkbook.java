@@ -1354,7 +1354,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 	            if(ct.isSetLocalSheetId()) {
 		            if (ct.getLocalSheetId() == sheetIndex) {
 		            	final String ref = ct.getStringValue();
-		            	final String newref = ref.replaceAll(o+"!", n+"!");
+		            	//20131024, dennischen@zkoss.org, ZSS-473, ZSS-482
+		    			Pattern p = Pattern.compile(o+"!",Pattern.LITERAL);
+		    			final String newref = p.matcher(ref).replaceAll(n+"!");
+//		            	final String newref = ref.replaceAll(o+"!", n+"!");
 		            	ct.setStringValue(newref);
 		            }
 	            }

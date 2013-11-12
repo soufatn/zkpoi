@@ -199,7 +199,7 @@ public final class FormulaParser {
 	private void GetChar() {
 		// Check to see if we've walked off the end of the string.
 		if (_pointer > _formulaLength) {
-			throw new RuntimeException("too far");
+			throw new FormulaParseException("string format is not correct");
 		}
 		if (_pointer < _formulaLength) {
 			look=_formulaString.charAt(_pointer);

@@ -422,12 +422,17 @@ public class HSSFWorkbook extends POIDocument implements org.zkoss.poi.ss.usermo
         _sheets.add(pos,_sheets.remove(oldSheetIndex));
         workbook.setSheetOrder(sheetname, pos);
 
-        FormulaShifter shifter = FormulaShifter.createForSheetShift(oldSheetIndex, pos);
-        for (HSSFSheet sheet : _sheets) {
-            sheet.getSheet().updateFormulasAfterCellShift(shifter, /* not used */ -1 );
-        }
-
-        workbook.updateNamesAfterCellShift(shifter);
+        // 20131031, paowang@potix.com, ZSS-494: above code has already update the position of sheets
+        // XLS using a link table for sheet reference of formula, it is a indirect linkage.
+        // so, the only need of reordering sheets is update the link table. 
+        // the index in cell's 3D reference is the index of link table, not actual sheet index (see MS Excel Spec. page 851)
+        // we should not directly change the sheet reference in cell's reference.
+        // this issue is referred to ZSS-490
+//        FormulaShifter shifter = FormulaShifter.createForSheetShift(oldSheetIndex, pos);
+//        for (HSSFSheet sheet : _sheets) {
+//            sheet.getSheet().updateFormulasAfterCellShift(shifter, /* not used */ -1 );
+//        }
+//        workbook.updateNamesAfterCellShift(shifter);
 
     }
 
