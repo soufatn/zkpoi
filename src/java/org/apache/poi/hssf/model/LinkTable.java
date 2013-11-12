@@ -599,18 +599,24 @@ final class LinkTable {
 	//20101213, henrichen@zkoss.org: handle externSheetRecord when remove a sheet
 	/*package*/ void removeSheet(int sheetIdx) {
 		if (_externSheetRecord != null) {
-			int thisWbIndex = -1; // this is probably always zero
-			for (int i=0; i<_externalBookBlocks.length; i++) {
-				SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
-				if (ebr.isInternalReferences()) {
-					thisWbIndex = i;
-					break;
-				}
-			}
-			if (thisWbIndex < 0) {
-				throw new RuntimeException("Could not find 'internal references' EXTERNALBOOK");
-			}
-			_externSheetRecord.removeSheet(sheetIdx, thisWbIndex);
+			_externSheetRecord.removeSheet(sheetIdx, getInternalWorkbookIndex());
 		}
+	}
+	
+	//20131025, hawkchen@potix.com, ZSS-490: when moving a sheet, update its index
+	void updateSheetIndex(int oldIndex, int newIndex){
+		if (_externSheetRecord != null) {
+			_externSheetRecord.updateSheetIndex(oldIndex, newIndex, getInternalWorkbookIndex());
+		}
+	}
+
+	private int getInternalWorkbookIndex() {
+		for (int i=0; i<_externalBookBlocks.length; i++) {
+			SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
+			if (ebr.isInternalReferences()) {
+				return i;
+			}
+		}
+		throw new RuntimeException("Could not find 'internal references' EXTERNALBOOK");
 	}
 }

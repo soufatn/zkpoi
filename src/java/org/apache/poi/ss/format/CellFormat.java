@@ -26,6 +26,7 @@ import org.zkoss.poi.ss.usermodel.DataFormatter;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -151,7 +152,7 @@ public class CellFormat {
 */
     /** Maps a format string to its parsed version for efficiencies sake. */
     private static final Map<Object, CellFormat> formatCache = //ZSS-68
-            new WeakHashMap<Object, CellFormat>();
+            Collections.synchronizedMap(new WeakHashMap<Object, CellFormat>());
 
     /**
      * Returns a {@link CellFormat} that applies the given format.  Two calls

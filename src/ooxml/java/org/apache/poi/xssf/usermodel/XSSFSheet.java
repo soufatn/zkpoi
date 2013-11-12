@@ -2732,6 +2732,29 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 ctHls[i] = hyperlink.getCTHyperlink();
             }
             worksheet.getHyperlinks().setHyperlinkArray(ctHls);
+            
+            //20131014, dennischen@zkoss.org, ZSS-461, instance of cthls is possibe change after setHyperlinkArray,(common issue of CTModel)
+            //sync hyperlinks back.
+            hyperlinks.clear();
+            try{
+	            PackageRelationshipCollection hyperRels =
+	                    getPackagePart().getRelationshipsByType(XSSFRelation.SHEET_HYPERLINKS.getRelation());
+	            for(CTHyperlink hyperlink : worksheet.getHyperlinks().getHyperlinkArray()) {
+	                PackageRelationship hyperRel = null;
+	                if(hyperlink.getId() != null) {
+	                    hyperRel = hyperRels.getRelationshipByID(hyperlink.getId());
+	                }
+	
+	                hyperlinks.add( new XSSFHyperlink(hyperlink, hyperRel) );
+	            }
+            } catch (InvalidFormatException e){
+                throw new POIXMLException(e);
+            }
+        }else{
+        	//2013/10/11 , dennischen@zkoss.org, it is possible user clean all the hyperlink
+        	if(worksheet.getHyperlinks() != null) {
+        		worksheet.unsetHyperlinks();
+        	}
         }
 
         for(XSSFRow row : _rows.values()){

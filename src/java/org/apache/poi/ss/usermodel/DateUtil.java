@@ -56,6 +56,8 @@ public class DateUtil {
     private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
     private static final Pattern date_ptrn3 = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*$");
+    // 20131029, dennischen@zkoss.org, ZSS-495 for other locale, it is possible to be yyyy/m/d AM/PM hh:mm:ss
+    private static final Pattern date_ptrn3_locale = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*[mhHsS :]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
 
@@ -377,7 +379,12 @@ public class DateUtil {
         // Otherwise, check it's only made up, in any case, of:
         //  y m d h s - \ / , . :
         // optionally followed by AM/PM
-        return date_ptrn3.matcher(fs).matches();
+        boolean r = date_ptrn3.matcher(fs).matches();
+        if(!r){
+        	// 20131029, dennischen@zkoss.org, ZSS-495 for other locale, it is possible to be yyyy/m/d AM/PM hh:mm:ss
+        	r = date_ptrn3_locale.matcher(fs).matches();
+        }
+        return r;
     }
 
     /**

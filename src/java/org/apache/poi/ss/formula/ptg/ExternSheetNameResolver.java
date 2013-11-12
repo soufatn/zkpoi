@@ -41,7 +41,11 @@ final class ExternSheetNameResolver {
 		} else {
 			String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
 			sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
-			SheetNameFormatter.appendFormat(sb, sheetName);
+			//20131104, hawkchen@potix.com, ZSS-502: sheet name might be empty
+			if ("".equals(sheetName)){
+				sheetName = "#REF";
+			}
+			SheetNameFormatter.appendFormat(sb,sheetName);
 		}
    		sb.append('!');
 		sb.append(cellRefText);

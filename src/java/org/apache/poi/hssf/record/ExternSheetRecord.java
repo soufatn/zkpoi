@@ -270,10 +270,49 @@ public class ExternSheetRecord extends StandardRecord {
 				ref.setFirstSheetIndex(-1);
 			}
 			final int diff2 = ref.getLastSheetIndex() - sheetIndex; 
-			if (diff > 0) {
+			if (diff2 > 0) {
 				ref.setLastSheetIndex(ref.getLastSheetIndex() - 1);
-			} else if (diff == 0) {
+			} else if (diff2 == 0) {
 				ref.setLastSheetIndex(-1);
+			}
+		}
+	}
+	
+	//20131024, hawkchen@potix.com, ZSS-490,  when moving a sheet, update its index
+	public void updateSheetIndex(int oldIndex, int newIndex, int internalBookIndex){
+		for (RefSubRecord ref : _list) {
+			if (ref.getExtBookIndex() != internalBookIndex) {
+				continue;
+			}
+			int firstIndex = ref.getFirstSheetIndex();
+			int lastIndex = ref.getLastSheetIndex();
+			if (oldIndex > newIndex){
+				if (firstIndex >= newIndex && firstIndex <= oldIndex){
+					ref.setFirstSheetIndex(calculateNewIndex(oldIndex, newIndex, firstIndex));
+				}
+				if (lastIndex >= newIndex && lastIndex <= oldIndex){
+					ref.setLastSheetIndex(calculateNewIndex(oldIndex, newIndex, lastIndex));
+				}
+			}else if (oldIndex < newIndex){
+				if (firstIndex >= oldIndex && firstIndex <= newIndex){
+					ref.setFirstSheetIndex(calculateNewIndex(oldIndex, newIndex, firstIndex));
+				}
+				if (lastIndex >= oldIndex && lastIndex <= newIndex){
+					ref.setLastSheetIndex(calculateNewIndex(oldIndex, newIndex, lastIndex));
+				}
+			}
+			
+		}
+	}
+
+	private int calculateNewIndex(int oldIndex, int newIndex, int currentIndex) {
+		if (oldIndex == currentIndex){
+			return newIndex;
+		}else{
+			if (oldIndex > newIndex){
+				return currentIndex+1;
+			}else{
+				return currentIndex-1;
 			}
 		}
 	}

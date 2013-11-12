@@ -216,19 +216,25 @@ public class CellDateFormatter extends CellFormatter {
                     doneMillis = true;
                 }
             } else if (it.getAttribute(DateFormat.Field.AM_PM) != null) {
+            	// 20131016, kuroridoplayer@gmail.com: handle whether AM, PM should showM or not 
+            	// and also take care situation under other language(that don't use AM/PM).
                 if (!doneAm) {
-                    if (showAmPm) {
-                        if (amPmUpper) {
-                            toAppendTo.append(Character.toUpperCase(ch));
-                            if (showM)
-                                toAppendTo.append('M');
-                        } else {
-                            toAppendTo.append(Character.toLowerCase(ch));
-                            if (showM)
-                                toAppendTo.append('m');
-                        }
-                    }
-                    doneAm = true;
+                	if(showAmPm) {
+	                	if (Character.toUpperCase(ch) =='A' || Character.toUpperCase(ch) =='P') { // if A/a or P/p, handle showM 
+	                	    if (amPmUpper) {
+	                	    	toAppendTo.append(Character.toUpperCase(ch));
+	                	        if (showM)
+	                	            toAppendTo.append('M');
+	                	    } else {
+	                	    	toAppendTo.append(Character.toLowerCase(ch));
+	                	        if (showM)
+	                	            toAppendTo.append('m');
+	                	    }
+	                	    doneAm = true;
+	                	} else {
+	                		toAppendTo.append(ch); // append AM_PM field directly.
+	                	}
+                	}
                 }
             } else {
                 toAppendTo.append(ch);

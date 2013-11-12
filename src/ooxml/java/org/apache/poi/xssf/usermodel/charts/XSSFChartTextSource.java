@@ -16,6 +16,8 @@
    ==================================================================== */
 package org.zkoss.poi.xssf.usermodel.charts;
 
+import java.util.regex.Pattern;
+
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 import org.zkoss.poi.ss.formula.SheetNameFormatter;
 import org.zkoss.poi.ss.usermodel.charts.ChartTextSource;
@@ -52,10 +54,17 @@ public class XSSFChartTextSource implements ChartTextSource {
 			final String o = SheetNameFormatter.format(oldname);
 			final String n = SheetNameFormatter.format(newname);
 			final String ref = tx.getStrRef().getF();
-			final String newref = ref.replaceAll(o+"!", n+"!");
+			
+			//20131024, dennischen@zkoss.org, ZSS-473, ZSS-482
+			Pattern p = Pattern.compile(o+"!",Pattern.LITERAL);
+			final String newref = p.matcher(ref).replaceAll(n+"!");
+//			final String newref = ref.replaceAll(o+"!", n+"!");
 			if (!newref.equals(ref)) {
 				tx.getStrRef().setF(newref);
-				tx.getStrRef().unsetStrCache(); //invalidate the cache 
+				//20131024, dennischen@zkoss.org, ZSS-482
+				if(tx.getStrRef().getStrCache()!=null){
+					tx.getStrRef().unsetStrCache(); //invalidate the cache
+				}
 			}
 		}
 	}

@@ -118,6 +118,12 @@ public class XSSFColor implements Color {
          return rgb;
       }
    }
+   
+   //20131017, dennischen@zkoss.org, the way to know it is original argb or not
+   public boolean isArgb(){
+	   byte[] rgb = getRGBOrARGB();
+	   return rgb!=null && rgb.length==4;
+   }
 
    /**
     * Standard Alpha Red Green Blue ctColor value (ARGB).

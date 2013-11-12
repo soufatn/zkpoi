@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.zkoss.poi.hssf.usermodel;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.zkoss.poi.ddf.EscherContainerRecord;
 import org.zkoss.poi.hssf.record.ObjRecord;
 import org.zkoss.poi.hssf.record.TextObjectRecord;
@@ -43,10 +45,15 @@ public class HSSFChartShape extends HSSFSimpleShape implements ZssChartX {
 //        setShapeType(OBJECT_TYPE_CHART);
 //	}
 	
+	//ZSS 505, chart id is possible duplicated in hssf
+	//we don't have a available scope to control id, so static sequence so far 
+	private long _chartId;
+	private static AtomicLong idseq = new AtomicLong();
 	
 	public HSSFChartShape(EscherContainerRecord spContainer, ObjRecord objRecord, BOFRecordAggregate bofAgg) {
 		super(spContainer, objRecord);
 		this._bofAgg = bofAgg;
+		_chartId = idseq.incrementAndGet();
 	}
 	
 	protected BOFRecordAggregate getBOFRecordAggregate(){
@@ -81,7 +88,7 @@ public class HSSFChartShape extends HSSFSimpleShape implements ZssChartX {
 
 	@Override
 	public String getChartId() {
-		return getName();
+		return Long.toHexString(_chartId);//reduce string length
 	}
 
 	//20111110, henrichen@zkoss.org: update chart anchor

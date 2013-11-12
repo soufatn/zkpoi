@@ -219,6 +219,7 @@ public final class WorkbookEvaluator {
 	public void clearAllCachedResultValues() {
 		_cache.clear();
 		_sheetIndexesBySheet.clear();
+		_sheetIndexesByName.clear(); // 20131025, paowang@potix.com, ZSS-492: don't forget to clear sheet name cache, or index will be inconsistent after reordering sheets 	
 	}
 
 	/**

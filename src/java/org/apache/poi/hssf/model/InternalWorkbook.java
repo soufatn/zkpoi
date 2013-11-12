@@ -644,13 +644,14 @@ public final class InternalWorkbook {
      * sets the order of appearance for a given sheet.
      *
      * @param sheetname the name of the sheet to reorder
-     * @param pos the position that we want to insert the sheet into (0 based)
+     * @param newIndex the position that we want to insert the sheet into (0 based)
      */
 
-    public void setSheetOrder(String sheetname, int pos ) {
-    int sheetNumber = getSheetIndex(sheetname);
-    //remove the sheet that needs to be reordered and place it in the spot we want
-    boundsheets.add(pos, boundsheets.remove(sheetNumber));
+    public void setSheetOrder(String sheetname, int newIndex ) {
+    	int oldIndex = getSheetIndex(sheetname);
+    	//remove the sheet that needs to be reordered and place it in the spot we want
+    	boundsheets.add(newIndex, boundsheets.remove(oldIndex));
+    	linkTable.updateSheetIndex(oldIndex, newIndex);
     }
 
     /**
