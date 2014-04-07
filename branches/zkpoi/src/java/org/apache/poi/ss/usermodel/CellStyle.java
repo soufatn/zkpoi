@@ -251,6 +251,20 @@ public interface CellStyle {
      * Get the format string
      */
     public String getDataFormatString();
+    
+    //20140213, dennischen@zkoss.org get the data format string that doesn't depends on locale
+    /**
+     * Get the raw data format string that are not transfered by ZSS Context Locale
+     * @return
+     */
+    public String getRawDataFormatString();
+    
+    //20140213, dennischen@zkoss.org the way to know a format is a builtin format
+    /**
+     * Check if the data format is build in format
+     * @return
+     */
+    public boolean isBuiltinDataFormat();
 
     /**
      * set the font for this style

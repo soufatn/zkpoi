@@ -56,7 +56,9 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(functionIndex);
         if(fm == null) {
             // Happens only as a result of a call to FormulaParser.parse(), with a non-built-in function name
-            return new FuncVarPtg(functionIndex, Ptg.CLASS_VALUE, new byte[] {Ptg.CLASS_VALUE}, numArgs);
+            FuncVarPtg funcVarPtg = new FuncVarPtg(functionIndex, Ptg.CLASS_VALUE, new byte[] {Ptg.CLASS_VALUE}, numArgs);
+            funcVarPtg.setExternal(true);	// 20131230, paowang@potix.com, ZSS-533: indicates it's a external function
+            return funcVarPtg;
         }
         return new FuncVarPtg(functionIndex, fm.getReturnClassCode(), fm.getParameterClassCodes(), numArgs);
     }
@@ -70,4 +72,16 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
     public int getSize() {
         return SIZE;
     }
+    
+	// 20131230, paowang@potix.com, ZSS-533: indicates it's a external function or not
+    // by default, it is an internal function
+	private boolean external = false;
+
+	public boolean isExternal() {
+		return external;
+	}
+
+	void setExternal(boolean external) {
+		this.external = external;
+	}
 }

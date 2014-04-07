@@ -95,6 +95,8 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 	//ZSS-81 Cannot input formula with proper external book name
 	@Override
 	public String toInternalFormulaString(FormulaRenderingWorkbook book) {
-		throw new RuntimeException("3D references need a workbook to determine formula text");
+		// 20140107, paowang@potix.com, ZSS-533: there is book for resolving function name (only external book reference needs internal form) 
+//		throw new RuntimeException("3D references need a workbook to determine formula text");
+		return toFormulaString(book);
 	}
 }

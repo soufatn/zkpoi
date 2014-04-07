@@ -113,6 +113,25 @@ public final class HSSFCellStyle implements CellStyle {
     public String getDataFormatString() {
         return getDataFormatString(_workbook);
     }
+    
+    /**
+     * Get the contents of the format string, by looking up
+     *  the DataFormat against the bound workbook
+     * @see org.zkoss.poi.hssf.usermodel.HSSFDataFormat
+     * @return the format string or "General" if not found
+     */
+    //20140213 dennischen@zkoss.org
+    public String getRawDataFormatString() {
+    	HSSFDataFormat format = new HSSFDataFormat( _workbook );
+        return format.getRawFormat(getDataFormat());
+    }
+    //20140213, dennischen@zkoss.org the way to know a format is a builtin format
+    public boolean isBuiltinDataFormat(){
+    	HSSFDataFormat format = new HSSFDataFormat( _workbook );
+        return format.isBuiltinFormat(getDataFormat());
+    }
+    
+    
     /**
      * Get the contents of the format string, by looking up
      *  the DataFormat against the supplied workbook
@@ -946,6 +965,13 @@ public final class HSSFCellStyle implements CellStyle {
     
     //20100923, henrichen@zkoss.org: handle Color
     public void setFillForegroundColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
+    	
     	if (color instanceof HSSFColorExt) { //20110119, henrichen@zkoss.org: handle XFExt record
     		getOrCreateXFExt().setFillForegroundColor(((HSSFColorExt) color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
@@ -954,6 +980,12 @@ public final class HSSFCellStyle implements CellStyle {
     }
     //20100923, henrichen@zkoss.org: handle Color
     public void setFillBackgroundColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
     	if (color instanceof HSSFColorExt) { //20110119, henrichen@zkoss.org: handle XFExt record
     		getOrCreateXFExt().setFillBackgroundColor(((HSSFColorExt) color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
@@ -981,6 +1013,13 @@ public final class HSSFCellStyle implements CellStyle {
     }
     //20110119, henrichen@zkoss.org: handle seting XFExtRecord text color
     private void setFontColorColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
+    	
     	if (color instanceof HSSFColorExt) {
     		getOrCreateXFExt().setTextColor(((HSSFColorExt)color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
@@ -991,6 +1030,12 @@ public final class HSSFCellStyle implements CellStyle {
 
 	//20131011, kuroridoplayer@gmail.com: choose similar color in palette.
     public void setTopBorderColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
     	if (color instanceof HSSFColorExt) {
     		getOrCreateXFExt().setTopBorderColor(((HSSFColorExt) color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
@@ -1000,6 +1045,12 @@ public final class HSSFCellStyle implements CellStyle {
     
     //20131011, kuroridoplayer@gmail.com: choose similar color in palette.
     public void setBottomBorderColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
     	if (color instanceof HSSFColorExt) {
     		getOrCreateXFExt().setBottomBorderColor(((HSSFColorExt) color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
@@ -1009,6 +1060,12 @@ public final class HSSFCellStyle implements CellStyle {
     
     //20131011, kuroridoplayer@gmail.com: choose similar color in palette.
     public void setRightBorderColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
     	if (color instanceof HSSFColorExt) {
     		getOrCreateXFExt().setRightBorderColor(((HSSFColorExt) color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));
@@ -1018,6 +1075,12 @@ public final class HSSFCellStyle implements CellStyle {
     
     //20131011, kuroridoplayer@gmail.com: choose similar color in palette.
     public void setLeftBorderColor(HSSFColor color) {
+    	//20131126, dennischen@zkoss.org, ZSS-517 use xffext color if there is xffext already
+    	XFExtRecord ext = getXFExt();
+    	if(ext!=null && !(color instanceof HSSFColorExt)){
+    		short[] rgb = color.getTriplet();
+    		color = new HSSFColorExt(new FullColorExt(rgb[0], rgb[1], rgb[2]));
+    	}
     	if (color instanceof HSSFColorExt) {
     		getOrCreateXFExt().setLeftBorderColor(((HSSFColorExt) color).getFullColorExt());
     		color = ((HSSFColorExt)color).getSimilarColor(new HSSFPalette(_workbook.getCustomPalette()));

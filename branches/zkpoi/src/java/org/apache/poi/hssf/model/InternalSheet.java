@@ -1065,6 +1065,15 @@ public final class InternalSheet {
         return cir.getHidden();
     }
 
+    //20140319, hawkchen@potix.com, zss-617: determine custom width
+    public boolean isColumnUserSet(int columnIndex) {
+        ColumnInfoRecord record = _columnInfos.findColumnInfo(columnIndex);
+        if (record == null) {
+            return false;
+        }
+        return record.getUserSet();
+    }
+
     /**
      * Get the hidden property for a given column.
      * @param column - the column number

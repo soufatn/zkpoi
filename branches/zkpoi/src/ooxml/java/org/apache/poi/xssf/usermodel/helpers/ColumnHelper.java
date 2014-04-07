@@ -238,6 +238,16 @@ public class ColumnHelper {
         CTCol col = getOrCreateColumn1Based(index+1, true);
         col.setCustomWidth(bestFit);
     }
+    
+    //20140319, hawkchen@potix.com, zss-617: determine custom width
+    public boolean getCustomWidth(long index) {
+        CTCol col = getColumn(index, false);
+        if (col == null) {
+        	return false;
+        }else{
+        	return col.getCustomWidth();
+        }
+    }
 
     public void setColWidth(long index, double width) {
         CTCol col = getOrCreateColumn1Based(index+1, true);

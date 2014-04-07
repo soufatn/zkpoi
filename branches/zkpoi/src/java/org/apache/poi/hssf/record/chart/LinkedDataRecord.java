@@ -28,7 +28,7 @@ import org.zkoss.poi.util.LittleEndianOutput;
 
 /**
  * Describes a linked data record.  This record refers to the series data or text.<p/>
- *
+ * Excel Binary File Format (.xls) Structure \ 2.4.29 BRAI
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class LinkedDataRecord extends StandardRecord {

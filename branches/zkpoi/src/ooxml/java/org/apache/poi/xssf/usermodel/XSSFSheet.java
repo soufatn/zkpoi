@@ -3645,4 +3645,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 	public PivotTable createPivotTable(CellReference destination, String name, PivotCache pivotCache) {
 		return XSSFPivotTableHelpers.instance.getHelper().createPivotTable(destination, name, pivotCache, this);
 	}
+
+	//20140319, hawkchen@potix.com, ZSS-617
+	@Override
+	public boolean isColumnCustom(int columnIndex) {
+		return getColumnHelper().getCustomWidth(columnIndex);
+	}
 }

@@ -1165,4 +1165,9 @@ public class DataFormatter {
     public static final Format getJavaFormat(Cell cell, Locale locale) { //ZSS-68
     	return new DataFormatter(locale, false).getFormat(cell);
     }
+    
+    //201400113, dennischen@zkoss.org:
+    public static final Format getJavaFormat(double cellValue, String format,Locale locale) {
+    	return new DataFormatter(locale, false).getFormat(cellValue,-1,format);//the index -1 in getFormat is for check buildin format, we set -1 to just ignore it.
+    }
 }

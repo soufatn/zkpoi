@@ -234,4 +234,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		//TODO see #getBookNameFromExternalLinkIndex(String externalIndex)
 		return bookname;
 	}
+	
+	@Override
+	public boolean isAllowedDeferredNamePtg() {
+		return false;
+	}
 }

@@ -35,21 +35,29 @@ final class ExternSheetNameResolver {
 		StringBuffer sb;
 		if (externalSheet != null) {
 			String wbName = externalSheet.getWorkbookName();
-			String sheetName = externalSheet.getSheetName();
+			String sheetName =convertSheetName(externalSheet.getSheetName());
+			// 20140103, paowang@potix.com, support 3D reference
+			String lastSheetName = convertSheetName(externalSheet.getLastSheetName());
+			sheetName = sheetName.equals(lastSheetName) ? sheetName : sheetName + ":" + lastSheetName;
+			//
 			sb = new StringBuffer(wbName.length() + sheetName.length() + cellRefText.length() + 4);
 			SheetNameFormatter.appendFormat(sb, wbName, sheetName);
 		} else {
-			String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
+			String sheetName = convertSheetName(book.getSheetNameByExternSheet(field_1_index_extern_sheet));
 			sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
-			//20131104, hawkchen@potix.com, ZSS-502: sheet name might be empty
-			if ("".equals(sheetName)){
-				sheetName = "#REF";
-			}
-			SheetNameFormatter.appendFormat(sb,sheetName);
+			SheetNameFormatter.appendFormat(sb,sheetName); //according to POI parser limitation, sheet name must be surrounded with single quote
 		}
    		sb.append('!');
 		sb.append(cellRefText);
 		return sb.toString();
+	}
+
+	//20131104, hawkchen@potix.com, ZSS-502: sheet name might be empty, convert empty sheet name to '#REF'
+	private static String convertSheetName(String sheetName) {
+		if ("".equals(sheetName)){
+			sheetName = "#REF";
+		}
+		return sheetName;
 	}
 
 	//20120117, henrichen@zkoss.org: prepare sheet name in  internal form
@@ -63,11 +71,15 @@ final class ExternSheetNameResolver {
 			if (wbIndex == null) {
 				wbIndex = wbName;
 			}
-			String sheetName = externalSheet.getSheetName();
+			String sheetName = convertSheetName(externalSheet.getSheetName());
+			// 20140103, paowang@potix.com, support 3D reference
+			String lastSheetName = convertSheetName(externalSheet.getLastSheetName());
+			sheetName = sheetName.equals(lastSheetName) ? sheetName : sheetName + ":" + lastSheetName;
+			//
 			sb = new StringBuffer(wbIndex.length() + sheetName.length() + cellRefText.length() + 4);
 			SheetNameFormatter.appendFormat(sb, wbIndex, sheetName);
 		} else {
-			String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
+			String sheetName = convertSheetName(book.getSheetNameByExternSheet(field_1_index_extern_sheet));
 			sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
 			SheetNameFormatter.appendFormat(sb, sheetName);
 		}

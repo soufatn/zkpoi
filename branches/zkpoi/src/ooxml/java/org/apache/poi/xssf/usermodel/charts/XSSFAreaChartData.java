@@ -20,12 +20,7 @@ package org.zkoss.poi.xssf.usermodel.charts;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import org.zkoss.poi.ss.usermodel.Chart;
 import org.zkoss.poi.ss.usermodel.charts.AbstractCategoryDataSerie;
 import org.zkoss.poi.ss.usermodel.charts.CategoryData;
@@ -46,6 +41,7 @@ import org.zkoss.poi.xssf.usermodel.XSSFChart;
 public class XSSFAreaChartData implements CategoryData {
 
 	private CTAreaChart ctAreaChart;
+	private ChartGrouping _chartGrouping;
     /**
      * List of all data series.
      */
@@ -85,7 +81,14 @@ public class XSSFAreaChartData implements CategoryData {
     }
     
     public void setGrouping(ChartGrouping grouping) {
-    	ctAreaChart.getGrouping().setVal(XSSFChartUtil.fromChartGrouping(grouping));
+    	_chartGrouping = grouping;
+    	if (ctAreaChart != null){
+    		CTGrouping ctGrouping = ctAreaChart.getGrouping(); 
+    		if ( ctGrouping == null){
+    			ctGrouping = ctAreaChart.addNewGrouping();
+    		}
+    		ctGrouping.setVal(XSSFChartUtil.fromChartGrouping(_chartGrouping));
+    	}
     }
 
     /**
@@ -140,7 +143,7 @@ public class XSSFAreaChartData implements CategoryData {
         
 	        ctAreaChart.addNewVaryColors().setVal(true);
 	        //TODO setup other properties of areaChart
-	
+	        setGrouping(_chartGrouping);
 	        for (CategoryDataSerie s : series) {
 	            ((Serie)s).addToChart(ctAreaChart);
 	        }

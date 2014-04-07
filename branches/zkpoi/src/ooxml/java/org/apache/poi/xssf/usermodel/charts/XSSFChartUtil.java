@@ -159,9 +159,16 @@ class XSSFChartUtil {
     
     //20111013, henrichen@zkoss.org: handle bar chart grouping
 	/*packdage*/ static STBarGrouping.Enum fromChartGroupingForBar(ChartGrouping grouping) {
+		if(grouping==null){
+			return null;
+		}
 		switch (grouping) {
 			case STANDARD: return STBarGrouping.STANDARD;
 			case STACKED: return STBarGrouping.STACKED;
+			case CLUSTERED:
+				return STBarGrouping.CLUSTERED;
+			case PERCENT_STACKED:
+				return STBarGrouping.PERCENT_STACKED;
 			default:
 				throw new IllegalArgumentException();
 		}
@@ -169,6 +176,9 @@ class XSSFChartUtil {
 
     //20111013, henrichen@zkoss.org: handle bar chart grouping
 	/*packdage*/ static ChartGrouping toChartGroupingForBar(CTBarGrouping ctBarGrouping) {
+		if(ctBarGrouping==null){
+			return null;
+		}
 		switch (ctBarGrouping.getVal().intValue()) {
 			case STBarGrouping.INT_STANDARD: return ChartGrouping.STANDARD;
 			case STBarGrouping.INT_STACKED: return ChartGrouping.STACKED;
@@ -181,6 +191,9 @@ class XSSFChartUtil {
 
     //20111013, henrichen@zkoss.org: handle chart grouping
 	/*packdage*/ static STGrouping.Enum fromChartGrouping(ChartGrouping grouping) {
+		if(grouping==null){
+			return null;
+		}
 		switch (grouping) {
 			case STANDARD: return STGrouping.STANDARD;
 			case STACKED: return STGrouping.STACKED;
@@ -192,6 +205,9 @@ class XSSFChartUtil {
 
     //20111013, henrichen@zkoss.org: handle chart grouping
 	/*packdage*/ static ChartGrouping toChartGrouping(CTGrouping ctGrouping) {
+		if(ctGrouping==null){
+			return null;
+		}
 		switch (ctGrouping.getVal().intValue()) {
 			case STGrouping.INT_PERCENT_STACKED: return ChartGrouping.STANDARD;
 			case STGrouping.INT_STANDARD: return ChartGrouping.STANDARD;
@@ -203,6 +219,9 @@ class XSSFChartUtil {
 
     //20111013, henrichen@zkoss.org: handle bar chart grouping
 	/*packdage*/ static STBarDir.Enum fromBarDirection(ChartDirection dir) {
+		if(dir==null){
+			return null;
+		}
 		switch (dir) {
 			case HORIZONTAL: return STBarDir.BAR;
 			case VERTICAL: return STBarDir.COL;
@@ -213,6 +232,9 @@ class XSSFChartUtil {
 
     //20111013, henrichen@zkoss.org: handle bar chart grouping
 	/*packdage*/ static ChartDirection toBarDirection(CTBarDir barDir) {
+		if(barDir==null){
+			return null;
+		}
 		switch (barDir.getVal().intValue()) {
 			case STBarDir.INT_BAR: return ChartDirection.HORIZONTAL;
 			case STBarDir.INT_COL: return ChartDirection.VERTICAL;

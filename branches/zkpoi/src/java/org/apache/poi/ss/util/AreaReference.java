@@ -41,6 +41,11 @@ public class AreaReference {
      * The area reference must be contiguous (i.e. represent a single rectangle, not a union of rectangles)
      */
     public AreaReference(String reference) {
+    	this(reference,0xFFFF);
+    }
+    
+    //2014/3/20, dennischen@zkoss.org, allow to define maxRow for Plain column reference
+    public AreaReference(String reference,int maxRowForPlainColumn) {
         if(! isContiguous(reference)) {
             throw new IllegalArgumentException(
                     "References passed to the AreaReference must be contiguous, " +
@@ -78,7 +83,8 @@ public class AreaReference {
             int col1 = CellReference.convertColStringToIndex(part1);
             
             _firstCell = new CellReference(0, col0, true, firstIsAbs);
-            _lastCell = new CellReference(0xFFFF, col1, true, lastIsAbs);
+            //2014/3/20, dennischen@zkoss.org, allow to define maxRow for Plain column reference
+            _lastCell = new CellReference(maxRowForPlainColumn, col1, true, lastIsAbs);
             _isSingleCell = false;
             // TODO - whole row refs
         } else {

@@ -17,12 +17,12 @@
 
 package org.zkoss.poi.ss.formula;
 
+import org.zkoss.poi.ss.formula.eval.ErrorEval;
 import org.zkoss.poi.ss.formula.eval.NameEval;
 import org.zkoss.poi.ss.formula.eval.NameXEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.functions.FreeRefFunction;
 import org.zkoss.poi.ss.formula.OperationEvaluationContext;
-import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 /**
  *
  * Common entry point for all user-defined (non-built-in) functions (where
@@ -57,7 +57,9 @@ final public class UserDefinedFunction implements FreeRefFunction {
 		}
 		FreeRefFunction targetFunc = ec.findUserDefinedFunction(functionName);
 		if (targetFunc == null) {
-			throw new NotImplementedException(functionName);
+			// 20131227, paowang@potix, ZSS-533: if doesn't find the function, it should be "#NAME?"
+			// throw new NotImplementedException(functionName);
+			return ErrorEval.NAME_INVALID;
 		}
 		int nOutGoingArgs = nIncomingArgs -1;
 		ValueEval[] outGoingArgs = new ValueEval[nOutGoingArgs];

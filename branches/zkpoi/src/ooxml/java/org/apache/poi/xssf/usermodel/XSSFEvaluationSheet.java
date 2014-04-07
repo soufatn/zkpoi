@@ -47,4 +47,29 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
 		}
 		return new XSSFEvaluationCell(cell, this);
 	}
+
+	//20140311, dennischen@zkoss.org, ZSS-596 Possible memory leak when formula evaluation
+	//implement hashCode and equals, use identity to implement euqlas
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_xs == null) ? 0 : _xs.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		XSSFEvaluationSheet other = (XSSFEvaluationSheet) obj;
+		return _xs == other._xs;
+	}
+	
+	
 }

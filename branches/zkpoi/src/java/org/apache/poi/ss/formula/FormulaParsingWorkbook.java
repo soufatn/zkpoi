@@ -65,4 +65,12 @@ public interface FormulaParsingWorkbook {
 	 *  named range name matching is case insensitive
 	 */
 	EvaluationName getOrCreateName(String name, int sheetIndex);
+
+	/**
+	 * In HSSF, we need to render a formula string from stored Ptg, so a formula cannot be parsed to DeferredNamePtg. 
+	 * Because DeferredNamePtg will be read as UnknownPtg for it's not written out.
+	 * @return true for using DeferredNamePtg to represent a non-existed defined name during formula parsing. 
+	 * If false, parser will create a defined name for a non-existed one. 
+	 */
+	boolean isAllowedDeferredNamePtg(); //a workaround for ZSS-575
 }

@@ -164,6 +164,56 @@ public final class HSSFDataFormat implements DataFormat {
 		}
 		return fmt;
 	}
+	
+	/**
+	 * get the format string that matches the given format index
+	 * @param index of a format
+	 * @return string represented at index of format or null if there is not a  format at that index
+	 */
+	//20140213 dennischen@zkoss.org , copy from getFormat and ignore zss locale
+	public String getRawFormat(short index) {
+		if (_movedBuiltins) {
+			return _formats.get(index);
+		}
+
+        if(index == -1) {
+            // YK: formatIndex can be -1, for example, for cell in column Y in test-data/spreadsheet/45322.xls
+            // return null for those
+            return null;
+        }
+
+		String fmt = _formats.size() > index ? _formats.get(index) : null;
+		if (_builtinFormats.length > index && _builtinFormats[index] != null) {
+		   // It's in the built in range
+		   if (fmt != null) {
+		      // It's been overriden, use that value
+		      return fmt;
+		   } else {
+		      // Standard built in format 
+	         return _builtinFormats[index];
+		   }
+		}
+		return fmt;
+	}
+	//20140213 dennischen@zkoss.org 
+	public boolean isBuiltinFormat(short index){
+		if (_movedBuiltins) {
+			return false;
+		}
+        if(index == -1) {
+            return false;
+        }
+		String fmt = _formats.size() > index ? _formats.get(index) : null;
+		if(fmt!=null){
+			return false;
+		}
+		if (_builtinFormats.length > index && _builtinFormats[index] != null) {
+		   if(_builtinFormats[index]!=null){
+			   return true;
+		   }
+		}
+		return false;
+	}
 
 	/**
 	 * get the format string that matches the given format index

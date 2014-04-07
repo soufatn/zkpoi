@@ -18,43 +18,19 @@
 package org.zkoss.poi.hssf.usermodel;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.zkoss.poi.ddf.EscherRecord;
-import org.zkoss.poi.hssf.model.DrawingManager2;
-import org.zkoss.poi.hssf.model.HSSFFormulaParser;
-import org.zkoss.poi.hssf.model.InternalSheet;
-import org.zkoss.poi.hssf.model.InternalWorkbook;
+import org.zkoss.poi.hssf.model.*;
 import org.zkoss.poi.hssf.record.*;
-import org.zkoss.poi.hssf.record.aggregates.DataValidityTable;
-import org.zkoss.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.zkoss.poi.hssf.record.aggregates.WorksheetProtectionBlock;
-import org.zkoss.poi.ss.formula.FormulaShifter;
-import org.zkoss.poi.ss.formula.ptg.MemFuncPtg;
-import org.zkoss.poi.ss.formula.ptg.Ptg;
-import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
-import org.zkoss.poi.ss.formula.ptg.UnionPtg;
+import org.zkoss.poi.hssf.record.aggregates.*;
 import org.zkoss.poi.hssf.util.PaneInformation;
 import org.zkoss.poi.ss.SpreadsheetVersion;
-import org.zkoss.poi.ss.formula.FormulaType;
-import org.zkoss.poi.ss.usermodel.AutoFilter;
-import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.CellRange;
-import org.zkoss.poi.ss.usermodel.CellStyle;
-import org.zkoss.poi.ss.usermodel.DataValidation;
-import org.zkoss.poi.ss.usermodel.DataValidationHelper;
-import org.zkoss.poi.ss.usermodel.PivotCache;
-import org.zkoss.poi.ss.usermodel.PivotTable;
-import org.zkoss.poi.ss.usermodel.Row;
-import org.zkoss.poi.ss.util.CellRangeAddress;
-import org.zkoss.poi.ss.util.CellReference;
-import org.zkoss.poi.ss.util.SSCellRange;
-import org.zkoss.poi.ss.util.SheetUtil;
-import org.zkoss.poi.util.POILogFactory;
-import org.zkoss.poi.util.POILogger;
+import org.zkoss.poi.ss.formula.*;
+import org.zkoss.poi.ss.formula.ptg.*;
+import org.zkoss.poi.ss.usermodel.*;
+import org.zkoss.poi.ss.util.*;
+import org.zkoss.poi.util.*;
 
 /**
  * High level representation of a worksheet.
@@ -2336,5 +2312,12 @@ public class HSSFSheet implements org.zkoss.poi.ss.usermodel.Sheet {
 			PivotCache pivotCache) {
 		// TODO: Not supported yet in xls format
 		return null;
+	}
+	
+
+	//20140319, hawkchen@potix.com, zss-617: determine custom width
+    @Override
+	public boolean isColumnCustom(int columnIndex) {
+    	return _sheet.isColumnUserSet(columnIndex);
 	}
 }

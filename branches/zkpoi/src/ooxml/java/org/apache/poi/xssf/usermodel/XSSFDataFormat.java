@@ -56,4 +56,16 @@ public class XSSFDataFormat implements DataFormat {
         if(fmt == null) fmt = BuiltinFormats.getBuiltinFormat(index, ZssContext.getCurrent().getLocale()); //20111229, henrichen@zkoss.org: ZSS-68
         return fmt;
     }
+    
+    /**
+     * get the format string that matches the given format index
+     * @param index of a format
+     * @return string represented at index of format or null if there is not a  format at that index
+     */
+    //20140213 dennischen@zkoss.org copy from getFormat and ignore zss locale
+    public String getRawFormat(short index) {
+        String fmt = stylesSource.getNumberFormatAt(index);
+        if(fmt == null) fmt = BuiltinFormats.getBuiltinFormat(index);
+        return fmt;
+    }
 }

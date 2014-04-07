@@ -18,7 +18,6 @@
 package org.zkoss.poi.ss.formula;
 
 import java.util.*;
-
 import org.zkoss.poi.ss.formula.ptg.Area3DPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaErrPtg;
 import org.zkoss.poi.ss.formula.ptg.AreaPtg;
@@ -40,6 +39,7 @@ import org.zkoss.poi.ss.formula.ptg.NamePtg;
 import org.zkoss.poi.ss.formula.ptg.NameXPtg;
 import org.zkoss.poi.ss.formula.ptg.NumberPtg;
 import org.zkoss.poi.ss.formula.ptg.OperationPtg;
+import org.zkoss.poi.ss.formula.ptg.DeferredNamePtg;
 import org.zkoss.poi.ss.formula.ptg.Ptg;
 import org.zkoss.poi.ss.formula.ptg.Ref3DPtg;
 import org.zkoss.poi.ss.formula.ptg.RefErrorPtg;
@@ -48,7 +48,6 @@ import org.zkoss.poi.ss.formula.ptg.StringPtg;
 import org.zkoss.poi.ss.formula.ptg.UnionPtg;
 import org.zkoss.poi.ss.formula.ptg.UnknownPtg;
 import org.zkoss.poi.ss.formula.atp.AnalysisToolPak;
-import org.zkoss.poi.ss.formula.eval.AreaEval;
 import org.zkoss.poi.ss.formula.eval.ArrayEval;
 import org.zkoss.poi.ss.formula.eval.BlankEval;
 import org.zkoss.poi.ss.formula.eval.BoolEval;
@@ -57,10 +56,8 @@ import org.zkoss.poi.ss.formula.eval.EvaluationException;
 import org.zkoss.poi.ss.formula.eval.FunctionEval;
 import org.zkoss.poi.ss.formula.eval.MissingArgEval;
 import org.zkoss.poi.ss.formula.eval.NameEval;
-import org.zkoss.poi.ss.formula.eval.NameXEval;
 import org.zkoss.poi.ss.formula.eval.NumberEval;
 import org.zkoss.poi.ss.formula.eval.OperandResolver;
-import org.zkoss.poi.ss.formula.eval.RefEval;
 import org.zkoss.poi.ss.formula.eval.StringEval;
 import org.zkoss.poi.ss.formula.eval.ValueEval;
 import org.zkoss.poi.ss.formula.eval.ValuesEval;
@@ -70,12 +67,10 @@ import org.zkoss.poi.ss.formula.functions.Function;
 import org.zkoss.poi.ss.formula.functions.IfFunc;
 import org.zkoss.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.zkoss.poi.ss.formula.udf.UDFFinder;
-import org.zkoss.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.zkoss.poi.hssf.util.CellReference;
 import org.zkoss.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.zkoss.poi.ss.formula.eval.NotImplementedException;
 import org.zkoss.poi.ss.usermodel.Cell;
-import org.zkoss.poi.ss.usermodel.Sheet;
 import org.zkoss.poi.util.POILogFactory;
 import org.zkoss.poi.util.POILogger;
 
@@ -123,8 +118,9 @@ public final class WorkbookEvaluator {
 		_workbook = workbook;
 		_evaluationListener = evaluationListener;
 		_cache = new EvaluationCache(evaluationListener);
-		_sheetIndexesBySheet = new IdentityHashMap<EvaluationSheet, Integer>();
-		_sheetIndexesByName = new IdentityHashMap<String, Integer>();
+		//20140311, dennischen@zkoss.org, ZSS-596 Possible memory leak when formula evaluation
+		_sheetIndexesBySheet = new HashMap<EvaluationSheet, Integer>();
+		_sheetIndexesByName = new HashMap<String, Integer>();
 		_collaboratingWorkbookEnvironment = CollaboratingWorkbooksEnvironment.EMPTY;
 		_workbookIx = 0;
 		_stabilityClassifier = stabilityClassifier;
@@ -566,7 +562,16 @@ public final class WorkbookEvaluator {
 					ValueEval p = stack.pop();
 					//20101115, henrichen@zkoss.org: add dependency before operation
 					//FuncVarPtg, the NamePtg(functionname) should be as is
-					p = postProcessValueEval(ec, p, !(optg instanceof FuncVarPtg) || j > 0); 
+					
+					// 20131230, paowang@potix.com, ZSS-533: FuncVarPtg indicates dynamic arguments function
+					// if it's a external function, the first argument must be the function name in NameEval
+					// so, if it's not a external function, we should also eval. the first argument in post process
+					//p = postProcessValueEval(ec, p, !(optg instanceof FuncVarPtg) || j > 0);
+					if(optg instanceof FuncVarPtg && ((FuncVarPtg)optg).isExternal()) {
+						p = postProcessValueEval(ec, p, j > 0);
+					} else {
+						p = postProcessValueEval(ec, p, true);
+					}
 					ops[j] = p;
 				}
 //				logDebug("invoke " + operation + " (nAgs=" + numops + ")");
@@ -738,6 +743,11 @@ public final class WorkbookEvaluator {
 		if (ptg instanceof ArrayPtg) {
 			return new ArrayEval((ArrayPtg) ptg);
 		}
+		// 20131227, paowang@potix.com, ZSS-533: using deferred name for EL and UDF evaluation.
+		if (ptg instanceof DeferredNamePtg) {
+			DeferredNamePtg pnp = (DeferredNamePtg)ptg;
+			return new NameEval(pnp.toFormulaString());
+		}
 		
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
 	}
@@ -745,12 +755,12 @@ public final class WorkbookEvaluator {
      * YK: Used by OperationEvaluationContext to resolve indirect names.
      */
 	/*package*/ ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
-	    if (ptgs.length == 1) {
-	      return getEvalForPtg(ptgs[0], ec);
-	    }
-	    //2013/8/27 dennischen@zkoss.org, zpoi extends evaluateFormula to provide ignoreDependency and ignoreDifference
-	    //I give a default value true for ignoreDependency and ignoreDifference false.
-	    return evaluateFormula(ec, ptgs, true, false);
+		if (ptgs.length > 1) {
+			//dennischen@zkoss.org, roll-back to poi 3.9 original code and change to throw not-implement-exception to avoid noisy console log
+			//for original code, please check commit on 2013/8/30
+			throw new NotImplementedException("Complex name formulas not supported yet");
+		}
+		return getEvalForPtg(ptgs[0], ec);
 	}
 
 	/**

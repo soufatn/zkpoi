@@ -1054,4 +1054,6 @@ public interface Sheet extends Iterable<Row> {
 	
 	//20120517, henrichen@zkoss.org: create a PivotTable
 	public PivotTable createPivotTable(CellReference destination, String name, PivotCache pivotCache);
+
+	public boolean isColumnCustom(int columnIndex);
 }

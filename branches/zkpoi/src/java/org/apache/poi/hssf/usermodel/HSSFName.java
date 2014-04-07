@@ -299,4 +299,9 @@ public final class HSSFName implements Name {
     public void setFunction(boolean value) {
         _definedNameRec.setFunction(value);
     }
+    
+    //2014/3/7 dennischen@zkoss.org, to allow import skip to import 
+    public boolean isBuiltInName(){
+    	return _definedNameRec.isBuiltInName();
+    }
 }
