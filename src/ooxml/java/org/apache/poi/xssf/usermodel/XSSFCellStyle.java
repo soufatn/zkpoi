@@ -29,6 +29,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.zkoss.poi.POIXMLException;
 import org.zkoss.poi.ss.usermodel.BorderStyle;
+import org.zkoss.poi.ss.usermodel.BuiltinFormats;
 import org.zkoss.poi.ss.usermodel.CellStyle;
 import org.zkoss.poi.ss.usermodel.Color;
 import org.zkoss.poi.ss.usermodel.FillPatternType;
@@ -442,6 +443,19 @@ public class XSSFCellStyle implements CellStyle {
         int idx = getDataFormat();
         return new XSSFDataFormat(_stylesSource).getFormat((short)idx);
     }
+    
+    //20140213 dennischen@zkoss.org 
+    //the implementation depends on XSSFDataFormat.getFormat(short)
+    public String getRawDataFormatString(){
+    	 int idx = getDataFormat();
+         return new XSSFDataFormat(_stylesSource).getRawFormat((short)idx);
+    }
+    //20140213 dennischen@zkoss.org 
+    public boolean isBuiltinDataFormat(){
+    	int idx = getDataFormat();
+    	return _stylesSource.getNumberFormatAt(idx)==null && BuiltinFormats.getBuiltinFormat(idx)!=null;
+    }
+    
 
     /**
      * Get the background fill color.

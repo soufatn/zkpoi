@@ -37,6 +37,7 @@ public final class ColumnInfoRecord extends StandardRecord {
     private int _xfIndex;
     private int _options;
     private static final BitField hidden    = BitFieldFactory.getInstance(0x01);
+    private static final BitField userSet    = BitFieldFactory.getInstance(0x02);
     private static final BitField outlevel  = BitFieldFactory.getInstance(0x0700);
     private static final BitField collapsed = BitFieldFactory.getInstance(0x1000);
     // Excel seems write values 2, 10, and 260, even though spec says "must be zero"
@@ -226,6 +227,11 @@ public final class ColumnInfoRecord extends StandardRecord {
 
     protected int getDataSize() {
         return 12;
+    }
+
+    //20140319, hawkchen@potix.com, zss-617: determine custom width
+    public boolean getUserSet() {
+        return userSet.isSet(_options);
     }
 
     public String toString() {

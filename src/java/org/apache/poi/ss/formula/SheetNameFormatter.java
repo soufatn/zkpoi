@@ -105,6 +105,12 @@ public final class SheetNameFormatter {
 			// sheet name with digit in the first position always requires delimiting
 			return true;
 		}
+		//201403-6 dennischen@zkoss.org
+		//ZSS-582, sheet name which start with '.' needs Delimiting
+		if('.' == rawSheetName.charAt(0)) {
+			return true;
+		}
+		
 		for(int i=0; i<len; i++) {
 			char ch = rawSheetName.charAt(i);
 			if(isSpecialChar(ch)) {
@@ -148,6 +154,7 @@ public final class SheetNameFormatter {
 		switch(ch) {
 			case '.': // dot is OK
 			case '_': // underscore is OK
+			case ':': // 20140213, paowang@potix.com: support 3D reference, colon connects two sheets
 				return false;
 			case '\n':
 			case '\r':

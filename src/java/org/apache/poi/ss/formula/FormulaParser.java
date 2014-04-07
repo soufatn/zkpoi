@@ -20,7 +20,6 @@ package org.zkoss.poi.ss.formula;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.zkoss.poi.ss.formula.ptg.*;
 import org.zkoss.poi.ss.formula.constant.ErrorConstant;
 import org.zkoss.poi.ss.formula.function.FunctionMetadata;
@@ -585,13 +584,15 @@ public final class FormulaParser {
 			throw new IllegalStateException("Need book to evaluate name '" + name + "'");
 		}
 		//20101115, henrichen@zkoss.org: shall provide a temporary defined named record
-		//EvaluationName evalName = _book.getName(name, _sheetIndex);
-		EvaluationName evalName = _book.getOrCreateName(name, _sheetIndex);
+		EvaluationName evalName = _book.getName(name, _sheetIndex);
+		//EvaluationName evalName = _book.getOrCreateName(name, _sheetIndex); //20131227, paowang@potix.com, ZSS-533: don't create name into book, use another ptg for name
 		if (evalName == null) {
 			//20101112, henrichen@zkoss.org: shall return #NAME? error
 			//throw new FormulaParseException("Specified named range '"
 			//		+ name + "' does not exist in the current workbook.");
-			return new ParseNode(ErrPtg.NAME_INVALID);
+			
+			//return new ParseNode(ErrPtg.NAME_INVALID);
+			return new ParseNode(createPtgForNonExistedName(_book, name));
 		}
 		//20101115, henrichen@zkoss.org: unnecessary check
 		//if (evalName.isRange()) {
@@ -600,9 +601,22 @@ public final class FormulaParser {
 		// TODO - what about NameX ?
 		//throw new FormulaParseException("Specified name '"
 		//		+ name + "' is not a range as expected.");
-		return new ParseNode(evalName.createPtg());
+		return new ParseNode(evalName.createPtg()); 
 	}
 
+	// 20140305, hawkchen@potix.com, ZSS-575: HSSF cannot use DeferredNamePtg because it renders a formula string from Ptg
+	//could move this method to FormulaParsingWorkbook 
+	private Ptg createPtgForNonExistedName(FormulaParsingWorkbook book, String nonExistedName){
+		// 20131227, paowang@potix.com, ZSS-533: still need a name, use another ptg for non-existed name					
+		// throw new FormulaParseException("Name '" + name
+		// + "' is completely unknown in the current workbook");
+		if(_book.isAllowedDeferredNamePtg()){
+			return new DeferredNamePtg(nonExistedName);
+		}else{
+			return _book.getOrCreateName(nonExistedName, _sheetIndex).createPtg();
+		}
+	}
+	
 	/**
 	 *
 	 * @return <code>true</code> if the specified character may be used in a defined name
@@ -940,14 +954,13 @@ public final class FormulaParser {
 				throw new IllegalStateException("Need book to evaluate name '" + name + "'");
 			}
 			//20101112, henrichen@zkoss.org: shall provide a temporary defined named record
-			//EvaluationName hName = _book.getName(name, _sheetIndex);
-			EvaluationName hName = _book.getOrCreateName(name, _sheetIndex);
+			EvaluationName hName = _book.getName(name, _sheetIndex); //20131227, paowang@potix.com, ZSS-533: don't create name into book, use another ptg for name
+//			EvaluationName hName = _book.getOrCreateName(name, _sheetIndex);
 			if (hName == null) {
 
 				nameToken = _book.getNameXPtg(name);
 				if (nameToken == null) {
-					throw new FormulaParseException("Name '" + name
-							+ "' is completely unknown in the current workbook");
+					nameToken = createPtgForNonExistedName(_book, name);
 				}
 			} else {
 				//20101112, henrichen@zkoss.org: unnecessary check
@@ -1083,7 +1096,8 @@ public final class FormulaParser {
 			missedPrevArg = false;
 			SkipWhite();
 			if (!isArgumentDelimiter(look)) {
-				throw expected("',' or ')'");
+				//20131204 kuroridoplayer@gmail.com : ZSS-523
+				throw unexpected(String.valueOf(look));
 			}
 		}
 		ParseNode[] result = new ParseNode[temp.size()];
@@ -1624,4 +1638,11 @@ end;
 		}
 		return new FormulaParseException(msg);
 	}
+	
+	//20131204, kuroridoplayer@gmail.com: make parse error more end user readable
+	private RuntimeException unexpected(String s) {
+		String msg = "The specified formula '" + _formulaString
+				+ "' contains an error. Doesn't expect " + s;
+		return new FormulaParseException(msg);
+	}	
 }

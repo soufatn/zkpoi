@@ -352,4 +352,10 @@ public final class XSSFName implements Name {
             throw new IllegalArgumentException("Invalid name: '"+name+"'; Names must begin with a letter or underscore and not contain spaces");
         }
     }
+    
+    //2014/3/7 dennischen@zkoss.org, to allow import skip to import 
+    public boolean isBuiltInName(){
+    	String namename = getNameName();
+    	return namename.startsWith("_xlnm.");
+    }
 }

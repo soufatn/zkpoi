@@ -32,4 +32,12 @@ public interface DataFormat {
      * @return string represented at index of format or null if there is not a  format at that index
      */
     String getFormat(short index);
+    
+    /**
+     * get the format string that matches the given format index, but it doesn't transfer the format by ZSS Context Locale
+     * @param index of a format
+     * @return string represented at index of format or null if there is not a  format at that index
+     */
+    //20140213 dennischen@zkoss.org to get the raw format that are not depends on zss locale
+    String getRawFormat(short index);
 }

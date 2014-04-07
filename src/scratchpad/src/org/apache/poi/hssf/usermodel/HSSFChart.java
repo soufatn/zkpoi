@@ -47,7 +47,7 @@ import org.zkoss.poi.ss.util.CellRangeAddressBase;
 
 /**
  * Has methods for construction of a chart object.
- *
+ * refer to Excel Binary File Format (.xls) Structure \ 2.2.3.7 Chart Group
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFChart implements ChartInfo {

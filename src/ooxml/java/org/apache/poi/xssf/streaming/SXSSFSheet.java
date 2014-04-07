@@ -1428,4 +1428,10 @@ public class SXSSFSheet implements Sheet, Cloneable
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	//20140319, hawkchen@potix.com, zss-617
+	@Override
+	public boolean isColumnCustom(int columnIndex) {
+		return false;
+	}
 }

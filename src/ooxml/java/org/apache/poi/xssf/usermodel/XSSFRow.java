@@ -532,12 +532,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     //20120103, henrichen@zkoss.org: return whether the row height is set by the user, compare to wrap text setting
 	@Override
 	public boolean isCustomHeight() {
-		return _row.isSetCustomHeight();
+		return _row.getCustomHeight();
 	}
 
-    //20120103, henrichen@zkoss.org: return whether the row height is set by the user, compare to wrap text setting
 	@Override
-	public void setCustomHeight(boolean b) {
-		_row.setCustomHeight(b);
+	public void setCustomHeight(boolean custom) {
+		_row.setCustomHeight(custom);
 	}
 }

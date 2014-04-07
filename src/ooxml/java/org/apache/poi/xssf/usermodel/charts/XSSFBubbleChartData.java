@@ -131,6 +131,10 @@ public class XSSFBubbleChartData implements XYZData {
 	            ((Serie)s).addToChart(ctBubbleChart);
 	        }
         }
+        
+        for(ChartAxis a : axis) {
+        	ctBubbleChart.addNewAxId().setVal(a.getId());
+        }
     }
     public List<? extends XYZDataSerie> getSeries() {
         return series;

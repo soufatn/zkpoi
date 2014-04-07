@@ -107,7 +107,7 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 
 		setPosition(pos);
 		setOrientation(AxisOrientation.MIN_MAX);
-		setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
+		setCrossBetween(AxisCrossBetween.BETWEEN);
 		setCrosses(AxisCrosses.AUTO_ZERO);
 	}
 

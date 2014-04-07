@@ -326,6 +326,17 @@ public class CellFormat {
             return apply("?");
         }
     }
+    
+    //20131209, dennischen@zkoss.org, api to know to convert double to date 
+	public boolean isApplicableDateFormat(Double value) {
+		if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
+			if (DateUtil.isValidExcelDate(value)) {
+				return true;
+			}
+		}
+		return false;
+	}
+    
     private static final CellFormatResult EMPTY_CELL_FORMAT_RESULT = new CellFormatResult(false, "", null); 
 
     /**

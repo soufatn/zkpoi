@@ -241,4 +241,9 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	public String getExternalLinkIndexFromBookName(String bookname) {
 		return _uBook.getExternalLinkIndexFromBookName(bookname);
 	}
+	
+	@Override
+	public boolean isAllowedDeferredNamePtg() {
+		return true;
+	}
 }
