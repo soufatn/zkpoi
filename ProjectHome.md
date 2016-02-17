@@ -1,0 +1,1 @@
+ZK POI is based on a part of the Apache POI spreadsheet library(http://poi.apache.org/spreadsheet/index.html) and is adapted to be used with ZK Spreadsheet(http://code.google.com/p/zkspreadsheet/)
